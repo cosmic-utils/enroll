@@ -1,5 +1,5 @@
-name := 'cosmic-ext-fprint'
-appid := 'fi.joonastuomi.Fprint'
+name := 'cosmic-utils-enroll'
+appid := 'org.cosmic-utils.Enroll'
 
 rootdir := ''
 prefix := '/usr'
