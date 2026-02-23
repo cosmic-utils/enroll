@@ -1,0 +1,46 @@
+app-id: org.cosmic-utils.Enroll
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: cosmic-utils-enroll
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+  - --socket=system-bus
+  # Allow talking to fprintd
+  - --talk-name=net.reactivated.Fprint
+  # Allow talking to PolicyKit for authentication
+  - --talk-name=org.freedesktop.PolicyKit1
+
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+
+build-options:
+  append-path: /usr/lib/sdk/rust-stable/bin
+  build-args:
+    - --share=network
+
+modules:
+  - name: cosmic-utils-enroll
+    buildsystem: simple
+    build-commands:
+      # Build the application
+      - cargo build --release
+
+      # Install the binary
+      - install -Dm0755 target/release/cosmic-utils-enroll /app/bin/cosmic-ext-fprint
+
+      # Install the desktop file
+      - install -Dm0644 resources/org.cosmic-utils.Enroll.desktop /app/share/applications/fi.joonastuomi.Fprint.desktop
+
+      # Install the AppStream metadata
+      - install -Dm0644 resources/org.cosmic-utils.Enroll.metainfo.xml /app/share/appdata/fi.joonastuomi.Fprint.metainfo.xml
+
+      # Install the icon
+      - install -Dm0644 resources/icons/hicolor/scalable/apps/icon.svg /app/share/icons/hicolor/scalable/apps/org.cosmic-utils.Enroll.svg
+
+    sources:
+      - type: dir
+        path: ..
