@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.cosmic-utils.Enroll</id>
+  <id>org.cosmic_utils.Enroll</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MPL-2.0</project_license>
   <name>Enroll</name>
@@ -14,9 +14,9 @@
     https://github.com/jotuel/cosmic-ext-fprint/raw/main/resources/icons/hicolor/scalable/apps/icon.svg
   </icon>
   <url type="vcs-browser">https://github.com/jotuel/cosmic-ext-fprint</url>
-  <launchable type="desktop-id">org.cosmic-utils.Enroll.desktop</launchable>
+  <launchable type="desktop-id">org.cosmic_utils.Enroll.desktop</launchable>
   <provides>
-    <id>org.cosmic-utils.Enroll</id>
+    <id>org.cosmic_utils.Enroll</id>
     <binaries>
       <binary>cosmic-utils-enroll</binary>
     </binaries>

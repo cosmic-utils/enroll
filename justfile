@@ -1,5 +1,5 @@
 name := 'cosmic-utils-enroll'
-appid := 'org.cosmic-utils.Enroll'
+appid := 'org.cosmic_utils.Enroll'
 
 rootdir := ''
 prefix := '/usr'
