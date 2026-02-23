@@ -2,8 +2,8 @@
 Name=Fprint
 Comment=GUI for fprintd fingerprint enrolling
 Type=Application
-Icon=fi.joonastuomi.Fprint
-Exec=cosmic-ext-fprint %F
+Icon=org.cosmic-utils.Enroll
+Exec=cosmic-utils-enroll %F
 Terminal=false
 StartupNotify=true
 Categories=Utility;System;
