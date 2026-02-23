@@ -23,8 +23,7 @@ pub async fn list_enrolled_fingers_dbus(
     username: String,
 ) -> zbus::Result<Vec<String>> {
     validate_username(&username)?;
-    let res = device.list_enrolled_fingers(&username).await
-
+    device.list_enrolled_fingers(&username).await
 }
 
 pub async fn delete_fingerprint_dbus(
