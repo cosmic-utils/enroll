@@ -39,7 +39,7 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: ${{ env.VERSION }}
-          files: cosmic-fprint.flatpak
+          files: cosmic-utils-enroll.flatpak
           draft: false
           prerelease: true
         env:

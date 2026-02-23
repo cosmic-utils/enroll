@@ -1019,8 +1019,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "cosmic-ext-fprint"
-version = "0.3.12"
+name = "cosmic-utils-enroll"
+version = "0.4.0"
 dependencies = [
  "futures-util",
  "i18n-embed 0.15.4",

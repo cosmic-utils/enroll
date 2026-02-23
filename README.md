@@ -1,6 +1,6 @@
-# Fprint for COSMIC™ DE
+# COSMIC™ Utils Enroll
 
-GUI for fingerprint management.
+GUI for fingerprint management. Designed for COSMIC DE.
 
 ## Prerequisites
 
@@ -44,7 +44,7 @@ If packaging for a Linux distribution, vendor dependencies locally with the `ven
 ```sh
 just vendor
 just build-vendored
-just rootdir=debian/cosmic-ext-fprint prefix=/usr install
+just rootdir=debian/cosmic-utils-enroll prefix=/usr install
 ```
 
 It is recommended to build a source tarball with the vendored dependencies, which can typically be done by running `just vendor` on the host system before it enters the build environment.
