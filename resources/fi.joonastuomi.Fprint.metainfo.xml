@@ -3,11 +3,11 @@
   <id>org.cosmic-utils.Enroll</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MPL-2.0</project_license>
-  <name>Fprint</name>
+  <name>Enroll</name>
   <summary>GUI built with COSMIC toolkit for fprintd fingerprint enrolling</summary>
   <description>
     <p>
-      Fprint is an application for enrolling fingerprints using the fprintd daemon. It allows you to register and delete fingerprints for authentication on your Linux system.
+      Enroll is an application for enrolling fingerprints using the fprintd daemon. It allows you to register and delete fingerprints for authentication on your Linux system.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">

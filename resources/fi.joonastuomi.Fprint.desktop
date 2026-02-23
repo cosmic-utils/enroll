@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Fprint
+Name=Enroll
 Comment=GUI for fprintd fingerprint enrolling
 Type=Application
 Icon=org.cosmic-utils.Enroll
