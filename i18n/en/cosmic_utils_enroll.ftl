@@ -1,7 +1,7 @@
-app-title = Fprint Enroll
+app-title = Enroll Fingerprint
 about = About
 view = View
-fprint = Register Fingerprint
+fprint = Enroll Fingerprint
 welcome = Register and/or delete fingerprints
 git-description = Git commit {$hash} on {$date}
 register = Register

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>fi.joonastuomi.Fprint</id>
+  <id>org.cosmic_utils.Enroll</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MPL-2.0</project_license>
-  <name>Fprint</name>
+  <name>Enroll</name>
   <summary>GUI built with COSMIC toolkit for fprintd fingerprint enrolling</summary>
   <description>
     <p>
-      Fprint is an application for enrolling fingerprints using the fprintd daemon. It allows you to register and delete fingerprints for authentication on your Linux system.
+      Enroll is an application for enrolling fingerprints using the fprintd daemon. It allows you to register and delete fingerprints for authentication on your Linux system.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
-    https://github.com/jotuel/cosmic-ext-fprint/raw/main/resources/icons/hicolor/scalable/apps/icon.svg
+    https://github.com/cosmic-utils/enroll/raw/main/resources/icons/hicolor/scalable/apps/icon.svg
   </icon>
-  <url type="vcs-browser">https://github.com/jotuel/cosmic-ext-fprint</url>
-  <launchable type="desktop-id">fi.joonastuomi.Fprint.desktop</launchable>
+  <url type="vcs-browser">https://github.com/cosmic-utils/enroll</url>
+  <launchable type="desktop-id">org.cosmic_utils.Enroll.desktop</launchable>
   <provides>
-    <id>fi.joonastuomi.Fprint</id>
+    <id>org.cosmic_utils.Enroll</id>
     <binaries>
-      <binary>cosmic-ext-fprint</binary>
+      <binary>cosmic-utils-enroll</binary>
     </binaries>
   </provides>
   <requires>
