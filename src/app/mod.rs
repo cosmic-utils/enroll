@@ -123,7 +123,6 @@ impl cosmic::Application for AppModel {
             context_page: ContextPage::default(),
             nav,
             key_binds: HashMap::new(),
-            // Optional configuration file for an application.
             config: Config::default(),
             status: fl!("status-connecting"),
             device_path: None,

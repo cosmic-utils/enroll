@@ -1019,24 +1019,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cosmic-utils-enroll"
-version = "0.4.0"
-dependencies = [
- "futures-util",
- "i18n-embed 0.15.4",
- "i18n-embed-fl 0.9.4",
- "libcosmic",
- "nix 0.31.1",
- "open",
- "rust-embed",
- "serde",
- "tokio",
- "tracing",
- "vergen",
- "zbus 5.13.2",
-]
-
-[[package]]
 name = "cosmic-freedesktop-icons"
 version = "0.4.0"
 source = "git+https://github.com/pop-os/freedesktop-icons#7a61a704f6d1ec41f71cbe766e3cc484858523fa"
@@ -1110,6 +1092,24 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.18",
+]
+
+[[package]]
+name = "cosmic-utils-enroll"
+version = "0.3.12"
+dependencies = [
+ "futures-util",
+ "i18n-embed 0.15.4",
+ "i18n-embed-fl 0.9.4",
+ "libcosmic",
+ "nix 0.31.1",
+ "open",
+ "rust-embed",
+ "serde",
+ "tokio",
+ "tracing",
+ "vergen",
+ "zbus 5.13.2",
 ]
 
 [[package]]
