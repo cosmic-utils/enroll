@@ -24,7 +24,7 @@ jobs:
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: cosmic-utils-enroll.flatpak
-          manifest-path: flatpak/org.cosmic_utils.Enroll.yml
+          manifest-path: flatpak/org.cosmic_utils.enroll.yml
           cache-key: flatpak-builder-${{ github.sha }}
 
       - name: Get version
