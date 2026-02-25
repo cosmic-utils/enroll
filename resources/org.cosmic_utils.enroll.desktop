@@ -1,11 +1,11 @@
 [Desktop Entry]
 Name=Enroll
-Comment=GUI for fprintd fingerprint enrolling
+Comment=Manage fingerprints
 Type=Application
 Icon=org.cosmic_utils.Enroll
 Exec=cosmic-utils-enroll %F
 Terminal=false
 StartupNotify=true
-Categories=Utility;System;
+Categories=Utility;COSMIC;
 Keywords=Fingerprint;Security;
 MimeType=

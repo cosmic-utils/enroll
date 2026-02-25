@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.cosmic_utils.enroll</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MPL-2.0</project_license>
+  <name>Enroll</name>
+  <summary>GUI built with COSMIC toolkit for fprintd fingerprint enrolling</summary>
+  <developer id="org.cosmic-utils">
+    <name>Joonas Tuomi</name>
+  </developer>
+  <description>
+    <p>
+      Fingerprint management for multi-user systems using the fprintd daemon. It allows you to register and delete fingerprints for authentication on your Linux system.
+    </p>
+  </description>
+  <icon type="remote" width="64" height="64" scale="1">
+    https://github.com/cosmic-utils/enroll/raw/main/resources/icons/hicolor/scalable/apps/enroll.svg
+  </icon>
+  <launchable type="desktop-id">org.cosmic_utils.enroll.desktop</launchable>
+  <provides>
+    <id>org.cosmic_utils.enroll</id>
+    <binaries>
+      <binary>cosmic-utils-enroll</binary>
+    </binaries>
+  </provides>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </supports>
+  <categories>
+    <category>Utility</category>
+    <category>COSMIC</category>
+  </categories>
+  <keywords>
+    <keyword>Fingerprint</keyword>
+    <keyword>Authentication</keyword>
+  </keywords>
+  <branding>
+    <color type="primary" scheme_preference="light">#7ea5ae</color>
+    <color type="primary" scheme_preference="dark">#381a38</color>
+  </branding>
+  <content_rating type="oars-1.1" />
+  <url type="homepage">https://cosmic-utils.org</url>
+  <url type="vcs-browser">https://github.com/cosmic-utils/enroll</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://user.fm/files/v2-2f0daf05b0e66f25db2778188ab82373/enroll-main.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://user.fm/files/v2-808d13b70d649c6b65df2cce1849db2f/enroll-additional.png</image>
+    </screenshot>
+  </screenshots>
+</component>
+

@@ -32,7 +32,7 @@ use fprint::{
 use error::AppError;
 
 const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
-const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/icon.svg");
+const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/enroll.svg");
 const FPRINT_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/fprint.svg");
 
 const STATUS_TEXT_SIZE: u16 = 16;
@@ -123,7 +123,6 @@ impl cosmic::Application for AppModel {
             context_page: ContextPage::default(),
             nav,
             key_binds: HashMap::new(),
-            // Optional configuration file for an application.
             config: Config::default(),
             status: fl!("status-connecting"),
             device_path: None,
