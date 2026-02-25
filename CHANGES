@@ -33,3 +33,4 @@
   - Moved project to COSMIC utils
   - Renamed from Fprint to Enroll
   - Redesigned icon svg
+0.4.1: Switched to snake case in ID
