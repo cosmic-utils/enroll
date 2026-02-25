@@ -33,13 +33,13 @@ modules:
       - install -Dm0755 target/release/cosmic-utils-enroll /app/bin/cosmic-utils-enroll
 
       # Install the desktop file
-      - install -Dm0644 resources/org.cosmic_utils.Enroll.desktop /app/share/applications/org.cosmic_utils.Enroll.desktop
+      - install -Dm0644 resources/org.cosmic_utils.enroll.desktop /app/share/applications/org.cosmic_utils.enroll.desktop
 
       # Install the AppStream metadata
-      - install -Dm0644 resources/org.cosmic_utils.Enroll.metainfo.xml /app/share/appdata/org.cosmic_utils.Enroll.metainfo.xml
+      - install -Dm0644 resources/org.cosmic_utils.enroll.metainfo.xml /app/share/appdata/org.cosmic_utils.enroll.metainfo.xml
 
       # Install the icon
-      - install -Dm0644 resources/icons/hicolor/scalable/apps/icon.svg /app/share/icons/hicolor/scalable/apps/org.cosmic_utils.Enroll.svg
+      - install -Dm0644 resources/icons/hicolor/scalable/apps/enroll.svg /app/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg
 
     sources:
       - type: dir

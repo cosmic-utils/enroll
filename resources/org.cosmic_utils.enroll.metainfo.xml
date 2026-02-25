@@ -14,7 +14,7 @@
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
-    https://github.com/cosmic-utils/enroll/raw/main/resources/icons/hicolor/scalable/apps/icon.svg
+    https://github.com/cosmic-utils/enroll/raw/main/resources/icons/hicolor/scalable/apps/enroll.svg
   </icon>
   <launchable type="desktop-id">org.cosmic_utils.enroll.desktop</launchable>
   <provides>
