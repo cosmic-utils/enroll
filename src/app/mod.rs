@@ -110,6 +110,16 @@ impl cosmic::Application for AppModel {
         core: cosmic::Core,
         _flags: Self::Flags,
     ) -> (Self, Task<cosmic::Action<Self::Message>>) {
+        // Get current user
+        let user = User::from_uid(Uid::current())
+            .ok()
+            .flatten()
+            .map(|u| UserOption {
+                username: Arc::new(u.name),
+                realname: Arc::new(u.gecos.to_string_lossy().into_owned()),
+                icon: Arc::new("".to_string()),
+            });
+
         // Construct the app model with the runtime's core.
         let mut app = AppModel {
             core,
@@ -126,14 +136,7 @@ impl cosmic::Application for AppModel {
             enroll_progress: 0,
             enroll_total_stages: None,
             users: Vec::new(),
-            selected_user: User::from_uid(Uid::current())
-                .ok()
-                .flatten()
-                .map(|u| UserOption {
-                    username: Arc::new(u.name),
-                    realname: Arc::new(u.gecos.to_string_lossy().into_owned()),
-                    icon: Arc::new("".to_string()),
-                }),
+            selected_user: user,
             selected_finger: Finger::default(),
             enrolled_fingers: Vec::new(),
             confirm_clear: false,
@@ -198,9 +201,6 @@ impl cosmic::Application for AppModel {
 
     /// Enables the COSMIC application to create a nav bar with this model.
     fn nav_model(&self) -> Option<&nav_bar::Model> {
-        for user in &self.users {
-            self.nav.insert().text(user.fmt()).icon();
-        }
         Some(&self.nav)
     }
 
@@ -556,11 +556,11 @@ impl AppModel {
                                 };
 
                                 if let Ok(user_proxy) = builder.build().await {
-                                    if let (Ok(name), Ok(real_name), Ok(icon)) =
-                                        (user_proxy.user_name().await,
+                                    if let (Ok(name), Ok(real_name), Ok(icon)) = (
+                                        user_proxy.user_name().await,
                                         user_proxy.real_name().await,
-                                        user_proxy.icon()).await)
-                                    {
+                                        user_proxy.icon().await,
+                                    ) {
                                         Ok::<_, zbus::Error>(UserOption {
                                             username: Arc::new(name),
                                             realname: Arc::new(real_name),
@@ -586,14 +586,14 @@ impl AppModel {
                 }
 
                 // Fallback to current user if list is empty
-                if users.is_empty() {
-                    if let Ok(Some(user)) = User::from_uid(Uid::current()) {
-                        users.push(UserOption {
-                            username: Arc::new(user.name),
-                            realname: Arc::new(user.gecos.to_string_lossy().into_owned()),
-                            icon: Arc::new("".to_string()),
-                        });
-                    }
+                if users.is_empty()
+                    && let Ok(Some(user)) = User::from_uid(Uid::current())
+                {
+                    users.push(UserOption {
+                        username: Arc::new(user.name),
+                        realname: Arc::new(user.gecos.to_string_lossy().into_owned()),
+                        icon: Arc::new("".to_string()),
+                    });
                 }
                 Message::UsersFound(users)
             },
@@ -604,8 +604,21 @@ impl AppModel {
     }
 
     fn on_users_found(&mut self, users: Vec<UserOption>) -> Task<cosmic::Action<Message>> {
+        self.nav = nav_bar::Model::default();
+        for user in &users {
+            let id = self.nav.insert().text(user.to_string()).id();
+            if self
+                .selected_user
+                .as_ref()
+                .map_or(false, |u| u.username == user.username)
+            {
+                self.nav.activate(id);
+            }
+        }
+
         self.users = users;
-        // Ensure selected_user is valid
+
+        // Ensure selected_user is valid and update it if necessary.
         if let Some(selected) = &self.selected_user {
             if !self.users.iter().any(|u| u.username == selected.username) {
                 if !self.users.is_empty() {
@@ -614,7 +627,7 @@ impl AppModel {
             } else if let Some(updated_user) =
                 self.users.iter().find(|u| u.username == selected.username)
             {
-                // Update realname if found
+                // Update selected_user with the fresh data from the fetched list.
                 self.selected_user = Some(updated_user.clone());
             }
         } else if !self.users.is_empty() {
@@ -629,23 +642,13 @@ impl AppModel {
             return Task::none();
         }
         self.confirm_clear = false;
-        for page in Finger::all() {
-            if page.localized_name() == finger {
-                self.selected_finger = Some(page.localized_name());
+        for fingers in Finger::all() {
+            if fingers.localized_name() == finger {
+                self.selected_finger = *fingers;
                 break;
             }
         }
         Task::none()
-    }
-
-    fn on_user_selected(&mut self, user: UserOption) -> Task<cosmic::Action<Message>> {
-        if self.busy {
-            return Task::none();
-        }
-        self.confirm_clear = false;
-        self.selected_user = Some(user.clone());
-        self.enrolled_fingers.clear();
-        self.list_fingers_task()
     }
 
     fn on_device_found(
