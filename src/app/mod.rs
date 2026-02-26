@@ -10,26 +10,26 @@ use cosmic::iced::alignment::{Horizontal, Vertical};
 use cosmic::iced::widget::pick_list;
 use cosmic::iced::{Alignment, Length, Subscription};
 use cosmic::prelude::*;
-use cosmic::widget::{self, icon, menu, nav_bar, text, dialog};
+use cosmic::widget::{self, dialog, icon, menu, nav_bar, text};
 use cosmic::{cosmic_theme, theme};
-use futures_util::stream::{self, StreamExt};
 use futures_util::SinkExt;
+use futures_util::stream::{self, StreamExt};
 use nix::unistd::{Uid, User};
 use std::collections::HashMap;
 use std::sync::Arc;
 
-pub mod page;
-pub mod message;
-pub mod fprint;
 pub mod error;
+pub mod fprint;
+pub mod message;
+pub mod page;
 
-use page::{ContextPage, Page};
-use message::{Message, UserOption};
-use fprint::{
-    delete_fingerprint_dbus, delete_fingers, enroll_fingerprint_process, find_device,
-    clear_all_fingers_dbus,list_enrolled_fingers_dbus,
-};
 use error::AppError;
+use fprint::{
+    clear_all_fingers_dbus, delete_fingerprint_dbus, delete_fingers, enroll_fingerprint_process,
+    find_device, list_enrolled_fingers_dbus,
+};
+use message::{Message, UserOption};
+use page::{ContextPage, Page};
 
 const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/enroll.svg");
@@ -69,6 +69,7 @@ pub struct AppModel {
     enrolling_finger: Option<Arc<String>>,
     // Enrollment progress
     enroll_progress: u32,
+    // If device supports num_enroll_stages a Some(u32) else None
     enroll_total_stages: Option<u32>,
     // List of users (username, realname)
     users: Vec<UserOption>,
@@ -253,9 +254,7 @@ impl cosmic::Application for AppModel {
             column = column.push(picker);
         }
 
-        column = column
-            .push(self.view_icon())
-            .push(self.view_status());
+        column = column.push(self.view_icon()).push(self.view_status());
 
         if let Some(progress) = self.view_progress() {
             column = column.push(progress);
@@ -325,7 +324,9 @@ impl cosmic::Application for AppModel {
                     {
                         Ok(_) => {}
                         Err(e) => {
-                            let _ = output.send(Message::OperationError(AppError::from(e))).await;
+                            let _ = output
+                                .send(Message::OperationError(AppError::from(e)))
+                                .await;
                         }
                     }
                     futures_util::future::pending().await
@@ -494,9 +495,7 @@ impl AppModel {
     }
 
     fn list_fingers_task(&self) -> Task<cosmic::Action<Message>> {
-        if let (Some(proxy), Some(user)) =
-            (&self.device_proxy, &self.selected_user)
-        {
+        if let (Some(proxy), Some(user)) = (&self.device_proxy, &self.selected_user) {
             let proxy = proxy.clone();
             let username = (*user.username).clone();
             return Task::perform(
@@ -542,7 +541,8 @@ impl AppModel {
             async move {
                 let mut users = Vec::new();
                 if let Ok(accounts) = AccountsProxy::new(&conn_clone).await
-                && let Ok(user_paths) = accounts.list_cached_users().await {
+                    && let Ok(user_paths) = accounts.list_cached_users().await
+                {
                     let fetched_users: Vec<_> = stream::iter(user_paths)
                         .map(|path| {
                             let conn = conn_clone.clone();
@@ -585,8 +585,6 @@ impl AppModel {
                     users.extend(fetched_users);
                 }
 
-
-
                 // Fallback to current user if list is empty
                 if users.is_empty() {
                     if let Ok(Some(user)) = User::from_uid(Uid::current()) {
@@ -613,9 +611,7 @@ impl AppModel {
                     self.selected_user = Some(self.users[0].clone());
                 }
             } else if let Some(updated_user) =
-                self.users
-                    .iter()
-                    .find(|u| u.username == selected.username)
+                self.users.iter().find(|u| u.username == selected.username)
             {
                 // Update realname if found
                 self.selected_user = Some(updated_user.clone());
@@ -892,12 +888,12 @@ impl AppModel {
             delete_btn
         };
 
-        let clear_btn = if !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none()
-        {
-            clear_btn.on_press(Message::ClearDevice)
-        } else {
-            clear_btn
-        };
+        let clear_btn =
+            if !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none() {
+                clear_btn.on_press(Message::ClearDevice)
+            } else {
+                clear_btn
+            };
 
         let mut cancel_btn = widget::button::text(fl!("cancel"));
         if self.enrolling_finger.is_some() {
@@ -945,7 +941,7 @@ mod tests {
             AppError::DeviceNotFound.localized_message(),
             "Fingerprint device not found."
         );
-         // Test localized message for timeout
+        // Test localized message for timeout
         assert_eq!(
             AppError::Timeout.localized_message(),
             "Operation timed out."
@@ -962,10 +958,7 @@ mod tests {
         let err = AppError::Unknown("Some error".to_string());
         let err_with_context = err.with_context("Context");
 
-        assert_eq!(
-            err_with_context.localized_message(),
-            "Context: Some error"
-        );
+        assert_eq!(err_with_context.localized_message(), "Context: Some error");
     }
 
     #[test]
@@ -974,10 +967,7 @@ mod tests {
         let err = AppError::PermissionDenied;
         let err_with_context = err.with_context("Context");
 
-        assert_eq!(
-            err_with_context.localized_message(),
-            "Permission denied."
-        );
+        assert_eq!(err_with_context.localized_message(), "Permission denied.");
     }
 
     #[test]

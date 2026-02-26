@@ -118,7 +118,10 @@ mod tests {
     fn test_page_as_finger_id() {
         assert_eq!(Page::RightThumb.as_finger_id(), Some("right-thumb"));
         assert_eq!(Page::RightIndex.as_finger_id(), Some("right-index-finger"));
-        assert_eq!(Page::RightMiddle.as_finger_id(), Some("right-middle-finger"));
+        assert_eq!(
+            Page::RightMiddle.as_finger_id(),
+            Some("right-middle-finger")
+        );
         assert_eq!(Page::RightRing.as_finger_id(), Some("right-ring-finger"));
         assert_eq!(Page::RightPinky.as_finger_id(), Some("right-little-finger"));
         assert_eq!(Page::LeftThumb.as_finger_id(), Some("left-thumb"));

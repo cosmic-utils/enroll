@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use crate::fprint_dbus::{DeviceProxy, ManagerProxy};
-use crate::app::message::Message;
 use crate::app::error::AppError;
+use crate::app::message::Message;
+use crate::fprint_dbus::{DeviceProxy, ManagerProxy};
 use futures_util::sink::Sink;
 use futures_util::{SinkExt, StreamExt};
 
@@ -150,9 +150,7 @@ where
                 let done: bool = args.done;
 
                 // Map result string to user friendly message if needed, or pass through
-                let _ = output
-                    .send(Message::EnrollStatus(result, done))
-                    .await;
+                let _ = output.send(Message::EnrollStatus(result, done)).await;
 
                 if done {
                     break;
@@ -160,9 +158,9 @@ where
             }
             Err(_) => {
                 let _ = output
-                    .send(Message::OperationError(
-                        AppError::Unknown("Failed to parse signal".to_string()),
-                    ))
+                    .send(Message::OperationError(AppError::Unknown(
+                        "Failed to parse signal".to_string(),
+                    )))
                     .await;
                 break;
             }
@@ -182,7 +180,10 @@ fn validate_username(username: &str) -> zbus::Result<()> {
     if username.len() > 255 {
         return Err(zbus::Error::Failure("Username is too long".to_string()));
     }
-    if !username.chars().all(|c| c.is_alphanumeric() || c == '-' || c == '_' || c == '.') {
+    if !username
+        .chars()
+        .all(|c| c.is_alphanumeric() || c == '-' || c == '_' || c == '.')
+    {
         return Err(zbus::Error::Failure(format!(
             "Invalid characters in username: {}",
             username

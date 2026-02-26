@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 
-use crate::config::Config;
-use crate::app::page::ContextPage;
-use std::sync::Arc;
 use crate::app::error::AppError;
+use crate::app::page::ContextPage;
+use crate::config::Config;
 use crate::fprint_dbus::DeviceProxy;
+use std::sync::Arc;
 
 /// Messages emitted by the application and its widgets.
 #[derive(Debug, Clone)]

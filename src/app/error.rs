@@ -63,8 +63,8 @@ impl From<zbus::Error> for AppError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use zbus::names::ErrorName;
     use zbus::message::Message;
+    use zbus::names::ErrorName;
 
     fn create_method_error(name: &str) -> zbus::Error {
         let msg = Message::method_call("/", "Ping")
@@ -82,14 +82,32 @@ mod tests {
     #[test]
     fn test_zbus_error_conversion() {
         let test_cases = vec![
-            ("net.reactivated.Fprint.Error.PermissionDenied", AppError::PermissionDenied),
-            ("net.reactivated.Fprint.Error.AlreadyInUse", AppError::AlreadyInUse),
+            (
+                "net.reactivated.Fprint.Error.PermissionDenied",
+                AppError::PermissionDenied,
+            ),
+            (
+                "net.reactivated.Fprint.Error.AlreadyInUse",
+                AppError::AlreadyInUse,
+            ),
             ("net.reactivated.Fprint.Error.Internal", AppError::Internal),
-            ("net.reactivated.Fprint.Error.NoEnrolledPrints", AppError::NoEnrolledPrints),
-            ("net.reactivated.Fprint.Error.ClaimDevice", AppError::ClaimDevice),
-            ("net.reactivated.Fprint.Error.PrintsNotDeleted", AppError::PrintsNotDeleted),
+            (
+                "net.reactivated.Fprint.Error.NoEnrolledPrints",
+                AppError::NoEnrolledPrints,
+            ),
+            (
+                "net.reactivated.Fprint.Error.ClaimDevice",
+                AppError::ClaimDevice,
+            ),
+            (
+                "net.reactivated.Fprint.Error.PrintsNotDeleted",
+                AppError::PrintsNotDeleted,
+            ),
             ("net.reactivated.Fprint.Error.Timeout", AppError::Timeout),
-            ("net.reactivated.Fprint.Error.DeviceNotFound", AppError::DeviceNotFound),
+            (
+                "net.reactivated.Fprint.Error.DeviceNotFound",
+                AppError::DeviceNotFound,
+            ),
         ];
 
         for (error_str, expected) in test_cases {
@@ -115,7 +133,8 @@ mod tests {
     #[test]
     fn test_non_method_error() {
         // Test a different zbus::Error variant
-        let zbus_err = zbus::Error::from(std::io::Error::new(std::io::ErrorKind::Other, "test error"));
+        let zbus_err =
+            zbus::Error::from(std::io::Error::new(std::io::ErrorKind::Other, "test error"));
         let app_err = AppError::from(zbus_err);
 
         if let AppError::Unknown(msg) = app_err {
