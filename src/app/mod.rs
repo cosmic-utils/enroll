@@ -556,13 +556,15 @@ impl AppModel {
                                 };
 
                                 if let Ok(user_proxy) = builder.build().await {
-                                    if let (Ok(name), Ok(real_name)) =
-                                        (user_proxy.user_name().await, user_proxy.real_name().await)
+                                    if let (Ok(name), Ok(real_name), Ok(icon)) =
+                                        (user_proxy.user_name().await,
+                                        user_proxy.real_name().await,
+                                        user_proxy.icon()).await)
                                     {
                                         Ok::<_, zbus::Error>(UserOption {
                                             username: Arc::new(name),
                                             realname: Arc::new(real_name),
-                                            icon: Arc::new("".to_string()),
+                                            icon: Arc::new(icon),
                                         })
                                     } else {
                                         Err(zbus::Error::Failure(
