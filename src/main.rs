@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MPL-2.0
 
+mod accounts_dbus;
 mod app;
 mod config;
 mod fprint_dbus;
-mod accounts_dbus;
 mod i18n;
 
 extern crate tracing;
