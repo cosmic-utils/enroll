@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 use crate::app::error::AppError;
-use crate::app::page::ContextPage;
+use crate::app::finger::ContextPage;
 use crate::config::Config;
 use crate::fprint_dbus::DeviceProxy;
 use std::sync::Arc;
@@ -26,14 +26,15 @@ pub enum Message {
     CancelClear,
     ClearComplete(Result<(), AppError>),
     EnrolledFingers(Vec<String>),
+    FingerSelected(String),
     UsersFound(Vec<UserOption>),
-    UserSelected(UserOption),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UserOption {
     pub username: Arc<String>,
     pub realname: Arc<String>,
+    pub icon: Arc<String>,
 }
 
 impl std::fmt::Display for UserOption {
@@ -56,6 +57,7 @@ mod tests {
         let user_option = UserOption {
             username: Arc::new("jdoe".to_string()),
             realname: Arc::new("John Doe".to_string()),
+            icon: Arc::new("".to_string()),
         };
         assert_eq!(user_option.to_string(), "John Doe (jdoe)");
     }
@@ -65,6 +67,7 @@ mod tests {
         let user_option = UserOption {
             username: Arc::new("jdoe".to_string()),
             realname: Arc::new("".to_string()),
+            icon: Arc::new("".to_string()),
         };
         assert_eq!(user_option.to_string(), "jdoe");
     }
@@ -74,6 +77,7 @@ mod tests {
         let user_option = UserOption {
             username: Arc::new("jdoe".to_string()),
             realname: Arc::new("   ".to_string()),
+            icon: Arc::new("".to_string()),
         };
         assert_eq!(user_option.to_string(), "    (jdoe)");
     }
@@ -83,6 +87,7 @@ mod tests {
         let user_option = UserOption {
             username: Arc::new("".to_string()),
             realname: Arc::new("John Doe".to_string()),
+            icon: Arc::new("".to_string()),
         };
         assert_eq!(user_option.to_string(), "John Doe ()");
     }
@@ -92,6 +97,7 @@ mod tests {
         let user_option = UserOption {
             username: Arc::new("".to_string()),
             realname: Arc::new("".to_string()),
+            icon: Arc::new("".to_string()),
         };
         assert_eq!(user_option.to_string(), "");
     }

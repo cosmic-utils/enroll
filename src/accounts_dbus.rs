@@ -22,4 +22,7 @@ pub trait User {
 
     #[zbus(property)]
     fn real_name(&self) -> zbus::Result<String>;
+
+    #[zbus(property)]
+    fn icon(&self) -> zbus::Result<String>;
 }

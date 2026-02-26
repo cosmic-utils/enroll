@@ -19,17 +19,17 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 pub mod error;
+pub mod finger;
 pub mod fprint;
 pub mod message;
-pub mod page;
 
 use error::AppError;
+use finger::{ContextPage, Finger};
 use fprint::{
     clear_all_fingers_dbus, delete_fingerprint_dbus, delete_fingers, enroll_fingerprint_process,
     find_device, list_enrolled_fingers_dbus,
 };
 use message::{Message, UserOption};
-use page::{ContextPage, Page};
 
 const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/enroll.svg");
@@ -75,6 +75,8 @@ pub struct AppModel {
     users: Vec<UserOption>,
     // Selected user
     selected_user: Option<UserOption>,
+    // Selected finger
+    selected_finger: Finger,
     // List of enrolled fingers
     enrolled_fingers: Vec<String>,
     // Confirmation state for clearing the device
@@ -108,21 +110,11 @@ impl cosmic::Application for AppModel {
         core: cosmic::Core,
         _flags: Self::Flags,
     ) -> (Self, Task<cosmic::Action<Self::Message>>) {
-        // Create a nav bar for every fingerprint
-        let mut nav = nav_bar::Model::default();
-
-        for page in Page::all() {
-            nav.insert()
-                .text(page.localized_name())
-                .data::<Page>(*page)
-                .icon(icon::from_name("applications-utilities-symbolic"));
-        }
-
         // Construct the app model with the runtime's core.
         let mut app = AppModel {
             core,
             context_page: ContextPage::default(),
-            nav,
+            nav: nav_bar::Model::default(),
             key_binds: HashMap::new(),
             config: Config::default(),
             status: fl!("status-connecting"),
@@ -140,7 +132,9 @@ impl cosmic::Application for AppModel {
                 .map(|u| UserOption {
                     username: Arc::new(u.name),
                     realname: Arc::new(u.gecos.to_string_lossy().into_owned()),
+                    icon: Arc::new("".to_string()),
                 }),
+            selected_finger: Finger::default(),
             enrolled_fingers: Vec::new(),
             confirm_clear: false,
         };
@@ -204,6 +198,9 @@ impl cosmic::Application for AppModel {
 
     /// Enables the COSMIC application to create a nav bar with this model.
     fn nav_model(&self) -> Option<&nav_bar::Model> {
+        for user in &self.users {
+            self.nav.insert().text(user.fmt()).icon();
+        }
         Some(&self.nav)
     }
 
@@ -250,7 +247,7 @@ impl cosmic::Application for AppModel {
     fn view(&self) -> Element<'_, Self::Message> {
         let mut column = widget::column().push(self.view_header());
 
-        if let Some(picker) = self.view_user_picker() {
+        if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
         }
 
@@ -347,7 +344,7 @@ impl cosmic::Application for AppModel {
 
             Message::UsersFound(users) => self.on_users_found(users),
 
-            Message::UserSelected(user) => self.on_user_selected(user),
+            Message::FingerSelected(finger) => self.on_finger_selected(finger),
 
             Message::DeviceFound(path) => self.on_device_found(path),
 
@@ -377,7 +374,7 @@ impl cosmic::Application for AppModel {
             Message::DeleteComplete => {
                 self.status = fl!("deleted");
                 self.busy = false;
-                if let Some(page) = self.nav.data::<Page>(self.nav.active()) {
+                if let Some(page) = self.nav.data::<Finger>(self.nav.active()) {
                     if let Some(finger_id) = page.as_finger_id() {
                         self.enrolled_fingers.retain(|f| f != finger_id);
                     } else {
@@ -565,6 +562,7 @@ impl AppModel {
                                         Ok::<_, zbus::Error>(UserOption {
                                             username: Arc::new(name),
                                             realname: Arc::new(real_name),
+                                            icon: Arc::new("".to_string()),
                                         })
                                     } else {
                                         Err(zbus::Error::Failure(
@@ -591,6 +589,7 @@ impl AppModel {
                         users.push(UserOption {
                             username: Arc::new(user.name),
                             realname: Arc::new(user.gecos.to_string_lossy().into_owned()),
+                            icon: Arc::new("".to_string()),
                         });
                     }
                 }
@@ -621,6 +620,20 @@ impl AppModel {
         }
 
         self.list_fingers_task()
+    }
+
+    fn on_finger_selected(&mut self, finger: String) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
+        self.confirm_clear = false;
+        for page in Finger::all() {
+            if page.localized_name() == finger {
+                self.selected_finger = Some(page.localized_name());
+                break;
+            }
+        }
+        Task::none()
     }
 
     fn on_user_selected(&mut self, user: UserOption) -> Task<cosmic::Action<Message>> {
@@ -738,7 +751,7 @@ impl AppModel {
     }
 
     fn on_delete(&mut self) -> Task<cosmic::Action<Message>> {
-        if let Some(page) = self.nav.data::<Page>(self.nav.active())
+        if let Some(page) = self.nav.data::<Finger>(self.nav.active())
             && let (Some(path), Some(conn), Some(user)) = (
                 self.device_path.clone(),
                 self.connection.clone(),
@@ -777,15 +790,9 @@ impl AppModel {
     }
 
     fn on_register(&mut self) -> Task<cosmic::Action<Message>> {
-        if let Some(page) = self.nav.data::<Page>(self.nav.active())
-            && let Some(finger_id) = page.as_finger_id()
-            && self.device_path.is_some()
-            && self.selected_user.is_some()
-        {
-            self.busy = true;
-            self.enrolling_finger = Some(Arc::new(finger_id.to_string()));
-            self.status = fl!("status-starting-enrollment");
-        }
+        self.busy = true;
+        self.enrolling_finger = Some(Arc::new(self.selected_finger.clone()));
+        self.status = fl!("status-starting-enrollment");
         Task::none()
     }
 
@@ -815,22 +822,20 @@ impl AppModel {
             .into()
     }
 
-    fn view_user_picker(&self) -> Option<Element<'_, Message>> {
-        if self.users.is_empty() {
-            return None;
+    fn view_finger_picker(&self) -> Option<Element<'_, Message>> {
+        let mut vec = Vec::new();
+
+        for page in Finger::all() {
+            vec.push(page.localized_name())
         }
 
         Some(
-            pick_list(
-                self.users.as_slice(),
-                self.selected_user.clone(),
-                Message::UserSelected,
-            )
-            .width(Length::Fixed(200.0))
-            .apply(widget::container)
-            .width(Length::Fill)
-            .align_x(Horizontal::Center)
-            .into(),
+            pick_list(vec, self.selected_finger.clone(), Message::FingerSelected)
+                .width(Length::Fixed(200.0))
+                .apply(widget::container)
+                .width(Length::Fill)
+                .align_x(Horizontal::Center)
+                .into(),
         )
     }
 
@@ -864,7 +869,7 @@ impl AppModel {
         let buttons_enabled =
             !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none();
 
-        let current_page = self.nav.data::<Page>(self.nav.active());
+        let current_page = self.nav.data::<Finger>(self.nav.active());
         let current_finger = current_page.and_then(|p| p.as_finger_id());
         let is_enrolled = if let Some(f) = current_finger {
             self.enrolled_fingers.iter().any(|ef| ef == f)
