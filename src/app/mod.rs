@@ -756,19 +756,17 @@ impl AppModel {
     }
 
     fn on_delete(&mut self) -> Task<cosmic::Action<Message>> {
-        if let Some(page) = self.nav.data::<Finger>(self.nav.active())
-            && let (Some(path), Some(conn), Some(user)) = (
-                self.device_path.clone(),
-                self.connection.clone(),
-                self.selected_user.clone(),
-            )
-        {
+        if let (Some(path), Some(conn), Some(user)) = (
+            self.device_path.clone(),
+            self.connection.clone(),
+            self.selected_user.clone(),
+        ) {
             self.status = fl!("deleting");
             self.busy = true;
             let path = (*path).clone();
             let username = (*user.username).clone();
 
-            if let Some(finger_name) = page.as_finger_id() {
+            if let Some(finger_name) = self.selected_finger.as_finger_id() {
                 let finger_name = finger_name.to_string();
                 return Task::perform(
                     async move {
@@ -796,7 +794,7 @@ impl AppModel {
 
     fn on_register(&mut self) -> Task<cosmic::Action<Message>> {
         self.busy = true;
-        self.enrolling_finger = Some(Arc::new(self.selected_finger.clone()));
+        self.enrolling_finger = Some(Arc::new(self.selected_finger.localized_name()));
         self.status = fl!("status-starting-enrollment");
         Task::none()
     }
@@ -835,12 +833,16 @@ impl AppModel {
         }
 
         Some(
-            pick_list(vec, self.selected_finger.clone(), Message::FingerSelected)
-                .width(Length::Fixed(200.0))
-                .apply(widget::container)
-                .width(Length::Fill)
-                .align_x(Horizontal::Center)
-                .into(),
+            pick_list(
+                vec,
+                Some(self.selected_finger.localized_name()),
+                Message::FingerSelected,
+            )
+            .width(Length::Fixed(200.0))
+            .apply(widget::container)
+            .width(Length::Fill)
+            .align_x(Horizontal::Center)
+            .into(),
         )
     }
 
@@ -874,8 +876,7 @@ impl AppModel {
         let buttons_enabled =
             !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none();
 
-        let current_page = self.nav.data::<Finger>(self.nav.active());
-        let current_finger = current_page.and_then(|p| p.as_finger_id());
+        let current_finger = self.selected_finger.as_finger_id();
         let is_enrolled = if let Some(f) = current_finger {
             self.enrolled_fingers.iter().any(|ef| ef == f)
         } else {
