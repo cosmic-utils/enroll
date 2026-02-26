@@ -245,13 +245,11 @@ impl cosmic::Application for AppModel {
     /// Application events will be processed through the view. Any messages emitted by
     /// events received by widgets will be passed to the update method.
     fn view(&self) -> Element<'_, Self::Message> {
-        let mut column = widget::column().push(self.view_header());
+        let mut column = widget::column().push(self.view_icon()).push(self.view_status());
 
         if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
         }
-
-        column = column.push(self.view_icon()).push(self.view_status());
 
         if let Some(progress) = self.view_progress() {
             column = column.push(progress);
@@ -374,7 +372,7 @@ impl cosmic::Application for AppModel {
             Message::DeleteComplete => {
                 self.status = fl!("deleted");
                 self.busy = false;
-                if let Some(finger_id) = page.as_finger_id() {
+                if let Some(finger_id) = self.selected_finger.as_finger_id() {
                     self.enrolled_fingers.retain(|f| f != finger_id);
                 } else {
                     self.enrolled_fingers.clear();
@@ -449,6 +447,12 @@ impl cosmic::Application for AppModel {
         self.confirm_clear = false;
         // Activate the page in the model.
         self.nav.activate(id);
+        let users = self.users.clone();
+        for user in users {
+            if self.nav.text(id).is_some_and(|f| f == user.to_string()) {
+                self.selected_user = Some(user);
+            }
+        }
 
         self.update_title()
     }
@@ -602,7 +606,6 @@ impl AppModel {
     }
 
     fn on_users_found(&mut self, users: Vec<UserOption>) -> Task<cosmic::Action<Message>> {
-        self.nav = nav_bar::Model::default();
         for user in &users {
             let id = self.nav.insert().text(user.to_string()).id();
             if self
@@ -811,16 +814,6 @@ impl AppModel {
         } else {
             Task::none()
         }
-    }
-
-    fn view_header(&self) -> Element<'_, Message> {
-        text::title1(fl!("fprint"))
-            .apply(widget::container)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .align_x(Horizontal::Center)
-            .align_y(Vertical::Center)
-            .into()
     }
 
     fn view_finger_picker(&self) -> Option<Element<'_, Message>> {
