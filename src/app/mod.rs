@@ -10,7 +10,7 @@ use cosmic::iced::alignment::{Horizontal, Vertical};
 use cosmic::iced::widget::pick_list;
 use cosmic::iced::{Alignment, Length, Subscription};
 use cosmic::prelude::*;
-use cosmic::widget::{self, dialog, icon, menu, nav_bar, text};
+use cosmic::widget::{self, dialog, menu, nav_bar, text};
 use cosmic::{cosmic_theme, theme};
 use futures_util::SinkExt;
 use futures_util::stream::{self, StreamExt};

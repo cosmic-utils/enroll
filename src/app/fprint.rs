@@ -109,7 +109,7 @@ where
     S: Sink<Message> + Unpin + Send,
     S::Error: std::fmt::Debug + Send,
 {
-    validate_username(&username)?;
+    validate_username(username)?;
     let device = DeviceProxy::builder(&connection)
         .path(path)?
         .build()
