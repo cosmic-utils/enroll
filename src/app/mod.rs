@@ -374,12 +374,10 @@ impl cosmic::Application for AppModel {
             Message::DeleteComplete => {
                 self.status = fl!("deleted");
                 self.busy = false;
-                if let Some(page) = self.nav.data::<Finger>(self.nav.active()) {
-                    if let Some(finger_id) = page.as_finger_id() {
-                        self.enrolled_fingers.retain(|f| f != finger_id);
-                    } else {
-                        self.enrolled_fingers.clear();
-                    }
+                if let Some(finger_id) = page.as_finger_id() {
+                    self.enrolled_fingers.retain(|f| f != finger_id);
+                } else {
+                    self.enrolled_fingers.clear();
                 }
                 Task::none()
             }
