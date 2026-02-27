@@ -293,13 +293,13 @@ impl cosmic::Application for AppModel {
         ];
 
         // Add enrollment subscription if enrolling
-        if let (Some(finger_name), Some(device_path), Some(connection), Some(user)) = (
+        if let (Some(finger_id), Some(device_path), Some(connection), Some(user)) = (
             &self.enrolling_finger,
             &self.device_path,
             &self.connection,
             &self.selected_user,
         ) {
-            let finger_name = finger_name.clone();
+            let finger_name = finger_id.clone();
             let device_path = device_path.clone();
             let connection = connection.clone();
             let user = user.clone();
@@ -795,7 +795,9 @@ impl AppModel {
 
     fn on_register(&mut self) -> Task<cosmic::Action<Message>> {
         self.busy = true;
-        self.enrolling_finger = Some(Arc::new(self.selected_finger.localized_name()));
+        if let Some(finger_id) = self.selected_finger.as_finger_id() {
+            self.enrolling_finger = Some(Arc::new(finger_id.to_string()));
+        }
         self.status = fl!("status-starting-enrollment");
         Task::none()
     }
