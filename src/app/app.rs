@@ -369,7 +369,7 @@ impl cosmic::Application for AppModel {
             }
         }
 
-        self.update_title()
+        Task::batch(vec![self.update_title(), self.list_fingers_task()])
     }
 }
 
