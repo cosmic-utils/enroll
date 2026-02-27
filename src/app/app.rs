@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
-use crate::accounts_dbus::{AccountsProxy, UserProxy};
+use crate::accounts_dbus::{AccountsProxyBlocking, UserProxyBlocking};
 use crate::app::MenuAction;
 use crate::app::error::*;
 use crate::app::finger::*;
@@ -18,7 +18,6 @@ use cosmic::prelude::*;
 use cosmic::widget::{self, dialog, menu, nav_bar, text};
 use cosmic::{cosmic_theme, theme};
 use futures_util::SinkExt;
-use futures_util::stream::{self, StreamExt};
 use nix::unistd::{Uid, User};
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -26,14 +25,61 @@ use std::sync::Arc;
 const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/enroll.svg");
 const FPRINT_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/fprint.svg");
-
 const STATUS_TEXT_SIZE: u16 = 16;
 const PROGRESS_BAR_HEIGHT: u16 = 10;
 const MAIN_SPACING: u16 = 20;
 const MAIN_PADDING: u16 = 20;
 
-const USER_FETCH_CONCURRENCY: usize = 10;
 use super::AppModel;
+
+/// Uses DBus synchronously to initialize users
+fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
+    let mut users = Vec::new();
+
+    if let Ok(conn) = zbus::blocking::Connection::system() {
+        if let Ok(accounts) = AccountsProxyBlocking::new(&conn) {
+            if let Ok(user_paths) = accounts.list_cached_users() {
+                for path in user_paths {
+                    if let Ok(builder) = UserProxyBlocking::builder(&conn).path(&path) {
+                        if let Ok(user_proxy) = builder.build() {
+                            if let (Ok(name), Ok(real_name)) = (
+                                user_proxy.user_name(),
+                                user_proxy.real_name(),
+                            ) {
+                                let icon = user_proxy.icon_file().unwrap_or_default();
+                                users.push(UserOption {
+                                    username: Arc::new(name),
+                                    realname: Arc::new(real_name),
+                                    icon: Arc::new(icon),
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let mut nav = nav_bar::Model::default();
+    let mut selected_user = None;
+    let current_username = User::from_uid(Uid::current())
+        .ok()
+        .flatten()
+        .map(|u| u.name);
+
+    for user_opt in &users {
+        let mut item = nav.insert().text(user_opt.to_string());
+        if !user_opt.icon.is_empty() {
+            item = item.icon(cosmic::widget::icon::from_name(user_opt.icon.as_str()));
+        }
+        let id = item.id();
+        if selected_user.is_none() || current_username.as_deref() == Some(&*user_opt.username) {
+            nav.activate(id);
+            selected_user = Some(user_opt.clone());
+        }
+    }
+    (users, nav, selected_user)
+}
 
 /// Create a COSMIC application from the app model
 impl cosmic::Application for AppModel {
@@ -62,21 +108,12 @@ impl cosmic::Application for AppModel {
         core: cosmic::Core,
         _flags: Self::Flags,
     ) -> (Self, Task<cosmic::Action<Self::Message>>) {
-        // Get current user
-        let user = User::from_uid(Uid::current())
-            .ok()
-            .flatten()
-            .map(|u| UserOption {
-                username: Arc::new(u.name),
-                realname: Arc::new(u.gecos.to_string_lossy().into_owned()),
-                icon: Arc::new("".to_string()),
-            });
-
+        let (users, nav, selected_user) = initialize_users();
         // Construct the app model with the runtime's core.
         let mut app = AppModel {
             core,
             context_page: ContextPage::default(),
-            nav: nav_bar::Model::default(),
+            nav,
             key_binds: HashMap::new(),
             config: Config::default(),
             status: fl!("status-connecting"),
@@ -87,8 +124,8 @@ impl cosmic::Application for AppModel {
             enrolling_finger: None,
             enroll_progress: 0,
             enroll_total_stages: None,
-            users: Vec::new(),
-            selected_user: user,
+            users,
+            selected_user,
             selected_finger: Finger::default(),
             enrolled_fingers: Vec::new(),
             confirm_clear: false,
@@ -153,7 +190,11 @@ impl cosmic::Application for AppModel {
 
     /// Enables the COSMIC application to create a nav bar with this model.
     fn nav_model(&self) -> Option<&nav_bar::Model> {
-        Some(&self.nav)
+        if self.nav.len() > 1 {
+            Some(&self.nav)
+        } else {
+            None
+        }
     }
 
     /// Display a context drawer if the context page is requested.
@@ -293,7 +334,6 @@ impl cosmic::Application for AppModel {
     fn update(&mut self, message: Self::Message) -> Task<cosmic::Action<Self::Message>> {
         match message {
             Message::ConnectionReady(conn) => self.on_connection_ready(conn),
-            Message::UsersFound(users) => self.on_users_found(users),
             Message::FingerSelected(finger) => self.on_finger_selected(finger),
             Message::DeviceFound(path) => self.on_device_found(path),
             Message::EnrolledFingers(fingers) => self.on_fingers_listed(fingers),
@@ -416,7 +456,7 @@ impl AppModel {
         self.status = fl!("status-searching-device");
 
         let conn_clone = conn.clone();
-        let find_device_task = Task::perform(
+        Task::perform(
             async move {
                 match find_device(&conn_clone).await {
                     Ok((path, proxy)) => Message::DeviceFound(Some((path, proxy))),
@@ -431,77 +471,7 @@ impl AppModel {
                 }
             },
             cosmic::Action::App,
-        );
-
-        let conn_clone = conn.clone();
-        // Get users from AccountsService
-        let fetch_users_task = Task::perform(
-            async move {
-                let mut users = Vec::new();
-                if let Ok(accounts) = AccountsProxy::new(&conn_clone).await
-                    && let Ok(user_paths) = accounts.list_cached_users().await
-                {
-                    let fetched_users: Vec<_> = stream::iter(user_paths)
-                        .map(|path| {
-                            let conn = conn_clone.clone();
-                            async move {
-                                let builder = match UserProxy::builder(&conn).path(&path) {
-                                    Ok(builder) => builder,
-                                    Err(e) => {
-                                        tracing::error!(
-                                            %e,
-                                            "Failed to create UserProxy for path {path}"
-                                        );
-                                        return Err(e);
-                                    }
-                                };
-
-                                if let Ok(user_proxy) = builder.build().await {
-                                    if let (Ok(name), Ok(real_name), Ok(icon)) = (
-                                        user_proxy.user_name().await,
-                                        user_proxy.real_name().await,
-                                        user_proxy.icon().await,
-                                    ) {
-                                        Ok::<_, zbus::Error>(UserOption {
-                                            username: Arc::new(name),
-                                            realname: Arc::new(real_name),
-                                            icon: Arc::new(icon),
-                                        })
-                                    } else {
-                                        Err(zbus::Error::Failure(
-                                            "Failed to fetch user name or real name".to_string(),
-                                        ))
-                                    }
-                                } else {
-                                    Err(zbus::Error::Failure(
-                                        "Failed to fetch user name or real name".to_string(),
-                                    ))
-                                }
-                            }
-                        })
-                        .buffered(USER_FETCH_CONCURRENCY)
-                        .filter_map(|res| async { res.ok() })
-                        .collect()
-                        .await;
-                    users.extend(fetched_users);
-                }
-
-                // Fallback to current user if list is empty
-                if users.is_empty()
-                    && let Ok(Some(user)) = User::from_uid(Uid::current())
-                {
-                    users.push(UserOption {
-                        username: Arc::new(user.name),
-                        realname: Arc::new(user.gecos.to_string_lossy().into_owned()),
-                        icon: Arc::new("".to_string()),
-                    });
-                }
-                Message::UsersFound(users)
-            },
-            cosmic::Action::App,
-        );
-
-        Task::batch(vec![find_device_task, fetch_users_task])
+        )
     }
 
     fn on_context_page_toggle(
@@ -529,40 +499,6 @@ impl AppModel {
     fn on_fingers_listed(&mut self, fingers: Vec<String>) -> Task<cosmic::Action<Message>> {
         self.enrolled_fingers = fingers;
         Task::none()
-    }
-
-    fn on_users_found(&mut self, users: Vec<UserOption>) -> Task<cosmic::Action<Message>> {
-        self.nav = nav_bar::Model::default();
-        for user in &users {
-            let id = self.nav.insert().text(user.to_string()).id();
-            if self
-                .selected_user
-                .as_ref()
-                .map_or(false, |u| u.username == user.username)
-            {
-                self.nav.activate(id);
-            }
-        }
-
-        self.users = users;
-
-        // Ensure selected_user is valid and update it if necessary.
-        if let Some(selected) = &self.selected_user {
-            if !self.users.iter().any(|u| u.username == selected.username) {
-                if !self.users.is_empty() {
-                    self.selected_user = Some(self.users[0].clone());
-                }
-            } else if let Some(updated_user) =
-                self.users.iter().find(|u| u.username == selected.username)
-            {
-                // Update selected_user with the fresh data from the fetched list.
-                self.selected_user = Some(updated_user.clone());
-            }
-        } else if !self.users.is_empty() {
-            self.selected_user = Some(self.users[0].clone());
-        }
-
-        self.list_fingers_task()
     }
 
     fn on_finger_selected(&mut self, finger: String) -> Task<cosmic::Action<Message>> {

@@ -27,7 +27,6 @@ pub enum Message {
     ClearComplete(Result<(), AppError>),
     EnrolledFingers(Vec<String>),
     FingerSelected(String),
-    UsersFound(Vec<UserOption>),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
