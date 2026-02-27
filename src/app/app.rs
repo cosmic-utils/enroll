@@ -238,19 +238,20 @@ impl cosmic::Application for AppModel {
     /// Application events will be processed through the view. Any messages emitted by
     /// events received by widgets will be passed to the update method.
     fn view(&self) -> Element<'_, Self::Message> {
-        let mut column = widget::column();
-
-        if let Some(picker) = self.view_finger_picker() {
-            column = column.push(picker);
-        }
-
-        column = column.push(self.view_icon()).push(self.view_status());
+        let mut column = widget::column()
+            .push(self.view_header())
+            .push(self.view_icon());
 
         if let Some(progress) = self.view_progress() {
             column = column.push(progress);
         }
 
+        if let Some(picker) = self.view_finger_picker() {
+            column = column.push(picker);
+        }
+
         column
+            .push(self.view_status())
             .push(self.view_controls())
             .align_x(Horizontal::Center)
             .spacing(MAIN_SPACING)
@@ -714,6 +715,16 @@ impl AppModel {
     fn on_update_config(&mut self, config: Config) -> Task<cosmic::Action<Message>> {
         self.config = config;
         Task::none()
+    }
+
+    fn view_header(&self) -> Element<'_, Message> {
+        text::title1(fl!("app-title"))
+            .apply(widget::container)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .align_x(Horizontal::Center)
+            .align_y(Vertical::Center)
+            .into()
     }
 
     fn view_finger_picker(&self) -> Option<Element<'_, Message>> {
