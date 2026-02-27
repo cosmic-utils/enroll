@@ -1,7 +1,7 @@
 app-title = Enroll Fingerprint
 about = About
 view = View
-fprint = Enroll Fingerprint
+fprint =
 welcome = Register and/or delete fingerprints
 git-description = Git commit {$hash} on {$date}
 register = Register
@@ -29,7 +29,7 @@ page-delete-all-users-prints = Delete All User's Prints
 
 status-connecting = Connecting to system bus...
 status-searching-device = Searching for fingerprint reader...
-status-device-found = Register fingerprint.
+status-device-found = Choose which fingerprint to register.
 status-no-device-found = No fingerprint reader found.
 status-starting-enrollment = Starting enrollment...
 

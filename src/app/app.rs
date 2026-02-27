@@ -197,7 +197,7 @@ impl cosmic::Application for AppModel {
     /// Application events will be processed through the view. Any messages emitted by
     /// events received by widgets will be passed to the update method.
     fn view(&self) -> Element<'_, Self::Message> {
-        let mut column = widget::column().push(self.view_header());
+        let mut column = widget::column();
 
         if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
@@ -752,7 +752,9 @@ impl AppModel {
 
     fn on_register(&mut self) -> Task<cosmic::Action<Message>> {
         self.busy = true;
-        self.enrolling_finger = Some(Arc::new(self.selected_finger.localized_name()));
+        if let Some(finger_id) = self.selected_finger.as_finger_id() {
+            self.enrolling_finger = Some(Arc::new(finger_id.to_string()));
+        }
         self.status = fl!("status-starting-enrollment");
         Task::none()
     }
@@ -776,16 +778,6 @@ impl AppModel {
     fn on_update_config(&mut self, config: Config) -> Task<cosmic::Action<Message>> {
         self.config = config;
         Task::none()
-    }
-
-    fn view_header(&self) -> Element<'_, Message> {
-        text::title1(fl!("fprint"))
-            .apply(widget::container)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .align_x(Horizontal::Center)
-            .align_y(Vertical::Center)
-            .into()
     }
 
     fn view_finger_picker(&self) -> Option<Element<'_, Message>> {
