@@ -17,6 +17,7 @@ use cosmic::iced::{Alignment, Length, Subscription};
 use cosmic::prelude::*;
 use cosmic::widget::{self, dialog, menu, nav_bar, text};
 use cosmic::{cosmic_theme, theme};
+
 use futures_util::SinkExt;
 use nix::unistd::{Uid, User};
 use std::collections::HashMap;
@@ -42,11 +43,11 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
                 for path in user_paths {
                     if let Ok(builder) = UserProxyBlocking::builder(&conn).path(&path) {
                         if let Ok(user_proxy) = builder.build() {
-                            if let (Ok(name), Ok(real_name)) = (
+                            if let (Ok(name), Ok(real_name), Ok(icon)) = (
                                 user_proxy.user_name(),
                                 user_proxy.real_name(),
+                                user_proxy.icon_file()
                             ) {
-                                let icon = user_proxy.icon_file().unwrap_or_default();
                                 users.push(UserOption {
                                     username: Arc::new(name),
                                     realname: Arc::new(real_name),
@@ -60,6 +61,7 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
         }
     }
 
+    // TODO: to use actual icon need custom nav
     let mut nav = nav_bar::Model::default();
     let mut selected_user = None;
     let current_username = User::from_uid(Uid::current())
@@ -67,12 +69,9 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
         .flatten()
         .map(|u| u.name);
 
+    // TODO: use actual icon
     for user_opt in &users {
-        let mut item = nav.insert().text(user_opt.to_string());
-        if !user_opt.icon.is_empty() {
-            item = item.icon(cosmic::widget::icon::from_name(user_opt.icon.as_str()));
-        }
-        let id = item.id();
+        let id = nav.insert().text(user_opt.to_string()).icon(widget::icon::from_name("user-idle-symbolic")).id();
         if selected_user.is_none() || current_username.as_deref() == Some(&*user_opt.username) {
             nav.activate(id);
             selected_user = Some(user_opt.clone());
@@ -240,18 +239,18 @@ impl cosmic::Application for AppModel {
     fn view(&self) -> Element<'_, Self::Message> {
         let mut column = widget::column()
             .push(self.view_header())
-            .push(self.view_icon());
-
-        if let Some(progress) = self.view_progress() {
-            column = column.push(progress);
-        }
+            .push(self.view_status());
 
         if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
         }
 
+        if let Some(progress) = self.view_progress() {
+            column = column.push(progress);
+        }
+
         column
-            .push(self.view_status())
+            .push(self.view_icon())
             .push(self.view_controls())
             .align_x(Horizontal::Center)
             .spacing(MAIN_SPACING)
