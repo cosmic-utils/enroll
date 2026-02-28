@@ -17,6 +17,7 @@ use cosmic::iced::{Alignment, Length, Subscription};
 use cosmic::prelude::*;
 use cosmic::widget::{self, dialog, menu, nav_bar, text};
 use cosmic::{cosmic_theme, theme};
+
 use futures_util::SinkExt;
 use nix::unistd::{Uid, User};
 use std::collections::HashMap;
@@ -68,11 +69,12 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
         .map(|u| u.name);
 
     for user_opt in &users {
-        let mut item = nav.insert().text(user_opt.to_string());
-        if !user_opt.icon.is_empty() {
-            item = item.icon(cosmic::widget::icon::from_name(user_opt.icon.as_str()));
-        }
-        let id = item.id();
+        let id = nav.insert().text(user_opt.to_string()).icon(widget::icon::from_name("user-idle-symbolic")).id();
+        // if !user_opt.icon.is_empty() {
+        //     item = item.icon("user-idle-symbolic");
+        // }
+        //
+        // let id = item.id();
         if selected_user.is_none() || current_username.as_deref() == Some(&*user_opt.username) {
             nav.activate(id);
             selected_user = Some(user_opt.clone());
