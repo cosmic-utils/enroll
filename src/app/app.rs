@@ -43,11 +43,11 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
                 for path in user_paths {
                     if let Ok(builder) = UserProxyBlocking::builder(&conn).path(&path) {
                         if let Ok(user_proxy) = builder.build() {
-                            if let (Ok(name), Ok(real_name)) = (
+                            if let (Ok(name), Ok(real_name), Ok(icon)) = (
                                 user_proxy.user_name(),
                                 user_proxy.real_name(),
+                                user_proxy.icon_file()
                             ) {
-                                let icon = user_proxy.icon_file().unwrap_or_default();
                                 users.push(UserOption {
                                     username: Arc::new(name),
                                     realname: Arc::new(real_name),
@@ -61,6 +61,7 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
         }
     }
 
+    // TODO: to use actual icon need custom nav
     let mut nav = nav_bar::Model::default();
     let mut selected_user = None;
     let current_username = User::from_uid(Uid::current())
@@ -68,13 +69,9 @@ fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
         .flatten()
         .map(|u| u.name);
 
+    // TODO: use actual icon
     for user_opt in &users {
         let id = nav.insert().text(user_opt.to_string()).icon(widget::icon::from_name("user-idle-symbolic")).id();
-        // if !user_opt.icon.is_empty() {
-        //     item = item.icon("user-idle-symbolic");
-        // }
-        //
-        // let id = item.id();
         if selected_user.is_none() || current_username.as_deref() == Some(&*user_opt.username) {
             nav.activate(id);
             selected_user = Some(user_opt.clone());
