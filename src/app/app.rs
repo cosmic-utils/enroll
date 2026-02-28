@@ -239,18 +239,18 @@ impl cosmic::Application for AppModel {
     fn view(&self) -> Element<'_, Self::Message> {
         let mut column = widget::column()
             .push(self.view_header())
-            .push(self.view_icon());
-
-        if let Some(progress) = self.view_progress() {
-            column = column.push(progress);
-        }
+            .push(self.view_status());
 
         if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
         }
 
+        if let Some(progress) = self.view_progress() {
+            column = column.push(progress);
+        }
+
         column
-            .push(self.view_status())
+            .push(self.view_icon())
             .push(self.view_controls())
             .align_x(Horizontal::Center)
             .spacing(MAIN_SPACING)
