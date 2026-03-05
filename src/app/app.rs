@@ -687,6 +687,9 @@ impl AppModel {
     }
 
     fn view_header(&self) -> Element<'_, Message> {
+        if self.config.experimental_ui {
+            return column().into();
+        }
         text::title1(fl!("app-title"))
             .apply(widget::container)
             .width(Length::Fill)
