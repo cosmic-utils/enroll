@@ -1,5 +1,6 @@
 app-title = Enroll Fingerprint
 about = About
+settings = Settings
 view = View
 fprint = Enroll
 welcome = Register and/or delete fingerprints

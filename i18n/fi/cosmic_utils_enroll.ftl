@@ -1,5 +1,6 @@
 app-title = Lisää sormenjälki
 about = Tietoa
+settings = Asetukset
 view = Katso
 fprint = Rekisteröi sormenjälki
 welcome = Rekisteröi tai poista sormenjälkiä

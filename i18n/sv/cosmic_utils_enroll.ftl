@@ -1,5 +1,6 @@
 app-title = Fprint registrerare
 about = Om
+settings = Inställningar
 view = Visa
 fprint = Registrera fingeravtryck
 welcome = Registrera och/eller radera fingeravtryck

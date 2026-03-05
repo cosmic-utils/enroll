@@ -5,10 +5,7 @@ use std::{collections::HashMap, sync::Arc};
 use cosmic::widget::{menu, nav_bar};
 
 use crate::{
-    app::{
-        finger::{ContextPage, Finger},
-        message::{Message, UserOption},
-    },
+    app::{finger::Finger, message::Message, users::UserOption},
     config::Config,
     fprint_dbus::DeviceProxy,
 };
@@ -17,6 +14,7 @@ pub mod error;
 pub mod finger;
 pub mod fprint;
 pub mod message;
+pub mod users;
 
 /// The application model stores app-specific state used to describe its interface and
 /// drive its logic.
@@ -64,6 +62,7 @@ mod app;
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MenuAction {
     About,
+    Settings,
 }
 
 impl menu::action::MenuAction for MenuAction {
@@ -72,8 +71,16 @@ impl menu::action::MenuAction for MenuAction {
     fn message(&self) -> Self::Message {
         match self {
             MenuAction::About => Message::ToggleContextPage(ContextPage::About),
+            MenuAction::Settings => Message::ToggleContextPage(ContextPage::Settings),
         }
     }
+}
+
+/// The context page to display in the context drawer.
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+pub enum ContextPage {
+    About,
+    Settings,
 }
 
 #[cfg(test)]

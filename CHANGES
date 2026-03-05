@@ -38,3 +38,6 @@
   - Renamed icon.svg to enroll.svg
 0.5.0: Refactored users to nav & fingerprint picker
 0.5.1: Added placeholder user icon
+0.5.2:
+  - Implemented Settings menu
+  - Refactored user options
