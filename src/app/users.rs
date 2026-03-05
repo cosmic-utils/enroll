@@ -7,26 +7,24 @@ use std::sync::Arc;
 pub fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
     let mut users = Vec::new();
 
-    if let Ok(conn) = zbus::blocking::Connection::system() {
-        if let Ok(accounts) = AccountsProxyBlocking::new(&conn) {
-            if let Ok(user_paths) = accounts.list_cached_users() {
-                for path in user_paths {
-                    if let Ok(builder) = UserProxyBlocking::builder(&conn).path(&path) {
-                        if let Ok(user_proxy) = builder.build() {
-                            if let (Ok(name), Ok(real_name), Ok(icon)) = (
-                                user_proxy.user_name(),
-                                user_proxy.real_name(),
-                                user_proxy.icon_file(),
-                            ) {
-                                users.push(UserOption {
-                                    username: Arc::new(name),
-                                    realname: Arc::new(real_name),
-                                    icon: Arc::new(icon),
-                                });
-                            }
-                        }
-                    }
-                }
+    if let Ok(conn) = zbus::blocking::Connection::system()
+        && let Ok(accounts) = AccountsProxyBlocking::new(&conn)
+        && let Ok(user_paths) = accounts.list_cached_users()
+    {
+        for path in user_paths {
+            if let Ok(builder) = UserProxyBlocking::builder(&conn).path(&path)
+                && let Ok(user_proxy) = builder.build()
+                && let (Ok(name), Ok(real_name), Ok(icon)) = (
+                    user_proxy.user_name(),
+                    user_proxy.real_name(),
+                    user_proxy.icon_file(),
+                )
+            {
+                users.push(UserOption {
+                    username: Arc::new(name),
+                    realname: Arc::new(real_name),
+                    icon: Arc::new(icon),
+                });
             }
         }
     }
