@@ -198,9 +198,7 @@ impl cosmic::Application for AppModel {
     /// Application events will be processed through the view. Any messages emitted by
     /// events received by widgets will be passed to the update method.
     fn view(&self) -> Element<'_, Self::Message> {
-        let mut column = widget::column()
-            .push(self.view_header())
-            .push(self.view_status());
+        let mut column = column().push(self.view_header()).push(self.view_status());
 
         if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
@@ -351,7 +349,7 @@ impl AppModel {
             .on_press(Message::OpenRepositoryUrl)
             .padding(0);
 
-        widget::column()
+        column()
             .push(icon)
             .push(title)
             .push(link)
