@@ -5,6 +5,8 @@ view = Visa
 fprint = Registrera fingeravtryck
 welcome = Registrera och/eller radera fingeravtryck
 git-description = Git commit {$hash} på {$date}
+alternative-ui = Andra UI
+
 register = Registrera
 delete = Radera
 deleted = Raderat fingeravtryck.

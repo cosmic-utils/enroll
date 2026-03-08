@@ -343,11 +343,13 @@ impl AppModel {
     /// Settings menu
     pub fn settings(&self) -> Element<'_, Message> {
         let col = column().push(
-            widget::checkbox("Experimental UI", self.config.experimental_ui).on_toggle(|value| {
-                Message::UpdateConfig(Config {
-                    experimental_ui: value,
-                })
-            }),
+            widget::checkbox(fl!("alternative-ui"), self.config.experimental_ui).on_toggle(
+                |value| {
+                    Message::UpdateConfig(Config {
+                        experimental_ui: value,
+                    })
+                },
+            ),
         );
         view_column(vec![col.into()]).into()
     }

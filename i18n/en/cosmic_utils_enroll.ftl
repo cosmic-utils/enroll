@@ -5,6 +5,8 @@ view = View
 fprint = Enroll
 welcome = Register and/or delete fingerprints
 git-description = Git commit {$hash} on {$date}
+alternative-ui = Alternative UI
+
 register = Register
 delete = Delete
 deleted = Deleted fingerprint.

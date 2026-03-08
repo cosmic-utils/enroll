@@ -5,6 +5,8 @@ view = Katso
 fprint = Rekisteröi sormenjälki
 welcome = Rekisteröi tai poista sormenjälkiä
 git-description = Git julkaisu {$hash} päivänä {$date}
+alternative-ui = Toinen käyttöliittymä
+
 register = Rekisteröi
 delete = Poista
 deleted = Sormenjälki poistettu.
