@@ -41,3 +41,4 @@
 0.5.2:
   - Implemented Settings menu
   - Refactored user options
+0.5.3: New alternative UI & config option for it
