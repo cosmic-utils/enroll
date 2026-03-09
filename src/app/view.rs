@@ -174,11 +174,8 @@ impl AppModel {
     pub(crate) fn view_progress(&self) -> Option<Element<'_, Message>> {
         self.enrolling_finger.as_ref()?;
 
-        self.enroll_total_stages.map(|total| {
-            progress_bar(0.0..=(total as f32), self.enroll_progress as f32)
-                .height(PROGRESS_BAR_HEIGHT)
-                .into()
-        })
+        self.enroll_total_stages
+            .map(|total| progress_bar(0.0..=(total as f32), self.enroll_progress as f32).into())
     }
 
     pub(crate) fn view_controls(&self) -> Element<'_, Message> {
