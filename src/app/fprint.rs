@@ -18,6 +18,14 @@ pub async fn find_device(
     Ok((path, device))
 }
 
+/// fprintd DBus API function for requesting users registered prints
+/// # Return
+/// Array containing all users registered fingerprints as strings
+/// # Errors
+/// net.reactivated.Fprint.Error.PermissionDenied:
+/// if the caller lacks the appropriate PolicyKit authorization
+/// net.reactivated.Fprint.Error.NoEnrolledPrints:
+/// if the chosen user doesn't have any fingerprints enrolled
 pub async fn list_enrolled_fingers_dbus(
     device: &DeviceProxy<'static>,
     username: String,
@@ -206,11 +214,13 @@ pub async fn verify_finger_dbus(
             return Err(e);
         }
     };
+
     if let Err(e) = device.verify_start(&finger).await {
         let _ = device.release().await;
         return Err(e);
     }
 
+    // TODO: send reference to self and implement Message::VerifyStatus(String)
     while let Some(signal) = status_stream.next().await {
         match signal.args() {
             Ok(args) => {
