@@ -352,7 +352,19 @@ impl AppModel {
     }
 
     pub(crate) fn on_update_config(&mut self, config: Config) -> Task<cosmic::Action<Message>> {
-        self.config = config;
+        self.config = config.clone();
+
+        tokio::task::spawn_blocking(move || {
+            use cosmic::cosmic_config::{self, CosmicConfigEntry};
+            use cosmic::Application;
+            
+            if let Ok(context) = cosmic_config::Config::new(AppModel::APP_ID, Config::VERSION) {
+                if let Err(err) = config.write_entry(&context) {
+                    tracing::error!("failed to write config: {}", err);
+                }
+            }
+        });
+
         Task::none()
     }
 }
