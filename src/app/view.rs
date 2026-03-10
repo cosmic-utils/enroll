@@ -85,18 +85,20 @@ impl AppModel {
         let is_enrolled = finger
             .as_finger_id()
             .is_some_and(|id| self.enrolled_fingers.iter().any(|ef| ef == id));
-        let svg = svg(svg::Handle::from_memory(FPRINT_ICON)).symbolic(true);
-        let mut label = finger.localized_name();
+        let mut svg = svg(svg::Handle::from_memory(FPRINT_ICON)).symbolic(true);
+        let label = text(finger.localized_name()).size(10);
         if is_enrolled {
-            label.push_str(" ✓");
+            svg = svg.opacity(0.7);
         }
+        let col = column().push(svg).push(label);
+        let container = container(col);
 
-        button::custom_image_button(svg, None)
+        button::custom_image_button(container, None)
             .width(40)
             .height(Length::Fixed(height))
             .on_press(Message::FingerSelected(finger.localized_name()))
             .selected(is_selected)
-            .description(label)
+            //.description(label)
             .into()
     }
 
