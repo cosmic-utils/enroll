@@ -275,6 +275,11 @@ where
         Err(e) => return Err(e),
     };
 
+    if let Err(e) = device.verify_start(&finger).await {
+        let _ = device.release().await;
+        return Err(e);
+    }
+
     let mut status_stream = match device.receive_verify_status().await {
         Ok(s) => s,
         Err(e) => {
@@ -282,11 +287,6 @@ where
             return Err(e);
         }
     };
-
-    if let Err(e) = device.verify_start(&finger).await {
-        let _ = device.release().await;
-        return Err(e);
-    }
 
     while let Some(signal) = status_stream.next().await {
         match signal.args() {
