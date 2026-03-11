@@ -1,25 +1,18 @@
 # COSMIC™ Utils Enroll
 
-GUI for fingerprint management. Designed for COSMIC DE.
+GUI application for fingerprint management. Designed for COSMIC DE.
 
 ## Prerequisites
 
-You're using Linux or freedesktop compatible system with a supported fingerprint scanner. Tested with COSMIC™ DE, Pop!_OS, Framework 13 laptop with a Goodix MOC Fingerprint Sensor. 
+You're using Linux or freedesktop compatible system with a supported fingerprint scanner. 
+
+Tested only with COSMIC™ DE, Pop!_OS, Framework 13 laptop with a Goodix MOC Fingerprint Sensor. 
 
 ## Usage
 
-Choose which finger to register or delete by a tab. Change user from a menu (default is current session.)</br> Click the action you want to take. Prompts you for your password. Follow instruction.</br> If you don't have correct rights or incorrect password your attempt will be dismissed.
+On a multiuser system you can choose user from navigation. It asks for authentication and checks correct rights if you choose user other than current session.
 
-[recording-2026-02-16_00-19-25.webm](https://github.com/user-attachments/assets/5c22b844-157a-41f2-9c07-83a073bd0d6b)
-
-## Todos
-
-- [x] Improve feedback given to user. Currently prints what daemon returns.
-- [x] Add a user dropdown to make it possible for admin to register for other users.
-- [x] Get project into cosmic-utils.
-- [x] Package & distribute, most likely as a flatpak, but maybe as a deb package also.
-- [ ] Sherlock the application by adding all functionality directly into cosmic-settings.
-
+Click the action you want to take. Different kind of authentication and rights check is performed. If something goes wrong status is shown. Otherwise you'll get a progress indicator. If you don't have correct rights or incorrect password your attempt will be dismissed.
 
 ## Installation
 
