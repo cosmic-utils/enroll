@@ -365,10 +365,10 @@ impl AppModel {
             use cosmic::Application;
             use cosmic::cosmic_config::{self, CosmicConfigEntry};
 
-            if let Ok(context) = cosmic_config::Config::new(AppModel::APP_ID, Config::VERSION) {
-                if let Err(err) = config.write_entry(&context) {
-                    tracing::error!("failed to write config: {}", err);
-                }
+            if let Ok(context) = cosmic_config::Config::new(AppModel::APP_ID, Config::VERSION)
+                && let Err(err) = config.write_entry(&context)
+            {
+                tracing::error!("failed to write config: {}", err);
             }
         });
 
