@@ -994,7 +994,7 @@ dependencies = [
 
 [[package]]
 name = "cosmic-utils-enroll"
-version = "0.5.4"
+version = "0.5.5"
 dependencies = [
  "futures-util",
  "i18n-embed 0.15.4",
