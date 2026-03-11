@@ -94,7 +94,11 @@ impl AppModel {
         let mut svg = svg(svg::Handle::from_memory(FPRINT_ICON)).symbolic(true);
         let label = text(finger.localized_name()).size(10);
         if is_enrolled {
-            svg = svg.opacity(0.7);
+            svg = svg.class(cosmic::theme::Svg::Custom(std::rc::Rc::new(|theme| {
+                cosmic::widget::svg::Style {
+                    color: Some(theme.cosmic().success.base.into()),
+                }
+            })));
         }
         let col = column().push(svg).push(label);
         let container = container(col);
