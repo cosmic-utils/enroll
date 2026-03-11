@@ -256,7 +256,7 @@ where
 /// if there are no enrolled prints for the chosen user
 /// ***net.reactivated.Fprint.Error.Internal:***
 /// if there was an internal error
-pub async fn verify_finger_dbus<S>(
+pub async fn verify_finger_process<S>(
     connection: &zbus::Connection,
     path: zbus::zvariant::OwnedObjectPath,
     finger: String,

@@ -274,7 +274,7 @@ impl cosmic::Application for AppModel {
                     let path = (*data.device_path).clone();
                     let username = (*data.username).clone();
 
-                    match verify_finger_dbus(
+                    match verify_finger_process(
                         &data.connection,
                         path,
                         data.finger,
