@@ -1,3 +1,5 @@
+### 1.0.4:
+  AppID changed to org.cosmic-utils.Enroll 
 ### 1.0.3:
   Fixes a bug in Verify option
 ### 1.0.2:
