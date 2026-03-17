@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["DeviceProxy","DeviceProxyBlocking","EnrollStatus","EnrollStatusArgs","EnrollStatusIterator","EnrollStatusStream","ManagerProxy","ManagerProxyBlocking","VerifyFingerSelected","VerifyFingerSelectedArgs","VerifyFingerSelectedIterator","VerifyFingerSelectedStream","VerifyStatus","VerifyStatusArgs","VerifyStatusIterator","VerifyStatusStream"]};

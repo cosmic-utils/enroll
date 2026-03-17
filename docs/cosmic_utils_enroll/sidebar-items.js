@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["WINDOW_MIN_HEIGHT","WINDOW_MIN_WIDTH"],"fn":["main"],"macro":["fl"],"mod":["accounts_dbus","app","config","fprint_dbus","i18n"]};

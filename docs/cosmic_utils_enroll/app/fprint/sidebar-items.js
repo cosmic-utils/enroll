@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["clear_all_fingers_dbus","delete_fingerprint_dbus","delete_fingers","enroll_fingerprint_process","find_device","list_enrolled_fingers_dbus","validate_username","verify_finger_process"]};

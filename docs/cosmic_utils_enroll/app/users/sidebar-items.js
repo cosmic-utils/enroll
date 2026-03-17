@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["initialize_users"],"struct":["UserOption"]};

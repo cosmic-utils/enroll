@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["task_clear_device","task_config","task_connect","task_delete_print","task_delete_prints","task_enroll_stop","task_find_device"]};
