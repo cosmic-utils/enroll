@@ -270,10 +270,9 @@ where
     validate_username(&username)?;
     let device = DeviceProxy::builder(connection).path(path)?.build().await?;
 
-    match device.claim(&username).await {
-        Ok(_) => {}
-        Err(e) => return Err(e),
-    };
+    if let Err(e) = device.claim(&username).await {
+        return Err(e);
+    }
 
     if let Err(e) = device.verify_start(&finger).await {
         let _ = device.release().await;
@@ -311,7 +310,6 @@ where
         }
     }
 
-    let _ = device.verify_stop().await;
     device.release().await
 }
 
