@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.cosmic_utils.enroll</id>
+  <id>org.cosmic-utils.Enroll</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MPL-2.0</project_license>
   <name>Enroll</name>
@@ -16,7 +16,7 @@
   <icon type="remote" width="64" height="64" scale="1">
     https://github.com/cosmic-utils/enroll/raw/main/resources/icons/hicolor/scalable/apps/enroll.svg
   </icon>
-  <launchable type="desktop-id">org.cosmic_utils.enroll.desktop</launchable>
+  <launchable type="desktop-id">org.cosmic-utils.Enroll.desktop</launchable>
   <provides>
       <binary>cosmic-utils-enroll</binary>
   </provides>

@@ -1,4 +1,4 @@
-app-id: org.cosmic_utils.enroll
+app-id: org.cosmic-utils.Enroll
 runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
@@ -30,9 +30,9 @@ modules:
       - cargo build --offline --release
 
       - install -Dm0755 target/release/cosmic-utils-enroll /app/bin/cosmic-utils-enroll
-      - install -Dm0644 resources/org.cosmic_utils.enroll.desktop /app/share/applications/org.cosmic_utils.enroll.desktop
-      - install -Dm0644 resources/org.cosmic_utils.enroll.metainfo.xml /app/share/appdata/org.cosmic_utils.enroll.metainfo.xml
-      - install -Dm0644 resources/icons/hicolor/scalable/apps/enroll.svg /app/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg
+      - install -Dm0644 resources/org.cosmic-utils.Enroll.desktop /app/share/applications/org.cosmic-utils.Enroll.desktop
+      - install -Dm0644 resources/org.cosmic-utils.Enroll.metainfo.xml /app/share/appdata/org.cosmic-utils.Enroll.metainfo.xml
+      - install -Dm0644 resources/icons/hicolor/scalable/apps/enroll.svg /app/share/icons/hicolor/scalable/apps/org.cosmic-utils.Enroll.svg
 
     sources:
       - type: git
