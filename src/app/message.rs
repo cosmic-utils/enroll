@@ -4,11 +4,12 @@ use crate::app::AppModel;
 use crate::app::error::AppError;
 use crate::app::tasks::*;
 use crate::app::{ContextPage, Finger};
-use crate::config::Config;
+use crate::config::{AppTheme, Config, is_cosmic_desktop};
 use crate::fl;
 use crate::fprint_dbus::DeviceProxy;
-use cosmic::Task;
+use cosmic::{Task, command};
 use std::sync::Arc;
+use tracing::info;
 use zbus;
 
 pub const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
@@ -36,6 +37,8 @@ pub enum Message {
     FingerSelected(String),
     VerifyFinger,
     VerifyStatus(String, bool),
+    ThemeChanged(bool),
+    ThemeSetting(AppTheme),
 }
 
 // Section for handling of Messages
@@ -387,5 +390,47 @@ impl AppModel {
         });
 
         Task::none()
+    }
+
+    /// On Flatpak non COSMIC DE sets Theme if set to System
+    ///
+    /// **Returns** ***cosmic::command::set_theme***() or ***None***()
+    pub(crate) fn on_portal_color_scheme_changed(
+        &mut self,
+        is_dark: bool,
+    ) -> Task<cosmic::Action<Message>> {
+        use crate::config::AppTheme;
+
+        // Only apply if user wants to follow system theme
+        if self.config.app_theme != AppTheme::System {
+            return Task::none();
+        }
+
+        info!(is_dark, "Portal color scheme changed, updating theme");
+        let theme = if is_dark {
+            cosmic::Theme::dark()
+        } else {
+            cosmic::Theme::light()
+        };
+        command::set_theme(theme)
+    }
+    pub fn on_theme_setting(&mut self, theme: AppTheme) -> Task<cosmic::Action<Message>> {
+        let mut tasks = vec![self.on_update_config(Config {
+            app_theme: theme,
+            ..self.config.clone()
+        })];
+
+        let task = if theme == AppTheme::Dark {
+            command::set_theme(cosmic::Theme::dark())
+        } else if theme == AppTheme::Light {
+            command::set_theme(cosmic::Theme::light())
+        } else if is_cosmic_desktop() {
+            command::set_theme(cosmic::theme::system_preference())
+        } else {
+            Task::none()
+        };
+
+        tasks.push(task);
+        Task::batch(tasks)
     }
 }

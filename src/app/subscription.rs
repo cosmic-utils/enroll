@@ -3,8 +3,9 @@ use crate::app::{
     error::AppError,
     fprint::{enroll_fingerprint_process, verify_finger_process},
 };
-use cosmic::iced::{Subscription, futures::channel::mpsc::Sender};
-use futures_util::SinkExt;
+use ashpd::desktop::settings::{ColorScheme, Settings};
+use cosmic::iced::{Subscription, futures::channel::mpsc::Sender, stream::channel};
+use futures_util::{SinkExt, StreamExt};
 
 #[derive(Clone)]
 pub(crate) struct VerifyData {
@@ -72,7 +73,7 @@ impl std::hash::Hash for EnrollData {
 pub(crate) fn enroll_subscription(data: EnrollData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
-        cosmic::iced::stream::channel(100, move |mut output: Sender<Message>| async move {
+        channel(100, move |mut output: Sender<Message>| async move {
             // Implement enrollment stream here
             match enroll_fingerprint_process(
                 data.connection,
@@ -99,7 +100,7 @@ pub(crate) fn enroll_subscription(data: EnrollData) -> Subscription<Message> {
 pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
-        cosmic::iced::stream::channel(100, move |mut output: Sender<Message>| async move {
+        channel(100, move |mut output: Sender<Message>| async move {
             let path = (*data.device_path).clone();
             let username = (*data.username).clone();
 
@@ -116,4 +117,44 @@ pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
             futures_util::future::pending().await
         })
     })
+}
+
+// On non-COSMIC desktops, subscribe to XDG portal color-scheme changes
+// so theme updates when user changes their desktop appearance
+pub fn portal_theme_subscription(app_theme: crate::config::AppTheme) -> Subscription<Message> {
+    if !crate::config::is_cosmic_desktop() && app_theme == crate::config::AppTheme::System {
+        Subscription::run_with(app_theme, |_| {
+            channel(10, async move |mut output: Sender<Message>| {
+                let Ok(settings) = Settings::new().await else {
+                    tracing::warn!("Failed to create XDG Settings portal proxy");
+                    std::future::pending::<()>().await;
+                    return;
+                };
+
+                let send_scheme =
+                    |output: &mut cosmic::iced::futures::channel::mpsc::Sender<Message>,
+                     scheme: ColorScheme| {
+                        let is_dark = !matches!(scheme, ColorScheme::PreferLight);
+                        output.try_send(Message::ThemeChanged(is_dark)).ok();
+                    };
+
+                // Send initial color scheme
+                if let Ok(scheme) = settings.color_scheme().await {
+                    send_scheme(&mut output, scheme);
+                }
+
+                // Subscribe to live changes via ashpd's D-Bus signal stream
+                if let Ok(mut stream) = settings.receive_color_scheme_changed().await {
+                    while let Some(scheme) = StreamExt::next(&mut stream).await {
+                        send_scheme(&mut output, scheme);
+                    }
+                }
+
+                tracing::warn!("Portal color-scheme stream ended");
+                std::future::pending::<()>().await;
+            })
+        })
+    } else {
+        Subscription::none()
+    }
 }

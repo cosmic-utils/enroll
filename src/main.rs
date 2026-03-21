@@ -6,6 +6,7 @@ mod config;
 mod fprint_dbus;
 mod i18n;
 
+extern crate ashpd;
 extern crate tracing;
 extern crate zbus;
 

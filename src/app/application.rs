@@ -4,7 +4,7 @@ use crate::app::{error::*, finger::*, fprint::*, subscription::*, users::*};
 
 use crate::app::message::{Message, REPOSITORY};
 use crate::app::{ContextPage, MenuAction};
-use crate::config::Config;
+use crate::config::{AppTheme, Config};
 use crate::fl;
 
 use cosmic::app::context_drawer;
@@ -14,7 +14,7 @@ use cosmic::{
     cosmic_theme,
     prelude::*,
     theme,
-    widget::{self, button, column, dialog, menu, nav_bar, settings::view_column, text},
+    widget::{self, button, column, dialog, menu, nav_bar, radio, settings::view_column, text},
 };
 
 use super::AppModel;
@@ -217,6 +217,8 @@ impl cosmic::Application for AppModel {
             subscriptions.push(verify_subscription(data));
         }
 
+        subscriptions.push(portal_theme_subscription(self.config.app_theme));
+
         Subscription::batch(subscriptions)
     }
 
@@ -246,6 +248,8 @@ impl cosmic::Application for AppModel {
             Message::LaunchUrl(url) => self.on_open_link(url),
             Message::VerifyFinger => self.on_verify_finger(),
             Message::VerifyStatus(status, done) => self.on_verify_status(status, done),
+            Message::ThemeChanged(is_dark) => self.on_portal_color_scheme_changed(is_dark),
+            Message::ThemeSetting(theme) => self.on_theme_setting(theme),
         }
     }
 
@@ -307,6 +311,7 @@ impl AppModel {
     /// Settings menu
     pub fn settings(&self) -> Element<'_, Message> {
         let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
+        let sel_theme = text::title3(fl!("settings-theme"));
         let text = text::title3(fl!("settings-ui"));
         let clear = text::title3(fl!("settings-clear-device"));
         let clear_btn = button::text(fl!("clear-device")).tooltip(fl!("clear-tooltip"));
@@ -318,12 +323,39 @@ impl AppModel {
                 clear_btn
             };
 
+        let selected = Some(self.config.app_theme);
+        let system = radio(
+            text::heading(fl!("theme-system")),
+            AppTheme::System,
+            selected,
+            Message::ThemeSetting,
+        );
+
+        let light = radio(
+            text::heading(fl!("theme-light")),
+            AppTheme::Light,
+            selected,
+            Message::ThemeSetting,
+        );
+
+        let dark = radio(
+            text::heading(fl!("theme-dark")),
+            AppTheme::Dark,
+            selected,
+            Message::ThemeSetting,
+        );
+
         let col = column()
+            .push(sel_theme)
+            .push(system)
+            .push(light)
+            .push(dark)
             .push(text)
             .push(
                 widget::checkbox(self.config.experimental_ui)
                     .on_toggle(|value| {
                         Message::UpdateConfig(Config {
+                            app_theme: self.config.app_theme,
                             experimental_ui: value,
                         })
                     })

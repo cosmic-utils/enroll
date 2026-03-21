@@ -5,8 +5,6 @@ view = View
 fprint = Enroll
 welcome = Register and/or delete fingerprints
 git-description = Git commit {$hash} on {$date}
-alternative-ui = Alternative UI
-
 register = Register
 verify = Verify
 delete = Delete
@@ -21,7 +19,13 @@ clear-device-confirm = Are you sure you want to clear fingerprints for ALL known
 cancel = Cancel
 
 settings-ui = User Interface
+alternative-ui = Alternative UI
 settings-clear-device = Remove all fingerprints
+settings-theme = Set Theming
+
+theme-system = System
+theme-light = Light
+theme-dark = Dark
 
 register-tooltip = Registers a new fingerprint
 delete-tooltip = Deletes this fingerprint
