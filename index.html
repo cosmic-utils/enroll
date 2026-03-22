@@ -1,247 +1,313 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COSMIC™ Utils Enroll</title>
-    <meta name="description" content="GUI application for fingerprint management. Designed for COSMIC DE.">
-    <style>
-        :root {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --accent-color: #F48041; /* Pop!_OS inspired orange */
-            --accent-hover: #D96A2F;
-            --card-bg: #1E1E1E;
-            --border-color: #333333;
-            --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>COSMIC™ Utils Enroll</title>
+		<meta
+			name="description"
+			content="GUI application for fingerprint management. Designed for COSMIC DE."
+		/>
+		<style>
+			:root {
+				--bg-color: #121212;
+				--text-color: #e0e0e0;
+				--accent-color: #f48041; /* Pop!_OS inspired orange */
+				--accent-hover: #d96a2f;
+				--card-bg: #1e1e1e;
+				--border-color: #333333;
+				--font-family:
+					system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+					Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+					"Helvetica Neue", sans-serif;
+			}
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: var(--font-family);
+				background-color: var(--bg-color);
+				color: var(--text-color);
+				line-height: 1.6;
+			}
 
-        header {
-            padding: 2rem;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(30,30,30,1) 0%, rgba(18,18,18,1) 100%);
-            border-bottom: 1px solid var(--border-color);
-        }
+			header {
+				padding: 2rem;
+				text-align: center;
+				background: linear-gradient(
+					180deg,
+					rgba(30, 30, 30, 1) 0%,
+					rgba(18, 18, 18, 1) 100%
+				);
+				border-bottom: 1px solid var(--border-color);
+			}
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+			.container {
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 2rem;
+			}
 
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            background: -webkit-linear-gradient(45deg, #F48041, #FFB088);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+			h1 {
+				font-size: 3rem;
+				margin-bottom: 0.5rem;
+				background: -webkit-linear-gradient(45deg, #f48041, #ffb088);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
 
-        h2 {
-            font-size: 2rem;
-            margin-top: 2.5rem;
-            color: #ffffff;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 0.5rem;
-        }
+			h2 {
+				font-size: 2rem;
+				margin-top: 2.5rem;
+				color: #ffffff;
+				border-bottom: 2px solid var(--border-color);
+				padding-bottom: 0.5rem;
+			}
 
-        p {
-            font-size: 1.1rem;
-            color: #b3b3b3;
-        }
+			p {
+				font-size: 1.1rem;
+				color: #b3b3b3;
+			}
 
-        .hero-subtitle {
-            font-size: 1.25rem;
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
-            color: #a0a0a0;
-        }
+			.hero-subtitle {
+				font-size: 1.25rem;
+				max-width: 600px;
+				margin: 0 auto 2rem auto;
+				color: #a0a0a0;
+			}
 
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
+			.button-group {
+				display: flex;
+				justify-content: center;
+				gap: 1rem;
+				margin-top: 2rem;
+			}
 
-        .btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
+			.btn {
+				display: inline-block;
+				padding: 0.75rem 1.5rem;
+				font-size: 1rem;
+				font-weight: 600;
+				text-decoration: none;
+				border-radius: 8px;
+				transition: all 0.2s ease;
+			}
 
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: #121212;
-            border: 2px solid var(--accent-color);
-        }
+			.btn-primary {
+				background-color: var(--accent-color);
+				color: #121212;
+				border: 2px solid var(--accent-color);
+			}
 
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-            border-color: var(--accent-hover);
-            transform: translateY(-2px);
-        }
+			.btn-primary:hover {
+				background-color: var(--accent-hover);
+				border-color: var(--accent-hover);
+				transform: translateY(-2px);
+			}
 
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--text-color);
-            border: 2px solid var(--border-color);
-        }
+			.btn-secondary {
+				background-color: transparent;
+				color: var(--text-color);
+				border: 2px solid var(--border-color);
+			}
 
-        .btn-secondary:hover {
-            border-color: var(--text-color);
-            transform: translateY(-2px);
-        }
+			.btn-secondary:hover {
+				border-color: var(--text-color);
+				transform: translateY(-2px);
+			}
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: 1.5rem;
+				margin-top: 2rem;
+			}
 
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: transform 0.2s ease;
-        }
+			.card {
+				background-color: var(--card-bg);
+				border: 1px solid var(--border-color);
+				border-radius: 12px;
+				padding: 1.5rem;
+				transition: transform 0.2s ease;
+			}
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-color);
-        }
+			.card:hover {
+				transform: translateY(-5px);
+				border-color: var(--accent-color);
+			}
 
-        .card h3 {
-            margin-top: 0;
-            color: #ffffff;
-        }
+			.card h3 {
+				margin-top: 0;
+				color: #ffffff;
+			}
 
-        .card p {
-            margin-bottom: 0;
-            font-size: 1rem;
-        }
+			.card p {
+				margin-bottom: 0;
+				font-size: 1rem;
+			}
 
-        pre {
-            background-color: #000000;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-        }
+			pre {
+				background-color: #000000;
+				padding: 1rem;
+				border-radius: 8px;
+				overflow-x: auto;
+				border: 1px solid var(--border-color);
+			}
 
-        code {
-            font-family: 'Courier New', Courier, monospace;
-            color: #e6e6e6;
-        }
+			code {
+				font-family: "Courier New", Courier, monospace;
+				color: #e6e6e6;
+			}
 
-        footer {
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-            border-top: 1px solid var(--border-color);
-            color: #808080;
-            font-size: 0.9rem;
-        }
+			footer {
+				text-align: center;
+				padding: 2rem;
+				margin-top: 3rem;
+				border-top: 1px solid var(--border-color);
+				color: #808080;
+				font-size: 0.9rem;
+			}
 
-        footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
+			footer a {
+				color: var(--accent-color);
+				text-decoration: none;
+			}
 
-        footer a:hover {
-            text-decoration: underline;
-        }
+			footer a:hover {
+				text-decoration: underline;
+			}
 
-        .svg-icon {
-            width: 50px;
-            height: 50px;
-        }
-    </style>
-</head>
-<body>
+			.svg-icon {
+				width: 50px;
+				height: 50px;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>
+				COSMIC™ Utils Enroll
+				<svg
+					class="svg-icon"
+					viewBox="0 0 100 100"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					>
+					<rect
+						x="0.080000304"
+						y="0.079998933"
+						width="100"
+						height="100"
+						rx="20"
+						ry="20"
+						fill="#0000ff"
+						id="rect1"
+						style="fill: #48547c; fill-opacity: 1"
+					/>
+					<path
+						d="m 75.427071,16.68824 c -0.353247,0 -0.706494,-0.08784 -1.015584,-0.26352 C 65.933556,12.07664 58.603677,10.232 49.772498,10.232 c -8.69871,0 -17.000018,2.06424 -24.550676,6.19272 -1.059741,0.57096 -2.384418,0.17568 -3.0026,-0.8784 -0.574027,-1.05408 -0.176625,-2.4156 0.883118,-2.98656 C 31.315335,8.036 40.323137,5.84 49.772498,5.84 c 9.449361,0 17.662358,2.06424 26.670159,6.588 1.103898,0.6588 1.5013,1.9764 0.927274,3.03048 -0.397403,0.79056 -1.103897,1.22976 -1.94286,1.22976 m -63.187081,23.058 c -0.441559,0 -0.883118,-0.13176 -1.280521,-0.39528 -0.927273,-0.70272 -1.236365,-2.06424 -0.529871,-3.0744 4.371433,-6.1488 9.935076,-10.98 16.55846,-14.36184 13.953261,-7.11504 31.615619,-7.15896 45.524725,-0.04392 6.623384,3.38184 12.187026,8.1252 16.55846,14.274 0.706494,0.96624 0.441558,2.37168 -0.529871,3.0744 C 87.525786,39.92192 86.156954,39.70232 85.45046,38.78 81.476429,33.15824 76.442657,28.81016 70.481612,25.77968 57.808871,19.32344 41.603658,19.32344 28.975073,25.8236 22.969871,28.898 17.936101,33.29 13.96207,38.78 c -0.353247,0.6588 -1.015586,0.96624 -1.72208,0.96624 m 27.597433,53.01144 c -0.574027,0 -1.103898,-0.2196 -1.545457,-0.6588 C 34.450404,88.27784 32.375077,85.81832 29.416632,80.504 26.369875,75.10184 24.780263,68.51384 24.780263,61.44272 c 0,-13.04424 11.215597,-23.67288 24.992235,-23.67288 13.776639,0 24.992236,10.62864 24.992236,23.67288 a 2.2077947,2.196 0 0 1 -2.207796,2.196 2.2077947,2.196 0 0 1 -2.207794,-2.196 c 0,-10.62864 -9.228581,-19.28088 -20.576646,-19.28088 -11.348065,0 -20.576645,8.65224 -20.576645,19.28088 0,6.32448 1.412988,12.16584 4.106498,16.86528 2.825976,5.09472 4.768835,7.2468 8.16884,10.67256 0.838961,0.8784 0.838961,2.23992 0,3.11832 -0.529872,0.4392 -1.059742,0.6588 -1.633768,0.6588 m 31.659774,-8.1252 c -5.254551,0 -9.890919,-1.3176 -13.688326,-3.90888 C 51.229643,76.28768 47.299769,69.0848 47.299769,61.44272 a 2.2077947,2.196 0 0 1 2.207794,-2.196 2.2077947,2.196 0 0 1 2.207794,2.196 c 0,6.19272 3.179225,12.03408 8.566243,15.63552 3.13507,2.10816 6.800009,3.11832 11.215597,3.11832 1.059741,0 2.825978,-0.13176 4.592213,-0.4392 1.19221,-0.2196 2.384418,0.57096 2.561043,1.80072 0.220779,1.14192 -0.574027,2.32776 -1.810392,2.54736 -2.516886,0.48312 -4.72468,0.52704 -5.342864,0.52704 M 62.621864,93.68 c -0.176625,0 -0.397404,0 -0.574027,0 C 55.027049,91.65968 50.434836,89.0684 45.621844,84.36896 39.440019,78.308 36.040016,70.13888 36.040016,61.44272 c 0,-7.11504 6.093513,-12.91248 13.600014,-12.91248 7.506503,0 13.600016,5.79744 13.600016,12.91248 0,4.69944 4.19481,8.52048 9.184425,8.52048 5.077928,0 9.184425,-3.82104 9.184425,-8.52048 0,-16.55784 -14.350664,-29.99736 -32.013021,-29.99736 -12.540274,0 -24.109118,6.93936 -29.187045,17.69976 -1.72208,3.55752 -2.605198,7.72992 -2.605198,12.2976 0,3.42576 0.309091,8.82792 2.958445,15.85512 0.441559,1.14192 -0.132469,2.4156 -1.280521,2.81088 -1.148053,0.39528 -2.428574,-0.17568 -2.825977,-1.27368 -2.207795,-5.75352 -3.22338,-11.50704 -3.22338,-17.39232 0,-5.2704 1.015585,-10.05768 3.0026,-14.23008 5.872735,-12.25368 18.898722,-20.2032 33.161076,-20.2032 20.046775,0 36.428611,15.41592 36.428611,34.38936 0,7.11504 -6.093513,12.91248 -13.600015,12.91248 -7.506501,0 -13.600014,-5.79744 -13.600014,-12.91248 0,-4.69944 -4.106498,-8.52048 -9.184427,-8.52048 -5.077927,0 -9.184425,3.82104 -9.184425,8.52048 0,7.51032 2.914289,14.53752 8.257152,19.80792 4.19481,4.12848 8.212996,6.41232 14.438976,8.08128 1.19221,0.35136 1.854548,1.58112 1.545457,2.72304 C 64.476411,93.0212 63.549137,93.68 62.621864,93.68 Z"
+						id="path1"
+						style="
+							fill: #f16949;
+							fill-opacity: 1;
+							stroke-width: 4.40378;
+						"
+					/>
+				</svg>
+			</h1>
+			<p class="hero-subtitle">
+				GUI application for fingerprint management, elegantly designed
+				for the COSMIC Desktop Environment.
+			</p>
+			<div class="button-group">
+				<a
+					href="https://flathub.org/apps/details/org.cosmic.utils.enroll"
+					class="btn btn-primary"
+					>Get from Flathub</a
+				>
+				<a
+					href="docs/cosmic_utils_enroll/index.html"
+					class="btn btn-secondary"
+					>Documentation</a
+				>
+				<a
+					href="https://github.com/cosmic-utils/enroll"
+					class="btn btn-secondary"
+					>View on GitHub</a
+				>
+			</div>
+		</header>
 
-    <header>
-        <h1>
-            COSMIC™ Utils Enroll
-            <svg class="svg-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                >
-                <rect
-                x="0.080000304"
-                y="0.079998933"
-                width="100"
-                height="100"
-                rx="20"
-                ry="20"
-                fill="#0000ff"
-                id="rect1"
-                style="fill:#48547c;fill-opacity:1" /><path
-                d="m 75.427071,16.68824 c -0.353247,0 -0.706494,-0.08784 -1.015584,-0.26352 C 65.933556,12.07664 58.603677,10.232 49.772498,10.232 c -8.69871,0 -17.000018,2.06424 -24.550676,6.19272 -1.059741,0.57096 -2.384418,0.17568 -3.0026,-0.8784 -0.574027,-1.05408 -0.176625,-2.4156 0.883118,-2.98656 C 31.315335,8.036 40.323137,5.84 49.772498,5.84 c 9.449361,0 17.662358,2.06424 26.670159,6.588 1.103898,0.6588 1.5013,1.9764 0.927274,3.03048 -0.397403,0.79056 -1.103897,1.22976 -1.94286,1.22976 m -63.187081,23.058 c -0.441559,0 -0.883118,-0.13176 -1.280521,-0.39528 -0.927273,-0.70272 -1.236365,-2.06424 -0.529871,-3.0744 4.371433,-6.1488 9.935076,-10.98 16.55846,-14.36184 13.953261,-7.11504 31.615619,-7.15896 45.524725,-0.04392 6.623384,3.38184 12.187026,8.1252 16.55846,14.274 0.706494,0.96624 0.441558,2.37168 -0.529871,3.0744 C 87.525786,39.92192 86.156954,39.70232 85.45046,38.78 81.476429,33.15824 76.442657,28.81016 70.481612,25.77968 57.808871,19.32344 41.603658,19.32344 28.975073,25.8236 22.969871,28.898 17.936101,33.29 13.96207,38.78 c -0.353247,0.6588 -1.015586,0.96624 -1.72208,0.96624 m 27.597433,53.01144 c -0.574027,0 -1.103898,-0.2196 -1.545457,-0.6588 C 34.450404,88.27784 32.375077,85.81832 29.416632,80.504 26.369875,75.10184 24.780263,68.51384 24.780263,61.44272 c 0,-13.04424 11.215597,-23.67288 24.992235,-23.67288 13.776639,0 24.992236,10.62864 24.992236,23.67288 a 2.2077947,2.196 0 0 1 -2.207796,2.196 2.2077947,2.196 0 0 1 -2.207794,-2.196 c 0,-10.62864 -9.228581,-19.28088 -20.576646,-19.28088 -11.348065,0 -20.576645,8.65224 -20.576645,19.28088 0,6.32448 1.412988,12.16584 4.106498,16.86528 2.825976,5.09472 4.768835,7.2468 8.16884,10.67256 0.838961,0.8784 0.838961,2.23992 0,3.11832 -0.529872,0.4392 -1.059742,0.6588 -1.633768,0.6588 m 31.659774,-8.1252 c -5.254551,0 -9.890919,-1.3176 -13.688326,-3.90888 C 51.229643,76.28768 47.299769,69.0848 47.299769,61.44272 a 2.2077947,2.196 0 0 1 2.207794,-2.196 2.2077947,2.196 0 0 1 2.207794,2.196 c 0,6.19272 3.179225,12.03408 8.566243,15.63552 3.13507,2.10816 6.800009,3.11832 11.215597,3.11832 1.059741,0 2.825978,-0.13176 4.592213,-0.4392 1.19221,-0.2196 2.384418,0.57096 2.561043,1.80072 0.220779,1.14192 -0.574027,2.32776 -1.810392,2.54736 -2.516886,0.48312 -4.72468,0.52704 -5.342864,0.52704 M 62.621864,93.68 c -0.176625,0 -0.397404,0 -0.574027,0 C 55.027049,91.65968 50.434836,89.0684 45.621844,84.36896 39.440019,78.308 36.040016,70.13888 36.040016,61.44272 c 0,-7.11504 6.093513,-12.91248 13.600014,-12.91248 7.506503,0 13.600016,5.79744 13.600016,12.91248 0,4.69944 4.19481,8.52048 9.184425,8.52048 5.077928,0 9.184425,-3.82104 9.184425,-8.52048 0,-16.55784 -14.350664,-29.99736 -32.013021,-29.99736 -12.540274,0 -24.109118,6.93936 -29.187045,17.69976 -1.72208,3.55752 -2.605198,7.72992 -2.605198,12.2976 0,3.42576 0.309091,8.82792 2.958445,15.85512 0.441559,1.14192 -0.132469,2.4156 -1.280521,2.81088 -1.148053,0.39528 -2.428574,-0.17568 -2.825977,-1.27368 -2.207795,-5.75352 -3.22338,-11.50704 -3.22338,-17.39232 0,-5.2704 1.015585,-10.05768 3.0026,-14.23008 5.872735,-12.25368 18.898722,-20.2032 33.161076,-20.2032 20.046775,0 36.428611,15.41592 36.428611,34.38936 0,7.11504 -6.093513,12.91248 -13.600015,12.91248 -7.506501,0 -13.600014,-5.79744 -13.600014,-12.91248 0,-4.69944 -4.106498,-8.52048 -9.184427,-8.52048 -5.077927,0 -9.184425,3.82104 -9.184425,8.52048 0,7.51032 2.914289,14.53752 8.257152,19.80792 4.19481,4.12848 8.212996,6.41232 14.438976,8.08128 1.19221,0.35136 1.854548,1.58112 1.545457,2.72304 C 64.476411,93.0212 63.549137,93.68 62.621864,93.68 Z"
-                id="path1"
-                style="fill:#f16949;fill-opacity:1;stroke-width:4.40378" />
-            </svg>
-        </h1>
-        <p class="hero-subtitle">GUI application for fingerprint management, elegantly designed for the COSMIC Desktop Environment.</p>
-        <div class="button-group">
-            <a href="https://github.com/cosmic-utils/enroll/releases/latest" class="btn btn-primary">Download Flatpak</a>
-            <a href="docs/cosmic_utils_enroll/index.html" class="btn btn-secondary">Documentation</a>
-            <a href="https://github.com/cosmic-utils/enroll" class="btn btn-secondary">View on GitHub</a>
-        </div>
-    </header>
+		<div class="container">
+			<section>
+				<h2>About the Project</h2>
+				<p>
+					COSMIC™ Utils Enroll provides a seamless graphical interface
+					for interacting with <code>fprintd</code> to enroll and
+					manage fingerprints. Built with Rust and libcosmic, it
+					seamlessly integrates with the visual language of the COSMIC
+					DE.
+				</p>
+			</section>
 
-    <div class="container">
-        <section>
-            <h2>About the Project</h2>
-            <p>
-                COSMIC™ Utils Enroll provides a seamless graphical interface for interacting with <code>fprintd</code> to enroll and manage fingerprints. Built with Rust and libcosmic, it seamlessly integrates with the visual language of the COSMIC DE.
-            </p>
-        </section>
+			<section>
+				<h2>Features</h2>
+				<div class="grid">
+					<div class="card">
+						<h3>Multiuser Support</h3>
+						<p>
+							On a multiuser system, choose a user from the
+							navigation. It prompts for authentication and
+							validates correct rights seamlessly.
+						</p>
+					</div>
+					<div class="card">
+						<h3>Secure Actions</h3>
+						<p>
+							Perform required authentication and rights checks
+							before managing fingerprints. Invalid attempts are
+							safely dismissed.
+						</p>
+					</div>
+					<div class="card">
+						<h3>Progress Indicators</h3>
+						<p>
+							Real-time visual feedback and progress indicators
+							during the fingerprint enrollment process to ensure
+							a smooth user experience.
+						</p>
+					</div>
+				</div>
+			</section>
 
-        <section>
-            <h2>Features</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Multiuser Support</h3>
-                    <p>On a multiuser system, choose a user from the navigation. It prompts for authentication and validates correct rights seamlessly.</p>
-                </div>
-                <div class="card">
-                    <h3>Secure Actions</h3>
-                    <p>Perform required authentication and rights checks before managing fingerprints. Invalid attempts are safely dismissed.</p>
-                </div>
-                <div class="card">
-                    <h3>Progress Indicators</h3>
-                    <p>Real-time visual feedback and progress indicators during the fingerprint enrollment process to ensure a smooth user experience.</p>
-                </div>
-            </div>
-        </section>
+			<section>
+				<h2>Prerequisites</h2>
+				<ul>
+					<li>Linux or a freedesktop-compatible system.</li>
+					<li>
+						A supported fingerprint scanner (e.g., Goodix MOC
+						Fingerprint Sensor).
+					</li>
+					<li>
+						Tested primarily on COSMIC™ DE, Pop!_OS, and Framework
+						13 laptops.
+					</li>
+				</ul>
+			</section>
 
-        <section>
-            <h2>Prerequisites</h2>
-            <ul>
-                <li>Linux or a freedesktop-compatible system.</li>
-                <li>A supported fingerprint scanner (e.g., Goodix MOC Fingerprint Sensor).</li>
-                <li>Tested primarily on COSMIC™ DE, Pop!_OS, and Framework 13 laptops.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Building from Source</h2>
-            <p>The project includes a <code>justfile</code> for the <a href="https://github.com/casey/just" style="color: var(--accent-color);">just</a> command runner.</p>
-            <pre><code># Build the application (release mode)
+			<section>
+				<h2>Building from Source</h2>
+				<p>
+					The project includes a <code>justfile</code> for the
+					<a
+						href="https://github.com/casey/just"
+						style="color: var(--accent-color)"
+						>just</a
+					>
+					command runner.
+				</p>
+				<pre><code># Build the application (release mode)
 just build-release
 
 # Build and run the application
@@ -249,13 +315,21 @@ just run
 
 # Install into the system
 just install</code></pre>
-        </section>
-    </div>
+			</section>
+		</div>
 
-    <footer>
-        <p>Licensed under the <a href="https://github.com/cosmic-utils/enroll/blob/main/LICENSE">MPL-2.0 License</a>.</p>
-        <p>&copy; 2024-2026 COSMIC Utils Contributors. "COSMIC" is a trademark of System76.</p>
-    </footer>
-
-</body>
+		<footer>
+			<p>
+				Licensed under the
+				<a
+					href="https://github.com/cosmic-utils/enroll/blob/main/LICENSE"
+					>MPL-2.0 License</a
+				>.
+			</p>
+			<p>
+				&copy; 2024-2026 COSMIC Utils Contributors. "COSMIC" is a
+				trademark of System76.
+			</p>
+		</footer>
+	</body>
 </html>
