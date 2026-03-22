@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Enroll
 Comment=Manage fingerprints
+Comment[cs]=Správa otisků prstů
 Type=Application
 Icon=org.cosmic_utils.enroll
 Exec=cosmic-utils-enroll %F
@@ -8,4 +9,5 @@ Terminal=false
 StartupNotify=true
 Categories=Utility;System;
 Keywords=Fingerprint;Security;
+Keywords[cs]=Otisky prstů;Zabezpečení;Biometrie;
 MimeType=

@@ -5,12 +5,16 @@
   <project_license>MPL-2.0</project_license>
   <name>Enroll</name>
   <summary>GUI built with COSMIC toolkit for fprintd fingerprint enrolling</summary>
+  <summary xml:lang="cs">GUI vytvořené pomocí toolkitu COSMIC pro registraci otisků prstů pomocí fprintd</summary>
   <developer id="org.cosmic-utils">
     <name>Joonas Tuomi</name>
   </developer>
   <description>
     <p>
       Fingerprint management for multi-user systems using the fprintd daemon. It allows you to register and delete fingerprints for authentication on your Linux system.
+    </p>
+    <p xml:lang="cs">
+      Správa otisků prstů pro víceuživatelské systémy pomocí služby fprintd. Umožňuje registrovat a mazat otisky prstů pro ověřování ve vašem systému Linux.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
@@ -36,6 +40,10 @@
   <keywords>
     <keyword>Fingerprint</keyword>
     <keyword>Authentication</keyword>
+
+    <keyword xml:lang="cs">Otisky prstů</keyword>
+    <keyword xml:lang="cs">Ověřování</keyword>
+    <keyword xml:lang="cs">Biometrie</keyword>
   </keywords>
   <branding>
     <color type="primary" scheme_preference="light">#7ea5ae</color>
@@ -48,14 +56,17 @@
     <screenshot type="default">
     <image>https://user.fm/files/v2-33b0fc7cc6603b601fe9ec2b84915fd8/enroll.png</image>
     <caption>Main window main UI</caption>
+    <caption xml:lang="cs">Hlavní okno - hlavní UI</caption>
     </screenshot>
     <screenshot>
       <image>https://user.fm/files/v2-2f0daf05b0e66f25db2778188ab82373/enroll-main.png</image>
       <caption>Main window alternative UI</caption>
+      <caption xml:lang="cs">Hlavní okno - alternativní UI</caption>
     </screenshot>
     <screenshot>
       <image>https://user.fm/files/v2-808d13b70d649c6b65df2cce1849db2f/enroll-additional.png</image>
       <caption>Enrolling a fingerprint</caption>
+      <caption xml:lang="cs">Registrace otisku prstu</caption>
     </screenshot>
   </screenshots>
   <releases>
@@ -66,4 +77,3 @@
     </release>
   </releases>
 </component>
-
