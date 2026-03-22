@@ -21,7 +21,7 @@ cancel = Cancel
 settings-ui = User Interface
 alternative-ui = Alternative UI
 settings-clear-device = Remove all fingerprints
-settings-theme = Set Theming
+settings-theme = Theme
 
 theme-system = System
 theme-light = Light
