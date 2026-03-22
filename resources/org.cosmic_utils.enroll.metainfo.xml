@@ -72,11 +72,10 @@
   	<release version="1.0.4" date="2026-03-21">
       <description>
         <p>
-        <ul>
-          <li>Update dependencies & application metadata</li>
-          <li>Added Setting section for Theme</li>
-          <li>Czech translation</li>
-        </ul>
+          - Updated dependencies
+          - Flathub friendlier metadata
+          - Added Setting section for Theme
+          - New Czech translation
         </p>
       </description>
     </release>
