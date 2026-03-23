@@ -7,6 +7,7 @@ use crate::app::{ContextPage, Finger};
 use crate::config::{AppTheme, Config};
 use crate::fl;
 use crate::fprint_dbus::DeviceProxy;
+use cosmic::cosmic_config::CosmicConfigEntry;
 use cosmic::{Task, command};
 use std::sync::Arc;
 use tracing::info;
@@ -379,16 +380,11 @@ impl AppModel {
     pub(crate) fn on_update_config(&mut self, config: Config) -> Task<cosmic::Action<Message>> {
         self.config = config.clone();
 
-        tokio::task::spawn_blocking(move || {
-            use cosmic::Application;
-            use cosmic::cosmic_config::{self, CosmicConfigEntry};
-
-            if let Ok(context) = cosmic_config::Config::new(AppModel::APP_ID, Config::VERSION)
-                && let Err(err) = config.write_entry(&context)
-            {
+        if let Some(handler) = &self.config_handler {
+            if let Err(err) = config.write_entry(handler) {
                 tracing::error!("failed to write config: {}", err);
             }
-        });
+        }
 
         Task::none()
     }

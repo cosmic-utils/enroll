@@ -2,6 +2,7 @@
 use cosmic::cosmic_config::{self, CosmicConfigEntry, cosmic_config_derive::CosmicConfigEntry};
 use cosmic::{Theme, theme};
 use serde::{Deserialize, Serialize};
+use tracing::error;
 
 // AppTheme is directly copied from https://github.com/cosmic-utils/camera
 /// Application theme preference
@@ -62,4 +63,23 @@ pub fn is_cosmic_desktop() -> bool {
             .unwrap_or(false)
     });
     *IS_COSMIC
+}
+
+pub fn read_config(app_id: &str) -> (Option<cosmic_config::Config>, Config) {
+    match cosmic_config::Config::new(app_id, Config::VERSION) {
+        Ok(handler) => {
+            let config = match Config::get_entry(&handler) {
+                Ok(config) => config,
+                Err((errors, config)) => {
+                    error!(?errors, "Errors loading config");
+                    config
+                }
+            };
+            (Some(handler), config)
+        }
+        Err(err) => {
+            error!(%err, "Failed to create config handler");
+            (None, Config::default())
+        }
+    }
 }

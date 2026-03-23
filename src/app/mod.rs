@@ -2,7 +2,10 @@
 
 use std::{collections::HashMap, sync::Arc};
 
-use cosmic::widget::{menu, nav_bar};
+use cosmic::{
+    cosmic_config,
+    widget::{menu, nav_bar},
+};
 
 use crate::{
     app::{finger::Finger, message::Message, users::UserOption},
@@ -34,6 +37,8 @@ pub struct AppModel {
     key_binds: HashMap<menu::KeyBind, MenuAction>,
     // Configuration data that persists between application runs.
     config: Config,
+    // Config handler for writing & reading it
+    config_handler: Option<cosmic_config::Config>,
     // Status text for the UI
     status: String,
     // Currently selected device path
