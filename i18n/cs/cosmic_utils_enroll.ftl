@@ -5,8 +5,6 @@ view = Zobrazení
 fprint = Registrovat
 welcome = Registrujte nebo smažte otisky prstů
 git-description = Git commit {$hash} dne {$date}
-alternative-ui = Alternativní UI
-
 register = Registrovat
 verify = Ověřit
 delete = Smazat
@@ -21,7 +19,13 @@ clear-device-confirm = Opravdu chcete vymazat otisky pro VŠECHNY známé uživa
 cancel = Zrušit
 
 settings-ui = Uživatelské rozhraní
+alternative-ui = Alternativní UI
 settings-clear-device = Odstranit všechny otisky
+settings-theme = Motiv
+
+theme-system = Podle systému
+theme-light = Světlý
+theme-dark = Tmavý
 
 register-tooltip = Zaregistruje nový otisk prstu
 delete-tooltip = Smaže tento otisk prstu

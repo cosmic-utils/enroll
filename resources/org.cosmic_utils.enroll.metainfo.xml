@@ -5,7 +5,7 @@
   <project_license>MPL-2.0</project_license>
   <name>Enroll</name>
   <summary>Fingerprint record management</summary>
-  <summary xml:lang="cs">GUI vytvořené pomocí toolkitu COSMIC pro registraci otisků prstů pomocí fprintd</summary>
+  <summary xml:lang="cs">Správa otisků prstů</summary>
   <summary xml:lang="fi">Sormenjälkien hallinointi</summary>
   <developer id="org.cosmic-utils">
     <name>Joonas Tuomi</name>
@@ -15,7 +15,7 @@
       Fingerprint management for single and multi-user systems. Allows you to register, verify and delete prints.
     </p>
     <p xml:lang="cs">
-      Správa otisků prstů pro víceuživatelské systémy pomocí služby fprintd. Umožňuje registrovat a mazat otisky prstů pro ověřování ve vašem systému Linux.
+      Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
     </p>
     <p xml:lang="fi">
       Sormenjälkien hallinnointi yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa jälkiä.
