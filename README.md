@@ -10,7 +10,7 @@ Tested with:
 | Distribution | Desktop | Architecture | Fingerprint scanner |
 | ------------ | ------- | ------------ | ------------------- |
 | Pop!_OS | COSMIC™ DE | amd64 | Goodix MOC Fingerprint Sensor | 
-| Arch Linux | KDE | arm64 | No fingerprint scanner | 
+| Arch Linux | KDE Plasma | arm64 | No fingerprint scanner | 
 
 ## Usage
 
