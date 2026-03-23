@@ -1,6 +1,9 @@
+### 1.0.5:
+	• Updated Czech translation by @lorduskordus
 ### 1.0.4:
 	• Add ashpd for Flatpak theming support
 	• Updated app metadata
+	• Czech translation by @lorduskordus
 ### 1.0.3:
 	Fixes a bug in Verify option
 ### 1.0.2:

@@ -5,9 +5,8 @@ view = Katso
 fprint = Rekisteröi sormenjälki
 welcome = Rekisteröi tai poista sormenjälkiä
 git-description = Git julkaisu {$hash} päivänä {$date}
-alternative-ui = Toinen käyttöliittymä
-
 register = Rekisteröi
+verify = Varmenna
 delete = Poista
 deleted = Sormenjälki poistettu.
 deleting = Poistetaan sormenjälkeä...
@@ -17,6 +16,31 @@ clearing-device = Tyhjennetään laitteen kaikki käyttäjien sormenjäljet...
 device-cleared = Laite tyhjennetty.
 clear-device-confirm = Oletko varma, että haluat poistaa kaikki käyttäjien sormenjäljet?
 cancel = Peruuta
+
+settings-ui = Käyttöliittymä
+alternative-ui = Toinen käyttöliittymä
+settings-clear-device = Poista kaikki
+settings-theme = Teema
+
+theme-system = Järjestelmä
+theme-light = Vaalea
+theme-dark = Tumma
+
+register-tooltip = Rekisteröi uusi sormenjälki
+delete-tooltip = Poista tämä sormenjälki
+clear-tooltip = Poista kaikki käyttäjien sormenjäljet
+verify-tooltip = Varmenna sormenjälki
+
+verify-finger = Laita {$finger} lukijalle
+verify-no-match = Sormenjälki ei täsmännyt
+verify-match = Sormenjälki täsmäsi
+verify-retry-scan = Lukija ei voinut lukea. Yritä uudelleen.
+verify-swipe-too-short = Pyyhkäisy oli liian lyhyt. Yritä uudelleen.
+verify-finger-not-centered = Sormi ei ole keskellä lukijaa. Yritä uudelleen.
+verify-remove-and-retry = Poista sormi ja yritä uudelleen.
+verify-too-fast = Liian nopea toisto. Yritä uudelleen.
+verify-disconnected = Laite katkaisi yhteyden. Sulje ikkuna.
+verify-unknown-error = Tapahtui tuntematon virhe.
 
 page-right-thumb = Oikea Peukalo
 page-right-index-finger = Oikea Etusormi

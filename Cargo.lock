@@ -1009,7 +1009,7 @@ dependencies = [
 
 [[package]]
 name = "cosmic-utils-enroll"
-version = "1.0.4"
+version = "1.0.5"
 dependencies = [
  "ashpd 0.13.8",
  "futures-util",

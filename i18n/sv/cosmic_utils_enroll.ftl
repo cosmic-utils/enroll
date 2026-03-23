@@ -5,9 +5,8 @@ view = Visa
 fprint = Registrera fingeravtryck
 welcome = Registrera och/eller radera fingeravtryck
 git-description = Git commit {$hash} på {$date}
-alternative-ui = Andra UI
-
 register = Registrera
+verify = Verifiera
 delete = Radera
 deleted = Raderat fingeravtryck.
 deleting = Raderar fingeravtryck...
@@ -17,6 +16,27 @@ clearing-device = Rensar enhet...
 device-cleared = Rensad för alla kända användare.
 clear-device-confirm = Är du säker du vill radera fingeravtryck för alla kända användare?
 cancel = Avbryt
+
+alternative-ui = Andra UI
+settings-ui = Användargränssnitt
+settings-clear-device = Radera alla användarens fingeravtryck
+settings-theme = Tema
+
+register-tooltip = Registrera en ny fingeravtryck
+delete-tooltip = Raderar detta fingeravtryck
+clear-tooltip = Radera alla fingeravtryck
+verify-tooltip = Verifierar fingeravtrycket mot de registrerade fingeravtrycken
+
+verify-finger = Plas {$finger} på läsare
+verify-no-match = Fingerprint matchade inte
+verify-match = Fingerprint matchade
+verify-retry-scan = Kunde inte läsa fingeravtrycket. Försök igen.
+verify-swipe-too-short = Swipe var för kort. Försök igen.
+verify-finger-not-centered = Finger var inte centrerat. Försök igen.
+verify-remove-and-retry = Ta bort finger och försök igen.
+verify-too-fast = Förstörande snabb touch. Försök igen.
+verify-disconnected = Enheten är uppkopplad. Stäng fönstret.
+verify-unknown-error = Det uppstod ett okänt fel.
 
 page-right-thumb = Höger tumme
 page-right-index-finger = Höger pekfinger

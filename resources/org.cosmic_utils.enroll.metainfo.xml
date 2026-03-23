@@ -7,6 +7,7 @@
   <summary>Fingerprint record management</summary>
   <summary xml:lang="cs">Správa otisků prstů</summary>
   <summary xml:lang="fi">Sormenjälkien hallinointi</summary>
+  <summary xml:lang="se">Fingerprint registreringshantering</summary>
   <developer id="org.cosmic-utils">
     <name>Joonas Tuomi</name>
   </developer>
@@ -19,7 +20,10 @@
     </p>
     <p xml:lang="fi">
       Sormenjälkien hallinnointi yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa jälkiä.
-    </p>
+     </p>
+     <p xml:lang="se">
+       Fingerprint registreringshantering för enskilda och flera användare. Tillåter dig att registrera, verifiera och ta bort fingeravtryck.
+     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
     https://github.com/cosmic-utils/enroll/raw/main/resources/icons/hicolor/scalable/apps/enroll.svg
@@ -51,6 +55,9 @@
     <keyword xml:lang="fi">Sormenjälki</keyword>
     <keyword xml:lang="fi">Tunnistautuminen</keyword>
     <keyword xml:lang="fi">COSMIC</keyword>
+    <keyword xml:lang="se">Fingerprint</keyword>
+    <keyword xml:lang="se">Autentisering</keyword>
+    <keyword xml:lang="se">COSMIC</keyword>
   </keywords>
   <branding>
     <color type="primary" scheme_preference="light">#7ea5ae</color>
@@ -61,11 +68,11 @@
   <url type="vcs-browser">https://github.com/cosmic-utils/enroll</url>
   <screenshots>
     <screenshot type="default">
-      <image
-        >https://user.fm/files/v2-1be40ab863867624714661b062d93218/main.png</image>
-      <caption>Main UI</caption>
-      <caption xml:lang="cs">Hlavní UI</caption>
-      <caption xml:lang="fi">Pääkäyttöliittymä</caption>
+    <image>https://user.fm/files/v2-1be40ab863867624714661b062d93218/main.png</image>
+    <caption>Main UI</caption>
+     <caption xml:lang="cs">Hlavní UI</caption>
+     <caption xml:lang="fi">Pääkäyttöliittymä</caption>
+     <caption xml:lang="se">Huvudsida</caption>
     </screenshot>
   </screenshots>
   <releases>
