@@ -5,9 +5,7 @@
   <project_license>MPL-2.0</project_license>
   <name>Enroll</name>
   <summary>Fingerprint record management</summary>
-  <summary xml:lang="cs">
-    GUI vytvořené pomocí toolkitu COSMIC pro registraci otisků prstů pomocí fprintd
-  </summary>
+  <summary xml:lang="cs">Správa otisků prstů</summary>
   <summary xml:lang="fi">Sormenjälkien hallinointi</summary>
   <summary xml:lang="se">Fingerprint registreringshantering</summary>
   <developer id="org.cosmic-utils">
@@ -18,7 +16,7 @@
       Fingerprint management for single and multi-user systems. Allows you to register, verify and delete prints.
     </p>
     <p xml:lang="cs">
-      Správa otisků prstů pro víceuživatelské systémy pomocí služby fprintd. Umožňuje registrovat a mazat otisky prstů pro ověřování ve vašem systému Linux.
+      Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
     </p>
     <p xml:lang="fi">
       Sormenjälkien hallinnointi yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa jälkiä.
@@ -32,7 +30,7 @@
   </icon>
   <launchable type="desktop-id">org.cosmic_utils.enroll.desktop</launchable>
   <provides>
-      <binary>cosmic-utils-enroll</binary>
+    <binary>cosmic-utils-enroll</binary>
   </provides>
   <requires>
     <display_length compare="ge">400</display_length>
@@ -70,8 +68,7 @@
   <url type="vcs-browser">https://github.com/cosmic-utils/enroll</url>
   <screenshots>
     <screenshot type="default">
-    <image
-			>https://user.fm/files/v2-1be40ab863867624714661b062d93218/main.png</image>
+    <image>https://user.fm/files/v2-1be40ab863867624714661b062d93218/main.png</image>
     <caption>Main UI</caption>
      <caption xml:lang="cs">Hlavní UI</caption>
      <caption xml:lang="fi">Pääkäyttöliittymä</caption>
@@ -79,7 +76,7 @@
     </screenshot>
   </screenshots>
   <releases>
-  	<release version="1.0.4" date="2026-03-21">
+    <release version="1.0.4" date="2026-03-21">
       <description>
         <p>
           - Updated dependencies
