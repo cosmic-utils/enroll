@@ -184,10 +184,7 @@ where
         .await?;
 
     // Claim device
-    match device.claim(username).await {
-        Ok(_) => {}
-        Err(e) => return Err(e),
-    };
+    device.claim(username).await?;
 
     let total_stages = match device.num_enroll_stages().await {
         Ok(n) if n > 0 => Some(n as u32),
@@ -270,9 +267,7 @@ where
     validate_username(&username)?;
     let device = DeviceProxy::builder(connection).path(path)?.build().await?;
 
-    if let Err(e) = device.claim(&username).await {
-        return Err(e);
-    }
+    device.claim(&username).await?;
 
     if let Err(e) = device.verify_start(&finger).await {
         let _ = device.release().await;
