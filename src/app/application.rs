@@ -3,7 +3,7 @@ use crate::app::message::{Message, REPOSITORY};
 use crate::app::tasks::task_connect;
 use crate::app::{ContextPage, MenuAction};
 use crate::app::{error::*, finger::*, fprint::*, subscription::*, users::*};
-use crate::config::{AppTheme, Config, read_config};
+use crate::config::{Config, read_config};
 use crate::fl;
 use cosmic::app::context_drawer;
 
@@ -12,7 +12,7 @@ use cosmic::{
     cosmic_theme,
     prelude::*,
     theme,
-    widget::{self, button, column, dialog, menu, nav_bar, radio, settings::view_column, text},
+    widget::{self, column, dialog, menu, nav_bar, text},
 };
 
 use super::AppModel;
@@ -312,65 +312,6 @@ impl AppModel {
             .align_x(Alignment::Center)
             .spacing(space_xxs)
             .into()
-    }
-
-    /// Settings menu
-    pub fn settings(&self) -> Element<'_, Message> {
-        let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
-        let sel_theme = text::title3(fl!("settings-theme"));
-        let text = text::title3(fl!("settings-ui"));
-        let clear = text::title3(fl!("settings-clear-device"));
-        let clear_btn = button::text(fl!("clear-device")).tooltip(fl!("clear-tooltip"));
-
-        let clear_btn =
-            if !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none() {
-                clear_btn.on_press(Message::ClearDevice)
-            } else {
-                clear_btn
-            };
-
-        let selected = Some(self.config.app_theme);
-        let system = radio(
-            text::heading(fl!("theme-system")),
-            AppTheme::System,
-            selected,
-            Message::ThemeSetting,
-        );
-
-        let light = radio(
-            text::heading(fl!("theme-light")),
-            AppTheme::Light,
-            selected,
-            Message::ThemeSetting,
-        );
-
-        let dark = radio(
-            text::heading(fl!("theme-dark")),
-            AppTheme::Dark,
-            selected,
-            Message::ThemeSetting,
-        );
-
-        let col = column()
-            .push(sel_theme)
-            .push(system)
-            .push(light)
-            .push(dark)
-            .push(text)
-            .push(
-                widget::checkbox(self.config.experimental_ui)
-                    .on_toggle(|value| {
-                        Message::UpdateConfig(Config {
-                            app_theme: self.config.app_theme,
-                            experimental_ui: value,
-                        })
-                    })
-                    .label(fl!("alternative-ui")),
-            )
-            .push(clear)
-            .push(clear_btn)
-            .spacing(space_xxs);
-        view_column(vec![col.into()]).into()
     }
 
     /// Gets all registered prints for requested user
