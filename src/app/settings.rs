@@ -1,7 +1,6 @@
 use crate::app::{AppModel, message::Message};
 use crate::config::{AppTheme, Config};
 use crate::fl;
-use cosmic::iced::Alignment;
 use cosmic::widget::settings::item::builder;
 use cosmic::widget::settings::{item_row, section, view_column};
 use cosmic::{
