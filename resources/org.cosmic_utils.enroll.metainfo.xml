@@ -78,6 +78,17 @@
     </screenshot>
   </screenshots>
   <releases>
+  	<release version="1.0.6" date="2026-03-30">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Decreased minimum height back to original</li>
+          <li>Updated dependencies</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.5" date="2026-03-24">
       <description>
         <p>
