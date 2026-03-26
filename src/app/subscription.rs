@@ -4,7 +4,9 @@ use crate::app::{
     fprint::{enroll_fingerprint_process, verify_finger_process},
 };
 use ashpd::desktop::settings::{ColorScheme, Settings};
-use cosmic::iced::{Subscription, futures::channel::mpsc::Sender, stream::channel};
+use cosmic::iced::{
+    Event, Subscription, futures::channel::mpsc::Sender, keyboard, stream::channel,
+};
 use futures_util::{SinkExt, StreamExt};
 
 #[derive(Clone)]
@@ -69,7 +71,7 @@ impl std::hash::Hash for EnrollData {
     }
 }
 
-/// ***Returns*** a subscription to an ongoing enroll process
+/// **Returns** a subscription to an ongoing enroll process
 pub(crate) fn enroll_subscription(data: EnrollData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
@@ -96,7 +98,7 @@ pub(crate) fn enroll_subscription(data: EnrollData) -> Subscription<Message> {
     })
 }
 
-/// ***Returns*** a subscription to an ongoing verify process
+/// **Returns** a subscription to an ongoing verify process
 pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
@@ -119,8 +121,10 @@ pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
     })
 }
 
-// On non-COSMIC desktops, subscribe to XDG portal color-scheme changes
-// so theme updates when user changes their desktop appearance
+/// On non-COSMIC desktops, subscribe to XDG portal color-scheme changes
+/// so theme updates when user changes their desktop appearance
+///
+/// **Returns** subscription to ColorScheme changes or None
 pub fn portal_theme_subscription(app_theme: crate::config::AppTheme) -> Subscription<Message> {
     if !crate::config::is_cosmic_desktop() && app_theme == crate::config::AppTheme::System {
         Subscription::run_with(app_theme, |_| {
@@ -157,4 +161,38 @@ pub fn portal_theme_subscription(app_theme: crate::config::AppTheme) -> Subscrip
     } else {
         Subscription::none()
     }
+}
+
+/// **Returns** a subscription to key events 0-9, r, v, c and Ctrl + d
+pub fn key_subscription() -> Subscription<Message> {
+    cosmic::iced::event::listen_raw(|event, _status, _window| {
+        let Event::Keyboard(keyboard::Event::KeyPressed { key, modifiers, .. }) = event else {
+            return None;
+        };
+
+        use cosmic::iced::keyboard::Key;
+
+        match key {
+            Key::Character(c) if modifiers.control() && c == "d" => Some(Message::Delete),
+            Key::Character(c) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
+                match c.as_str() {
+                    "r" => Some(Message::Register),
+                    "v" => Some(Message::VerifyFinger),
+                    "c" => Some(Message::EnrollStop),
+                    "1" => Some(Message::SelectFingerByNumber(1)),
+                    "2" => Some(Message::SelectFingerByNumber(2)),
+                    "3" => Some(Message::SelectFingerByNumber(3)),
+                    "4" => Some(Message::SelectFingerByNumber(4)),
+                    "5" => Some(Message::SelectFingerByNumber(5)),
+                    "6" => Some(Message::SelectFingerByNumber(6)),
+                    "7" => Some(Message::SelectFingerByNumber(7)),
+                    "8" => Some(Message::SelectFingerByNumber(8)),
+                    "9" => Some(Message::SelectFingerByNumber(9)),
+                    "0" => Some(Message::SelectFingerByNumber(0)),
+                    _ => None,
+                }
+            }
+            _ => None,
+        }
+    })
 }

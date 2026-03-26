@@ -281,42 +281,7 @@ impl cosmic::Application for AppModel {
     }
 }
 
-fn key_subscription() -> Subscription<Message> {
-    cosmic::iced::event::listen_raw(|event, _status, _window| {
-        use cosmic::iced::{Event, keyboard};
-
-        let Event::Keyboard(keyboard::Event::KeyPressed { key, modifiers, .. }) = event else {
-            return None;
-        };
-
-        use cosmic::iced::keyboard::Key;
-
-        match key {
-            Key::Character(c) if modifiers.control() && c == "d" => Some(Message::Delete),
-            Key::Character(c) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
-                match c.as_str() {
-                    "r" => Some(Message::Register),
-                    "v" => Some(Message::VerifyFinger),
-                    "c" => Some(Message::EnrollStop),
-                    "1" => Some(Message::SelectFingerByNumber(1)),
-                    "2" => Some(Message::SelectFingerByNumber(2)),
-                    "3" => Some(Message::SelectFingerByNumber(3)),
-                    "4" => Some(Message::SelectFingerByNumber(4)),
-                    "5" => Some(Message::SelectFingerByNumber(5)),
-                    "6" => Some(Message::SelectFingerByNumber(6)),
-                    "7" => Some(Message::SelectFingerByNumber(7)),
-                    "8" => Some(Message::SelectFingerByNumber(8)),
-                    "9" => Some(Message::SelectFingerByNumber(9)),
-                    "0" => Some(Message::SelectFingerByNumber(0)),
-                    _ => None,
-                }
-            }
-            _ => None,
-        }
-    })
-}
-
-// TODO: about & settings could be in view. others in tasks.
+// TODO: about could be in view. others in tasks.
 impl AppModel {
     /// The about page for this app.
     pub fn about(&self) -> Element<'_, Message> {
