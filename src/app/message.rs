@@ -40,6 +40,8 @@ pub enum Message {
     VerifyStatus(String, bool),
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
+
+    SelectFingerByNumber(u8),
 }
 
 // Section for handling of Messages
@@ -188,9 +190,15 @@ impl AppModel {
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_verify_finger(&mut self) -> Task<cosmic::Action<Message>> {
-        self.busy = true;
-        self.verifying_finger = true;
-        self.status = fl!("status-starting-verification");
+        if self
+            .selected_finger
+            .as_finger_id()
+            .is_some_and(|id| self.enrolled_fingers.iter().any(|ef| ef == id))
+        {
+            self.busy = true;
+            self.verifying_finger = true;
+            self.status = fl!("status-starting-verification");
+        }
         Task::none()
     }
 
@@ -281,6 +289,9 @@ impl AppModel {
     ///
     /// **Returns** either ***Task***() or ***task_enroll_stop***()
     pub(crate) fn on_enroll_stop(&self) -> Task<cosmic::Action<Message>> {
+        if self.enrolling_finger.is_none() {
+            return Task::none();
+        }
         if let (Some(path), Some(conn)) = (self.device_path.clone(), self.connection.clone()) {
             let path = (*path).clone();
             return task_enroll_stop(path, conn);
@@ -366,11 +377,13 @@ impl AppModel {
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_register(&mut self) -> Task<cosmic::Action<Message>> {
-        self.busy = true;
-        if let Some(finger_id) = self.selected_finger.as_finger_id() {
-            self.enrolling_finger = Some(Arc::new(finger_id.to_string()));
+        if !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none() {
+            self.busy = true;
+            if let Some(finger_id) = self.selected_finger.as_finger_id() {
+                self.enrolling_finger = Some(Arc::new(finger_id.to_string()));
+            }
+            self.status = fl!("status-starting-enrollment");
         }
-        self.status = fl!("status-starting-enrollment");
         Task::none()
     }
 
@@ -381,9 +394,10 @@ impl AppModel {
         self.config = config.clone();
 
         if let Some(handler) = &self.config_handler
-            && let Err(err) = config.write_entry(handler) {
-                tracing::error!("failed to write config: {}", err);
-            }
+            && let Err(err) = config.write_entry(handler)
+        {
+            tracing::error!("failed to write config: {}", err);
+        }
 
         Task::none()
     }
@@ -420,5 +434,16 @@ impl AppModel {
 
         tasks.push(task);
         Task::batch(tasks)
+    }
+
+    /// Selects a finger by numeric key (1-0).
+    ///
+    /// **Returns** ***Task***()
+    pub(crate) fn on_select_finger_by_number(&mut self, key: u8) -> Task<cosmic::Action<Message>> {
+        if let Some(finger) = Finger::from_key(key) {
+            self.confirm_clear = false;
+            self.selected_finger = finger;
+        }
+        Task::none()
     }
 }

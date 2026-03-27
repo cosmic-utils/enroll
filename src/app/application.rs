@@ -225,6 +225,8 @@ impl cosmic::Application for AppModel {
 
         subscriptions.push(portal_theme_subscription(self.config.app_theme));
 
+        subscriptions.push(key_subscription());
+
         Subscription::batch(subscriptions)
     }
 
@@ -256,6 +258,7 @@ impl cosmic::Application for AppModel {
             Message::VerifyStatus(status, done) => self.on_verify_status(status, done),
             Message::ThemeChanged(is_dark) => self.on_portal_color_scheme_changed(is_dark),
             Message::ThemeSetting(theme) => self.on_theme_setting(theme),
+            Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),
         }
     }
 
@@ -278,7 +281,7 @@ impl cosmic::Application for AppModel {
     }
 }
 
-// TODO: about & settings could be in view. others in tasks.
+// TODO: about could be in view. others in tasks.
 impl AppModel {
     /// The about page for this app.
     pub fn about(&self) -> Element<'_, Message> {

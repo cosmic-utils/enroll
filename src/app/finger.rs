@@ -54,6 +54,23 @@ impl Finger {
         }
     }
 
+    /// Maps keys 1-0 to fingers (1=RightThumb, 0=LeftPinky).
+    pub fn from_key(key: u8) -> Option<Finger> {
+        match key {
+            1 => Some(Finger::LeftPinky),
+            2 => Some(Finger::LeftRing),
+            3 => Some(Finger::LeftMiddle),
+            4 => Some(Finger::LeftIndex),
+            5 => Some(Finger::LeftThumb),
+            6 => Some(Finger::RightThumb),
+            7 => Some(Finger::RightIndex),
+            8 => Some(Finger::RightMiddle),
+            9 => Some(Finger::RightRing),
+            0 => Some(Finger::RightPinky),
+            _ => None,
+        }
+    }
+
     pub fn as_finger_id(&self) -> Option<&'static str> {
         match self {
             Finger::RightThumb => Some("right-thumb"),
@@ -107,6 +124,21 @@ mod tests {
         assert!(!Finger::LeftRing.localized_name().is_empty());
         assert!(!Finger::LeftPinky.localized_name().is_empty());
         assert!(!Finger::DeleteAllUsersPrints.localized_name().is_empty());
+    }
+
+    #[test]
+    fn test_finger_from_key() {
+        assert_eq!(Finger::from_key(6), Some(Finger::RightThumb));
+        assert_eq!(Finger::from_key(7), Some(Finger::RightIndex));
+        assert_eq!(Finger::from_key(8), Some(Finger::RightMiddle));
+        assert_eq!(Finger::from_key(9), Some(Finger::RightRing));
+        assert_eq!(Finger::from_key(0), Some(Finger::RightPinky));
+        assert_eq!(Finger::from_key(1), Some(Finger::LeftThumb));
+        assert_eq!(Finger::from_key(2), Some(Finger::LeftIndex));
+        assert_eq!(Finger::from_key(3), Some(Finger::LeftMiddle));
+        assert_eq!(Finger::from_key(4), Some(Finger::LeftRing));
+        assert_eq!(Finger::from_key(5), Some(Finger::LeftPinky));
+        assert_eq!(Finger::from_key(10), None);
     }
 
     #[test]
