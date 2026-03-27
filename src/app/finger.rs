@@ -57,16 +57,16 @@ impl Finger {
     /// Maps keys 1-0 to fingers (1=RightThumb, 0=LeftPinky).
     pub fn from_key(key: u8) -> Option<Finger> {
         match key {
-            1 => Some(Finger::RightThumb),
-            2 => Some(Finger::RightIndex),
-            3 => Some(Finger::RightMiddle),
-            4 => Some(Finger::RightRing),
-            5 => Some(Finger::RightPinky),
-            6 => Some(Finger::LeftThumb),
-            7 => Some(Finger::LeftIndex),
-            8 => Some(Finger::LeftMiddle),
-            9 => Some(Finger::LeftRing),
-            0 => Some(Finger::LeftPinky),
+            1 => Some(Finger::LeftPinky),
+            2 => Some(Finger::LeftRing),
+            3 => Some(Finger::LeftMiddle),
+            4 => Some(Finger::LeftIndex),
+            5 => Some(Finger::LeftThumb),
+            6 => Some(Finger::RightThumb),
+            7 => Some(Finger::RightIndex),
+            8 => Some(Finger::RightMiddle),
+            9 => Some(Finger::RightRing),
+            0 => Some(Finger::RightPinky),
             _ => None,
         }
     }
