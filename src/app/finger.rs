@@ -128,16 +128,16 @@ mod tests {
 
     #[test]
     fn test_finger_from_key() {
-        assert_eq!(Finger::from_key(1), Some(Finger::RightThumb));
-        assert_eq!(Finger::from_key(2), Some(Finger::RightIndex));
-        assert_eq!(Finger::from_key(3), Some(Finger::RightMiddle));
-        assert_eq!(Finger::from_key(4), Some(Finger::RightRing));
-        assert_eq!(Finger::from_key(5), Some(Finger::RightPinky));
-        assert_eq!(Finger::from_key(6), Some(Finger::LeftThumb));
-        assert_eq!(Finger::from_key(7), Some(Finger::LeftIndex));
-        assert_eq!(Finger::from_key(8), Some(Finger::LeftMiddle));
-        assert_eq!(Finger::from_key(9), Some(Finger::LeftRing));
-        assert_eq!(Finger::from_key(0), Some(Finger::LeftPinky));
+        assert_eq!(Finger::from_key(6), Some(Finger::RightThumb));
+        assert_eq!(Finger::from_key(7), Some(Finger::RightIndex));
+        assert_eq!(Finger::from_key(8), Some(Finger::RightMiddle));
+        assert_eq!(Finger::from_key(9), Some(Finger::RightRing));
+        assert_eq!(Finger::from_key(0), Some(Finger::RightPinky));
+        assert_eq!(Finger::from_key(1), Some(Finger::LeftThumb));
+        assert_eq!(Finger::from_key(2), Some(Finger::LeftIndex));
+        assert_eq!(Finger::from_key(3), Some(Finger::LeftMiddle));
+        assert_eq!(Finger::from_key(4), Some(Finger::LeftRing));
+        assert_eq!(Finger::from_key(5), Some(Finger::LeftPinky));
         assert_eq!(Finger::from_key(10), None);
     }
 
