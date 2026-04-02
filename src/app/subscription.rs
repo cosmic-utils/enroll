@@ -163,16 +163,31 @@ pub fn portal_theme_subscription(app_theme: crate::config::AppTheme) -> Subscrip
     }
 }
 
-/// **Returns** a subscription to key events 0-9, r, v, c and Ctrl + d
+/// **Returns** a subscription to key events 0-9, r, v, c, Ctrl + d, Tab, Shift + Tab, F1, and Ctrl + ,
 pub fn key_subscription() -> Subscription<Message> {
     cosmic::iced::event::listen_raw(|event, _status, _window| {
         let Event::Keyboard(keyboard::Event::KeyPressed { key, modifiers, .. }) = event else {
             return None;
         };
 
+        use crate::app::ContextPage;
         use cosmic::iced::keyboard::Key;
+        use cosmic::iced::keyboard::key::Named;
 
-        match key {
+        match &key {
+            Key::Named(Named::Tab) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
+                if modifiers.shift() {
+                    Some(Message::CycleFinger(-1))
+                } else {
+                    Some(Message::CycleFinger(1))
+                }
+            }
+            Key::Named(Named::F1) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
+                Some(Message::ToggleContextPage(ContextPage::About))
+            }
+            Key::Character(c) if modifiers.control() && c == "," => {
+                Some(Message::ToggleContextPage(ContextPage::Settings))
+            }
             Key::Character(c) if modifiers.control() && c == "d" => Some(Message::Delete),
             Key::Character(c) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
                 match c.as_str() {
