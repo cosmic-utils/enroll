@@ -92,7 +92,19 @@
     </screenshot>
   </screenshots>
   <releases>
-  	<release version="1.0.6" date="2026-04-02">
+    <release version="1.0.7" date="2026-04-08">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Updated dependencies</li>
+          <li>Ukrainian translations added</li>
+          <li>Initial Tab support</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.0.6" date="2026-04-02">
       <description>
         <p>
           Changes:

@@ -42,6 +42,7 @@ pub enum Message {
     ThemeSetting(AppTheme),
 
     SelectFingerByNumber(u8),
+    CycleFinger(i8),
 }
 
 // Section for handling of Messages
@@ -279,6 +280,7 @@ impl AppModel {
             self.enrolling_finger = None;
 
             if status == "enroll-completed" {
+                let _ = self.on_cycle_finger(1);
                 return self.list_fingers_task();
             }
         }
@@ -443,6 +445,27 @@ impl AppModel {
         if let Some(finger) = Finger::from_key(key) && !self.busy {
             self.confirm_clear = false;
             self.selected_finger = finger;
+        }
+        Task::none()
+    }
+
+    /// Cycles through selectable fingers (excludes DeleteAllUsersPrints).
+    ///
+    /// **Returns** ***Task***()
+    pub(crate) fn on_cycle_finger(&mut self, direction: i8) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
+        let fingers: Vec<Finger> = Finger::all()
+            .iter()
+            .filter(|f| f.as_finger_id().is_some())
+            .copied()
+            .collect();
+        if let Some(pos) = fingers.iter().position(|f| *f == self.selected_finger) {
+            let len = fingers.len() as i8;
+            let next = ((pos as i8 + direction) % len + len) % len;
+            self.confirm_clear = false;
+            self.selected_finger = fingers[next as usize];
         }
         Task::none()
     }
