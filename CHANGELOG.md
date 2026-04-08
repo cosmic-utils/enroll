@@ -1,3 +1,6 @@
+### 1.0.7:
+	• Ukrainian translation by @Dymkom
+	• Added initial Tab support
 ### 1.0.6:
 	• Italian translations by @albannobattistella
 	• Buttons 1-0, v, r & ctrl + d added
