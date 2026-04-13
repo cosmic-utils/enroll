@@ -25,6 +25,12 @@
     <p xml:lang="cs">
       Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
     </p>
+    <p xml:lang="cs">
+      Vyberte uživatele, pro kterého chcete otisk zaregistrovat (výchozí je aktuální uživatel), a poté prst. Klikněte na „Registrovat“ pro přidání nového otisku, „Ověřit“ pro porovnání s existujícím otiskem nebo „Smazat“ pro jeho odstranění.
+    </p>
+    <p xml:lang="cs">
+      V nabídce „Zobrazení“ najdete „Nastavení“, kde můžete upravit vzhled aplikace, nebo použít volbu „Smazat vše“, která se pokusí odstranit všechny registrované otisky ze zařízení snímače.
+    </p>
     <p xml:lang="fi">
       Sormenjälkien hallinnointi yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa jälkiä.
     </p>
