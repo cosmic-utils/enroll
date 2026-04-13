@@ -16,20 +16,8 @@
     <p>
       Fingerprint record management for single and multi-user systems. You can register, verify and delete prints.
     </p>
-    <p>
-      Select the user you wish to register, by default the current user, and then the finger. Click either Register to enroll a print for a new finger, Verify to match against an existing one or Delete to remove it.
-    </p>
-    <p>
-      From View menu you can access Settings where you can configure appearance or access Delete all option, which attempts to clear all registered prints from your scanner device.
-    </p>
     <p xml:lang="cs">
       Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
-    </p>
-    <p xml:lang="cs">
-      Vyberte uživatele, pro kterého chcete otisk zaregistrovat (výchozí je aktuální uživatel), a poté prst. Klikněte na „Registrovat“ pro přidání nového otisku, „Ověřit“ pro porovnání s existujícím otiskem nebo „Smazat“ pro jeho odstranění.
-    </p>
-    <p xml:lang="cs">
-      V nabídce „Zobrazení“ najdete „Nastavení“, kde můžete upravit vzhled aplikace, nebo použít volbu „Smazat vše“, která se pokusí odstranit všechny registrované otisky ze zařízení snímače.
     </p>
     <p xml:lang="fi">
       Sormenjälkien hallinnointi yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa jälkiä.
@@ -39,6 +27,18 @@
     </p>
     <p xml:lang="it">
       Gestione delle impronte digitali per sistemi monoutente e multiutente. Consente di creare, verificare ed eliminare le impronte digitali.
+    </p>
+    <p>
+      Select the user you wish to register, by default the current user, and then the finger. Click either Register to enroll a print for a new finger, Verify to match against an existing one or Delete to remove it.
+    </p>
+    <p xml:lang="cs">
+      Vyberte uživatele, pro kterého chcete otisk zaregistrovat (výchozí je aktuální uživatel), a poté prst. Klikněte na „Registrovat“ pro přidání nového otisku, „Ověřit“ pro porovnání s existujícím otiskem nebo „Smazat“ pro jeho odstranění.
+    </p>
+    <p>
+      From View menu you can access Settings where you can configure appearance or access Delete all option, which attempts to clear all registered prints from your scanner device.
+    </p>
+    <p xml:lang="cs">
+      V nabídce „Zobrazení“ najdete „Nastavení“, kde můžete upravit vzhled aplikace, nebo použít volbu „Smazat vše“, která se pokusí odstranit všechny registrované otisky ze zařízení snímače.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
