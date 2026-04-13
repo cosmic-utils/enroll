@@ -9,15 +9,15 @@ register = Registrovat
 verify = Ověřit
 delete = Smazat
 danger = Varování
+cancel = Zrušit
 success = Hotovo. Nyní zaregistrujte otisk.
 deleted = Otisk byl smazán.
 deleting = Mazání otisku...
 clear-device = Vymazat zařízení
 confirm-clear = Jste si jistí?
-clearing-device = Mažou se všechny otisky ze zařízení pro všechny známé uživatele...
+clearing-device = Mazání všech otisků ze zařízení pro všechny známé uživatele...
 device-cleared = Zařízení bylo vymazáno pro všechny známé uživatele.
 clear-device-confirm = Opravdu chcete vymazat otisky pro VŠECHNY známé uživatele?
-cancel = Zrušit
 
 settings-ui = Uživatelské rozhraní
 alternative-ui = Alternativní UI
