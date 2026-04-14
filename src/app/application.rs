@@ -8,11 +8,12 @@ use crate::fl;
 use cosmic::app::context_drawer;
 
 use cosmic::iced::{Alignment, Subscription};
+use cosmic::widget::Column;
 use cosmic::{
     cosmic_theme,
     prelude::*,
     theme,
-    widget::{self, column, dialog, menu, nav_bar, text},
+    widget::{self, dialog, menu, nav_bar, text},
 };
 
 use super::AppModel;
@@ -259,7 +260,6 @@ impl cosmic::Application for AppModel {
             Message::ThemeChanged(is_dark) => self.on_portal_color_scheme_changed(is_dark),
             Message::ThemeSetting(theme) => self.on_theme_setting(theme),
             Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),
-            Message::CycleFinger(direction) => self.on_cycle_finger(direction),
         }
     }
 
@@ -300,7 +300,7 @@ impl AppModel {
             .on_press(Message::OpenRepositoryUrl)
             .padding(0);
 
-        column()
+        Column::new()
             .push(icon)
             .push(title)
             .push(link)

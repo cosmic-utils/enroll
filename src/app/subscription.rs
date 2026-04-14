@@ -175,13 +175,13 @@ pub fn key_subscription() -> Subscription<Message> {
         use cosmic::iced::keyboard::key::Named;
 
         match &key {
-            Key::Named(Named::Tab) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
-                if modifiers.shift() {
-                    Some(Message::CycleFinger(-1))
-                } else {
-                    Some(Message::CycleFinger(1))
-                }
-            }
+            //Key::Named(Named::Tab) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
+            //    if modifiers.shift() {
+            //        Some(Message::CycleFinger(-1))
+            //    } else {
+            //        Some(Message::CycleFinger(1))
+            //    }
+            //}
             Key::Named(Named::F1) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
                 Some(Message::ToggleContextPage(ContextPage::About))
             }

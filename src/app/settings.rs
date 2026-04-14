@@ -5,7 +5,7 @@ use cosmic::widget::settings::item::builder;
 use cosmic::widget::settings::{item_row, section, view_column};
 use cosmic::{
     Element, cosmic_theme, theme,
-    widget::{button, checkbox, column, radio, text},
+    widget::{Column, button, checkbox, radio, text},
 };
 
 impl AppModel {
@@ -67,7 +67,7 @@ impl AppModel {
             .title(fl!("danger"))
             .add(builder(fl!("settings-clear-device")).control(item_row(vec![clear_btn.into()])));
 
-        let col = column()
+        let col = Column::new()
             .push(theme_section)
             .push(clear_section)
             .spacing(space_xs);

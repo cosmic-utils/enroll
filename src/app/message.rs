@@ -40,9 +40,7 @@ pub enum Message {
     VerifyStatus(String, bool),
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
-
     SelectFingerByNumber(u8),
-    CycleFinger(i8),
 }
 
 // Section for handling of Messages
@@ -442,7 +440,9 @@ impl AppModel {
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_select_finger_by_number(&mut self, key: u8) -> Task<cosmic::Action<Message>> {
-        if let Some(finger) = Finger::from_key(key) && !self.busy {
+        if let Some(finger) = Finger::from_key(key)
+            && !self.busy
+        {
             self.confirm_clear = false;
             self.selected_finger = finger;
         }
