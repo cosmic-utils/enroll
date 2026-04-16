@@ -39,6 +39,7 @@ verify-remove-and-retry = Ta bort fingeret och försök igen.
 verify-too-fast = För snabb touch. Försök igen.
 verify-disconnected = Enheten är frånkopplad. Stäng fönstret.
 verify-unknown-error = Det uppstod ett okänt fel.
+verify-cancelled = Verifiering avbruten.
 
 page-right-thumb = Höger tumme
 page-right-index-finger = Höger pekfinger

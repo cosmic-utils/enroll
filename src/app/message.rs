@@ -38,6 +38,7 @@ pub enum Message {
     FingerSelected(String),
     VerifyFinger,
     VerifyStatus(String, bool),
+    VerifyStop,
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
     SelectFingerByNumber(u8),
@@ -45,6 +46,14 @@ pub enum Message {
 
 // Section for handling of Messages
 impl AppModel {
+    /// Stops any ongoing verification
+    pub(crate) fn on_verify_stop(&mut self) -> Task<cosmic::Action<Message>> {
+        self.status = fl!("verify-cancelled");
+        self.verifying_finger = false;
+        self.device_proxy.as_ref().map(|p| p.verify_stop());
+        Task::none()
+    }
+
     /// Resets clear state
     ///
     /// **Returns** ***Task***()

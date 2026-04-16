@@ -257,6 +257,7 @@ impl cosmic::Application for AppModel {
             Message::LaunchUrl(url) => self.on_open_link(url),
             Message::VerifyFinger => self.on_verify_finger(),
             Message::VerifyStatus(status, done) => self.on_verify_status(status, done),
+            Message::VerifyStop => self.on_verify_stop(),
             Message::ThemeChanged(is_dark) => self.on_portal_color_scheme_changed(is_dark),
             Message::ThemeSetting(theme) => self.on_theme_setting(theme),
             Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),

@@ -248,6 +248,8 @@ impl AppModel {
         let mut cancel_btn = button::text(fl!("cancel"));
         if self.enrolling_finger.is_some() {
             cancel_btn = cancel_btn.on_press(Message::EnrollStop);
+        } else if self.verifying_finger {
+            cancel_btn = cancel_btn.on_press(Message::VerifyStop);
         }
 
         let mut row = Row::new()

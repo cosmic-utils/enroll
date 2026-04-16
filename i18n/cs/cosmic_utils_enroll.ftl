@@ -43,6 +43,7 @@ verify-remove-and-retry = Sejměte prst a zkuste to znovu.
 verify-too-fast = Dotyk byl příliš rychlý. Zkuste to znovu.
 verify-disconnected = Zařízení bylo odpojeno. Zavřete okno.
 verify-unknown-error = Došlo k neznámé chybě.
+verify-cancelled = Vерифікація скасована.
 
 page-right-thumb = Pravý palec
 page-right-index-finger = Pravý ukazováček
