@@ -257,7 +257,7 @@ impl AppModel {
             .push(verify_btn)
             .push(delete_btn);
 
-        if self.enrolling_finger.is_some() {
+        if self.enrolling_finger.is_some() || self.verifying_finger {
             row = row.push(cancel_btn);
         }
 
