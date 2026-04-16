@@ -1,6 +1,7 @@
 ### 1.0.8:
 	• Updated sv & cz translation by @bittin, @lorduskordus
 	• Removed custom tab handling as updated libcosmic works now
+	• Cancel option to an ongoing Verify process
 ### 1.0.7:
 	• Ukrainian translation by @Dymkom
 	• Added initial Tab support
