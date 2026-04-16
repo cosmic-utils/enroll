@@ -254,10 +254,10 @@ where
 /// ***net.reactivated.Fprint.Error.Internal:***
 /// if there was an internal error
 pub async fn verify_finger_process<S>(
-    connection: &zbus::Connection,
-    path: zbus::zvariant::OwnedObjectPath,
-    finger: String,
-    username: String,
+    connection: zbus::Connection,
+    path: &zbus::zvariant::OwnedObjectPath,
+    finger: &str,
+    username: &str,
     output: &mut S,
 ) -> zbus::Result<()>
 where
@@ -265,7 +265,7 @@ where
     S::Error: std::fmt::Debug + Send,
 {
     validate_username(&username)?;
-    let device = DeviceProxy::builder(connection).path(path)?.build().await?;
+    let device = DeviceProxy::builder(&connection).path(path)?.build().await?;
 
     device.claim(&username).await?;
 

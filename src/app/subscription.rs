@@ -14,7 +14,7 @@ pub(crate) struct VerifyData {
     device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
     connection: zbus::Connection,
     username: std::sync::Arc<String>,
-    finger: String,
+    finger: std::sync::Arc<String>,
 }
 
 impl VerifyData {
@@ -22,7 +22,7 @@ impl VerifyData {
         device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
         connection: zbus::Connection,
         username: std::sync::Arc<String>,
-        finger: String,
+        finger: std::sync::Arc<String>,
     ) -> Self {
         Self {
             device_path,
@@ -103,10 +103,12 @@ pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
         channel(100, move |mut output: Sender<Message>| async move {
-            let path = (*data.device_path).clone();
-            let username = (*data.username).clone();
-
-            match verify_finger_process(&data.connection, path, data.finger, username, &mut output)
+            match verify_finger_process(
+                data.connection,
+                &data.device_path,
+                &data.finger,
+                &data.username,
+                &mut output)
                 .await
             {
                 Ok(_) => {}

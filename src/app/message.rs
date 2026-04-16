@@ -46,13 +46,6 @@ pub enum Message {
 
 // Section for handling of Messages
 impl AppModel {
-    /// Stops any ongoing verification
-    pub(crate) fn on_verify_stop(&mut self) -> Task<cosmic::Action<Message>> {
-        self.status = fl!("verify-cancelled");
-        self.verifying_finger = false;
-        self.device_proxy.as_ref().map(|p| p.verify_stop());
-        Task::none()
-    }
 
     /// Resets clear state
     ///
@@ -230,6 +223,7 @@ impl AppModel {
             "verify-too-fast" => fl!("verify-too-fast"),
             "verify-disconnected" => fl!("verify-disconnected"),
             "verify-unknown-error" => fl!("verify-unknown-error"),
+            "verify-cancelled" => fl!("verify-cancelled"),
             _ => status.clone(),
         };
         self.status = status_msg;
@@ -239,6 +233,16 @@ impl AppModel {
             self.verifying_finger = false;
         }
         Task::none()
+    }
+
+    /// Stops any ongoing verification
+    pub(crate) fn on_verify_stop(&mut self) -> Task<cosmic::Action<Message>> {
+        if let (Some(path), Some(conn)) = (self.device_path.clone(), self.connection.clone()) {
+            let path = (*path).clone();
+            task_verify_stop(path, conn)
+        } else {
+            Task::none()
+        }
     }
 
     /// Starts the enroll process, set status and enroll options

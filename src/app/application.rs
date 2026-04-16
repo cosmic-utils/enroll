@@ -208,17 +208,14 @@ impl cosmic::Application for AppModel {
 
         // Add verify subscription if verifying
         if self.verifying_finger
-            && let (Some(device_path), Some(connection), Some(user)) =
-                (&self.device_path, &self.connection, &self.selected_user)
+            && let (Some(device_path), Some(connection), Some(user), Some(finger)) =
+                (&self.device_path, &self.connection, &self.selected_user, &self.enrolling_finger)
         {
             let data = VerifyData::new(
                 device_path.clone(),
                 connection.clone(),
                 user.username.clone(),
-                self.selected_finger
-                    .as_finger_id()
-                    .unwrap_or_default()
-                    .to_string(),
+                finger.clone()
             );
 
             subscriptions.push(verify_subscription(data));

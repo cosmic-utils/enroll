@@ -58,10 +58,30 @@ pub fn task_enroll_stop(
             Ok::<(), zbus::Error>(())
         },
         |res| match res {
-            Ok(_) => {
-                cosmic::Action::App(Message::EnrollStatus("enroll-cancelled".to_string(), true))
-            }
+            Ok(_) => cosmic::Action::App(Message::EnrollStatus("enroll-cancelled".to_string(), true)),
             Err(e) => cosmic::Action::App(Message::OperationError(AppError::from(e))),
+        },
+    )
+}
+
+/// **Returns** ***Task*** which:
+///
+/// Sends a signal to stop current verify process
+pub fn task_verify_stop(
+    path: zbus::zvariant::OwnedObjectPath,
+    conn: zbus::Connection,
+) -> Task<cosmic::Action<Message>> {
+    Task::perform(
+        async move {
+            let device = DeviceProxy::builder(&conn).path(path)?.build().await?;
+            let _ = device.verify_stop().await;
+            device.release().await?;
+            Ok::<(), zbus::Error>(())
+        },
+        |res| match res {
+            Ok(_) =>
+                cosmic::Action::App(Message::VerifyStatus("verify-cancelled".to_string(), true)),
+                Err(e) => cosmic::Action::App(Message::OperationError(AppError::from(e))),
         },
     )
 }
