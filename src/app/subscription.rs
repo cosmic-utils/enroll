@@ -1,7 +1,5 @@
 use crate::app::{
-    Message,
-    error::AppError,
-    fprint::{enroll_fingerprint_process, verify_finger_process},
+    Message, error::AppError, finger::Finger, fprint::{enroll_fingerprint_process, verify_finger_process}
 };
 use ashpd::desktop::settings::{ColorScheme, Settings};
 use cosmic::iced::{
@@ -14,7 +12,7 @@ pub(crate) struct VerifyData {
     device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
     connection: zbus::Connection,
     username: std::sync::Arc<String>,
-    finger: String,
+    finger: Finger,
 }
 
 impl VerifyData {
@@ -22,7 +20,7 @@ impl VerifyData {
         device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
         connection: zbus::Connection,
         username: std::sync::Arc<String>,
-        finger: String,
+        finger: Finger,
     ) -> Self {
         Self {
             device_path,
@@ -103,10 +101,12 @@ pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
         channel(100, move |mut output: Sender<Message>| async move {
-            let path = (*data.device_path).clone();
-            let username = (*data.username).clone();
-
-            match verify_finger_process(&data.connection, path, data.finger, username, &mut output)
+            match verify_finger_process(
+                data.connection,
+                &data.device_path,
+                &data.finger.as_finger_id().unwrap_or_default(),
+                &data.username,
+                &mut output)
                 .await
             {
                 Ok(_) => {}
@@ -175,13 +175,6 @@ pub fn key_subscription() -> Subscription<Message> {
         use cosmic::iced::keyboard::key::Named;
 
         match &key {
-            Key::Named(Named::Tab) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
-                if modifiers.shift() {
-                    Some(Message::CycleFinger(-1))
-                } else {
-                    Some(Message::CycleFinger(1))
-                }
-            }
             Key::Named(Named::F1) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
                 Some(Message::ToggleContextPage(ContextPage::About))
             }

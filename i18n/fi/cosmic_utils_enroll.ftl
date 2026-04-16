@@ -43,6 +43,7 @@ verify-remove-and-retry = Poista sormi ja yritä uudelleen.
 verify-too-fast = Liian nopea toisto. Yritä uudelleen.
 verify-disconnected = Laite katkaisi yhteyden. Sulje ikkuna.
 verify-unknown-error = Tapahtui tuntematon virhe.
+verify-cancelled = Varmennus peruttu.
 
 page-right-thumb = Oikea Peukalo
 page-right-index-finger = Oikea Etusormi

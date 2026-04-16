@@ -5,7 +5,7 @@ use crate::fl;
 /// The page to display in the application.
 ///
 /// Or buttons depending default UI.
-#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Default, Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub enum Finger {
     RightThumb,
     #[default]

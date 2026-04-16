@@ -43,6 +43,7 @@ verify-remove-and-retry = Remove finger and try again.
 verify-too-fast = Too fast touch. Try again.
 verify-disconnected = Device disconnected. Close window.
 verify-unknown-error = There was an unknown error.
+verify-cancelled = Verification cancelled.
 
 page-right-thumb = Right Thumb
 page-right-index-finger = Right Index Finger

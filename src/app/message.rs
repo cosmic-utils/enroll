@@ -38,15 +38,15 @@ pub enum Message {
     FingerSelected(String),
     VerifyFinger,
     VerifyStatus(String, bool),
+    VerifyStop,
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
-
     SelectFingerByNumber(u8),
-    CycleFinger(i8),
 }
 
 // Section for handling of Messages
 impl AppModel {
+
     /// Resets clear state
     ///
     /// **Returns** ***Task***()
@@ -223,6 +223,7 @@ impl AppModel {
             "verify-too-fast" => fl!("verify-too-fast"),
             "verify-disconnected" => fl!("verify-disconnected"),
             "verify-unknown-error" => fl!("verify-unknown-error"),
+            "verify-cancelled" => fl!("verify-cancelled"),
             _ => status.clone(),
         };
         self.status = status_msg;
@@ -232,6 +233,16 @@ impl AppModel {
             self.verifying_finger = false;
         }
         Task::none()
+    }
+
+    /// Stops any ongoing verification
+    pub(crate) fn on_verify_stop(&mut self) -> Task<cosmic::Action<Message>> {
+        if let (Some(path), Some(conn)) = (self.device_path.clone(), self.connection.clone()) {
+            let path = (*path).clone();
+            task_verify_stop(path, conn)
+        } else {
+            Task::none()
+        }
     }
 
     /// Starts the enroll process, set status and enroll options
@@ -442,7 +453,9 @@ impl AppModel {
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_select_finger_by_number(&mut self, key: u8) -> Task<cosmic::Action<Message>> {
-        if let Some(finger) = Finger::from_key(key) && !self.busy {
+        if let Some(finger) = Finger::from_key(key)
+            && !self.busy
+        {
             self.confirm_clear = false;
             self.selected_finger = finger;
         }

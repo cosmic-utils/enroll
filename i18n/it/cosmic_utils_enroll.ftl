@@ -43,6 +43,7 @@ verify-remove-and-retry = Rimuovi il dito e riprova.
 verify-too-fast = Tocco troppo veloce. Riprova.
 verify-disconnected = Dispositivo disconnesso. Chiudi la finestra.
 verify-unknown-error = Si è verificato un errore sconosciuto.
+verify-cancelled = Verifica annullata.
 
 page-right-thumb = Pollice Destro
 page-right-index-finger = Indice Destro

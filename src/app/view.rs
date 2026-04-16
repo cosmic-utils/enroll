@@ -6,8 +6,9 @@ use crate::app::message::Message;
 use crate::fl;
 use cosmic::iced::Length;
 use cosmic::iced::alignment::{Horizontal, Vertical};
-use cosmic::iced_widget::pick_list;
-use cosmic::widget::{button, column, container, progress_bar, row, svg, text};
+use cosmic::iced::widget::{ProgressBar, pick_list};
+use cosmic::widget::{Column, Row};
+use cosmic::widget::{button, container, svg, text};
 use cosmic::{Apply, Element};
 const FPRINT_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/fprint.svg");
 const STATUS_TEXT_SIZE: u16 = 16;
@@ -19,7 +20,7 @@ impl AppModel {
     ///
     /// **Returns** column with one or two rows of button widgets
     pub(crate) fn view_main(&self) -> Element<'_, Message> {
-        let left_hand = row()
+        let left_hand = Row::new()
             .push(self.finger_button(Finger::LeftPinky, 110.0))
             .push(self.finger_button(Finger::LeftRing, 140.0))
             .push(self.finger_button(Finger::LeftMiddle, 150.0))
@@ -28,7 +29,7 @@ impl AppModel {
             .spacing(10)
             .align_y(Vertical::Bottom);
 
-        let right_hand = row()
+        let right_hand = Row::new()
             .push(self.finger_button(Finger::RightThumb, 40.0))
             .push(self.finger_button(Finger::RightIndex, 130.0))
             .push(self.finger_button(Finger::RightMiddle, 150.0))
@@ -37,7 +38,7 @@ impl AppModel {
             .spacing(10)
             .align_y(Vertical::Bottom);
 
-        let mut column = column();
+        let mut column = Column::new();
 
         if self.core.is_condensed() {
             column = column
@@ -56,7 +57,7 @@ impl AppModel {
                         .padding(MAIN_PADDING),
                 );
         } else {
-            let hands = row()
+            let hands = Row::new()
                 .push(left_hand)
                 .push(right_hand)
                 .spacing(50)
@@ -100,7 +101,7 @@ impl AppModel {
                 }
             })));
         }
-        let col = column().push(svg).push(label);
+        let col = Column::new().push(svg).push(label);
         let container = container(col);
 
         button::custom_image_button(container, None)
@@ -113,7 +114,9 @@ impl AppModel {
 
     /// The first UI version which can still be enabled from Settings
     pub(crate) fn view_old(&self) -> Element<'_, Message> {
-        let mut column = column().push(self.view_header()).push(self.view_status());
+        let mut column = Column::new()
+            .push(self.view_header())
+            .push(self.view_status());
 
         if let Some(picker) = self.view_finger_picker() {
             column = column.push(picker);
@@ -194,11 +197,14 @@ impl AppModel {
     /// enrolling print is
     ///
     /// **Returns** progress_bar widget from *0* to *num_enroll_steps*
+    #[rustfmt::skip]
     pub(crate) fn view_progress(&self) -> Option<Element<'_, Message>> {
         self.enrolling_finger.as_ref()?;
 
         self.enroll_total_stages
-            .map(|total| progress_bar(0.0..=(total as f32), self.enroll_progress as f32).into())
+            .map(|total| {
+            	ProgressBar::new(0.0..=(total as f32), self.enroll_progress as f32).into()
+            })
     }
 
     /// State dependent generation for main controls of the application:
@@ -242,11 +248,16 @@ impl AppModel {
         let mut cancel_btn = button::text(fl!("cancel"));
         if self.enrolling_finger.is_some() {
             cancel_btn = cancel_btn.on_press(Message::EnrollStop);
+        } else if self.verifying_finger {
+            cancel_btn = cancel_btn.on_press(Message::VerifyStop);
         }
 
-        let mut row = row().push(register_btn).push(verify_btn).push(delete_btn);
+        let mut row = Row::new()
+            .push(register_btn)
+            .push(verify_btn)
+            .push(delete_btn);
 
-        if self.enrolling_finger.is_some() {
+        if self.enrolling_finger.is_some() || self.verifying_finger {
             row = row.push(cancel_btn);
         }
 

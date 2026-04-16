@@ -1,10 +1,13 @@
 [package]
 name = "cosmic-utils-enroll"
-version = "1.0.7"
+version = "1.0.8"
 edition = "2024"
 license = "MPL-2.0"
 description = "GUI for fprintd fingerprint enrolling"
 repository = "https://github.com/cosmic-utils/enroll"
+[features]
+default = []
+wgpu = ["libcosmic/wgpu"]
 
 [build-dependencies]
 vergen = { version = "8", features = ["git", "gitcl"] }
@@ -33,8 +36,8 @@ features = [
     "a11y",
     # Uses cosmic-settings-daemon to watch for config file changes
     "dbus-config",
-    # Support creating additional application windows.
-    "multi-window",
+    # Not an applet
+    "desktop",
     # On app startup, focuses an existing instance if the app is already open
     "single-instance",
     # Uses tokio as the executor for the runtime
@@ -43,8 +46,10 @@ features = [
     "winit",
     # Add Wayland support to winit
     "wayland",
-    # GPU-accelerated rendering
-    "wgpu",
+    # systemd.scope
+    "desktop-systemd-scope",
+    # desktop portal for sandboxed enviroment
+    "xdg-portal",
 ]
 
 # Uncomment to test a locally-cloned libcosmic
