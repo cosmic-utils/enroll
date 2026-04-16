@@ -111,7 +111,7 @@
         </p>
         <ul>
           <li>Verify can also be cancelled</li>
-          <li>Updated sv & cz translation by @bittin, @lorduskordus</li>
+          <li>Updated sv and cz translations</li>
           <li>Removed custom tab handling as updated libcosmic works now</li>
         </ul>
       </description>
