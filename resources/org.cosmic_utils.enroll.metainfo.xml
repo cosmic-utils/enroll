@@ -20,7 +20,7 @@
       Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
     </p>
     <p xml:lang="fi">
-      Sormenjälkien hallinnointi yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa jälkiä.
+      Yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa sormenjälkiä yhteensopivilla lukijoilla.
     </p>
     <p xml:lang="se">
       Fingerprint registreringshantering för enskilda och flera användare. Tillåter dig att registrera, verifiera och ta bort fingeravtryck.
@@ -32,7 +32,7 @@
       Select the user you wish to register, by default the current user, and then the finger. Click either Register to enroll a print for a new finger, Verify to match against an existing one or Delete to remove it.
     </p>
     <p xml:lang="fi">
-      Valitse käyttäjä jonka sormenjäljen haluat rekisteröidä. Oletuksena nykyinen käyttäjä. Sitten valitse sormi. Paina Rekisteröi lisätäksesi sormenjäljen, Varmenna vahvistaaksesi nykyisen jäljen tai Poista.
+      Valitse käyttäjä jonka sormenjäljen haluat rekisteröidä. Valitse sormi jota haluat muokata. Rekisteröi lisätäksesi sormenjäljen, Varmenna vahvistaaksesi nykyisen jäljen tai Poista poistaaksesi sen.
     </p>
     <p xml:lang="cs">
       Vyberte uživatele, pro kterého chcete otisk zaregistrovat (výchozí je aktuální uživatel), a poté prst. Klikněte na „Registrovat“ pro přidání nového otisku, „Ověřit“ pro porovnání s existujícím otiskem nebo „Smazat“ pro jeho odstranění.
@@ -41,7 +41,7 @@
       From View menu you can access Settings where you can configure appearance or access Delete all option, which attempts to clear all registered prints from your scanner device.
     </p>
     <p xml:lang="fi">
-      Näkymä valikosta pääset Asetuksiin jossa voit säätää ulkonäköä tai tyhjentää koko sormenjälkilukijan. Toimii vain yhä olemassa oleville käyttäjille.
+      Näkymä valikosta pääset Asetuksiin jossa voit säätää ulkonäköä tai tyhjentää koko sormenjälkilukijan.
     </p>
     <p xml:lang="cs">
       V nabídce „Zobrazení“ najdete „Nastavení“, kde můžete upravit vzhled aplikace, nebo použít volbu „Smazat vše“, která se pokusí odstranit všechny registrované otisky ze zařízení snímače.
