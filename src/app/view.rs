@@ -2,20 +2,96 @@
 
 use crate::app::AppModel;
 use crate::app::Finger;
-use crate::app::message::Message;
-use crate::fl;
+use crate::{
+    app::message::{Message, REPOSITORY},
+    fl,
+};
+use cosmic::cosmic_theme;
+use cosmic::iced::Alignment;
 use cosmic::iced::Length;
 use cosmic::iced::alignment::{Horizontal, Vertical};
+use cosmic::iced::widget;
 use cosmic::iced::widget::{ProgressBar, pick_list};
+use cosmic::theme;
 use cosmic::widget::{Column, Row};
 use cosmic::widget::{button, container, svg, text};
 use cosmic::{Apply, Element};
+const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/enroll.svg");
 const FPRINT_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/fprint.svg");
 const STATUS_TEXT_SIZE: u16 = 16;
+const LICENSES: &str = "https://cosmic-utils.org/enroll/licenses";
+const FREEDESKTOP_FPRINT: &str = "https://fprint.freedesktop.org/";
+const WIKI_ARCH: &str = "https://wiki.archlinux.org/title/Fprint#Login_configuration";
 pub(crate) const MAIN_PADDING: u16 = 20;
 pub(crate) const MAIN_SPACING: u16 = 20;
 
 impl AppModel {
+    /// The about page for this app.
+    pub fn about(&self) -> Element<'_, Message> {
+        let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
+
+        let icon = widget::svg(widget::svg::Handle::from_memory(APP_ICON));
+
+        let title = text::title3(fl!("app-title"));
+
+        let hash = env!("VERGEN_GIT_SHA");
+        let short_hash: String = hash.chars().take(7).collect();
+        let date = env!("VERGEN_GIT_COMMIT_DATE");
+
+        let link = button::link(REPOSITORY)
+            .on_press(Message::OpenRepositoryUrl)
+            .padding(0);
+
+        let license_info = text::title3(fl!("about-licenses"));
+        let licenses = button::link(LICENSES)
+            .on_press(Message::LaunchUrl(LICENSES.into()))
+            .padding(0);
+
+        Column::new()
+            .push(icon)
+            .push(title)
+            .push(link)
+            .push(
+                button::link(fl!(
+                    "git-description",
+                    hash = short_hash.as_str(),
+                    date = date
+                ))
+                .on_press(Message::LaunchUrl(format!("{REPOSITORY}/commits/{hash}")))
+                .padding(0),
+            )
+            .push(license_info)
+            .push(licenses)
+            .align_x(Alignment::Center)
+            .spacing(space_xxs)
+            .into()
+    }
+
+    /// Help page
+    pub fn help(&self) -> Element<'_, Message> {
+        let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
+        let help = Column::new();
+        let title_fprintd = text::title3("Fprintd");
+        let help_section_fprintd = text(fl!("help-fprintd"));
+        let fprintd_url = button::link(FREEDESKTOP_FPRINT)
+            .on_press(Message::LaunchUrl(FREEDESKTOP_FPRINT.into()))
+            .padding(0);
+        let title_pam = text::title3("PAM");
+        let help_section_pam = text(fl!("help-pam"));
+        let wiki_arch_url = button::link(WIKI_ARCH)
+            .on_press(Message::LaunchUrl(WIKI_ARCH.into()))
+            .padding(0);
+        help.push(title_fprintd)
+            .push(help_section_fprintd)
+            .push(fprintd_url)
+            .push(title_pam)
+            .push(help_section_pam)
+            .push(wiki_arch_url)
+            .align_x(Alignment::Center)
+            .spacing(space_xxs)
+            .into()
+    }
+
     /// Used to construct the main view of application
     ///
     /// **Returns** column with one or two rows of button widgets

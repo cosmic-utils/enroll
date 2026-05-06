@@ -1,6 +1,7 @@
 app-title = Enroll Fingerprint
 about = About
 settings = Settings
+help = Help
 view = View
 fprint = Enroll
 welcome = Register and/or delete fingerprints
@@ -18,6 +19,10 @@ confirm-clear = Are you sure?
 clearing-device = Clearing all fingerprints from device for all known users...
 device-cleared = Device cleared for all known users.
 clear-device-confirm = Are you sure you want to clear fingerprints for ALL known users?
+
+about-licenses = License information
+help-fprintd = If you have any issues please first check you have fprintd correctly installed. You can find more information from their website:
+help-pam = Also to be able to utilize fingerprint effectively PAM must be configured to use fprintd module for authentication. You can find examples here:
 
 settings-ui = User Interface
 alternative-ui = Alternative UI

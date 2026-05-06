@@ -76,6 +76,7 @@ mod application;
 pub enum MenuAction {
     About,
     Settings,
+    Help,
 }
 
 impl menu::action::MenuAction for MenuAction {
@@ -85,6 +86,7 @@ impl menu::action::MenuAction for MenuAction {
         match self {
             MenuAction::About => Message::ToggleContextPage(ContextPage::About),
             MenuAction::Settings => Message::ToggleContextPage(ContextPage::Settings),
+            MenuAction::Help => Message::ToggleContextPage(ContextPage::Help),
         }
     }
 }
@@ -94,6 +96,7 @@ impl menu::action::MenuAction for MenuAction {
 pub enum ContextPage {
     About,
     Settings,
+    Help,
 }
 
 #[cfg(test)]
