@@ -14,7 +14,7 @@
   </developer>
   <description>
     <p>
-      Fingerprint record management for single and multi-user systems. You can register, verify and delete prints.
+      Enables you in registering, verifying and deleting fingerprint records. Can also be used for managing them for another user.
     </p>
     <p xml:lang="cs">
       Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
@@ -38,10 +38,10 @@
       Vyberte uživatele, pro kterého chcete otisk zaregistrovat (výchozí je aktuální uživatel), a poté prst. Klikněte na „Registrovat“ pro přidání nového otisku, „Ověřit“ pro porovnání s existujícím otiskem nebo „Smazat“ pro jeho odstranění.
     </p>
     <p>
-      From View menu you can access Settings where you can configure appearance or access Delete all option, which attempts to clear all registered prints from your scanner device.
+      From View menu you can access Settings, About & Help pages for more information or configuration options.
     </p>
     <p xml:lang="fi">
-      Näkymä valikosta pääset Asetuksiin jossa voit säätää ulkonäköä tai tyhjentää koko sormenjälkilukijan.
+      Näkymä valikosta pääset Asetuksiin, Tietoa tai Apua valikkoihin joista saat tietoa ongelmiin tai voit muutta miten sovellus toimii.
     </p>
     <p xml:lang="cs">
       V nabídce „Zobrazení“ najdete „Nastavení“, kde můžete upravit vzhled aplikace, nebo použít volbu „Smazat vše“, která se pokusí odstranit všechny registrované otisky ze zařízení snímače.
@@ -94,7 +94,7 @@
   <screenshots>
     <screenshot type="default">
       <image>
-        https://user.fm/files/v2-1be40ab863867624714661b062d93218/main.png
+        https://user.fm/files/v2-3c00f9a00451da9a7c3e51420129b7f7/enroll-view.png
       </image>
       <caption>Main UI</caption>
       <caption xml:lang="cs">Hlavní UI</caption>
@@ -104,6 +104,16 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.0.9" date="2026-05-06">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Added Help section with links</li>
+          <li>Updated translations</li>
+        </ul>
+      </description>
     <release version="1.0.8" date="2026-04-16">
       <description>
         <p>
