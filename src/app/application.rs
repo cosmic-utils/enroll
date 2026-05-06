@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MPL-2.0
-use crate::app::message::{Message, REPOSITORY};
+use crate::app::message::Message;
 use crate::app::tasks::task_connect;
 use crate::app::{ContextPage, MenuAction};
 use crate::app::{error::*, finger::*, fprint::*, subscription::*, users::*};
@@ -7,19 +7,14 @@ use crate::config::{Config, read_config};
 use crate::fl;
 use cosmic::app::context_drawer;
 
-use cosmic::iced::{Alignment, Subscription};
-use cosmic::widget::Column;
+use cosmic::iced::Subscription;
 use cosmic::{
-    cosmic_theme,
     prelude::*,
-    theme,
-    widget::{self, dialog, menu, nav_bar, text},
+    widget::{self, dialog, menu, nav_bar},
 };
 
 use super::AppModel;
 use std::collections::HashMap;
-
-const APP_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalable/apps/enroll.svg");
 
 /// Turns AppModel to a COSMIC application
 impl cosmic::Application for AppModel {
@@ -96,6 +91,7 @@ impl cosmic::Application for AppModel {
                 vec![
                     menu::Item::Button(fl!("about"), None, MenuAction::About),
                     menu::Item::Button(fl!("settings"), None, MenuAction::Settings),
+                    menu::Item::Button(fl!("help"), None, MenuAction::Help),
                 ],
             ),
         )]);
@@ -129,6 +125,11 @@ impl cosmic::Application for AppModel {
                 Message::ToggleContextPage(ContextPage::Settings),
             )
             .title(fl!("settings")),
+            ContextPage::Help => context_drawer::context_drawer(
+                self.help(),
+                Message::ToggleContextPage(ContextPage::Help),
+            )
+            .title(fl!("help")),
         })
     }
 
@@ -280,42 +281,8 @@ impl cosmic::Application for AppModel {
     }
 }
 
-// TODO: about could be in view. others in tasks.
+// TODO: move into tasks.
 impl AppModel {
-    /// The about page for this app.
-    pub fn about(&self) -> Element<'_, Message> {
-        let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
-
-        let icon = widget::svg(widget::svg::Handle::from_memory(APP_ICON));
-
-        let title = text::title3(fl!("app-title"));
-
-        let hash = env!("VERGEN_GIT_SHA");
-        let short_hash: String = hash.chars().take(7).collect();
-        let date = env!("VERGEN_GIT_COMMIT_DATE");
-
-        let link = widget::button::link(REPOSITORY)
-            .on_press(Message::OpenRepositoryUrl)
-            .padding(0);
-
-        Column::new()
-            .push(icon)
-            .push(title)
-            .push(link)
-            .push(
-                widget::button::link(fl!(
-                    "git-description",
-                    hash = short_hash.as_str(),
-                    date = date
-                ))
-                .on_press(Message::LaunchUrl(format!("{REPOSITORY}/commits/{hash}")))
-                .padding(0),
-            )
-            .align_x(Alignment::Center)
-            .spacing(space_xxs)
-            .into()
-    }
-
     /// Gets all registered prints for requested user
     pub(crate) fn list_fingers_task(&self) -> Task<cosmic::Action<Message>> {
         if let (Some(proxy), Some(user)) = (&self.device_proxy, &self.selected_user) {

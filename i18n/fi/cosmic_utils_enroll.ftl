@@ -1,10 +1,11 @@
 app-title = Lisää sormenjälki
 about = Tietoa
 settings = Asetukset
-view = Katso
+view = Näkymä
+help = Apua
 fprint = Rekisteröi sormenjälki
 welcome = Rekisteröi tai poista sormenjälkiä
-git-description = Git julkaisu {$hash} päivänä {$date}
+git-description = Git julkaisu {$hash} päivältä {$date}
 register = Rekisteröi
 verify = Varmenna
 delete = Poista
@@ -18,6 +19,10 @@ confirm-clear = Oletko varma?
 clearing-device = Tyhjennetään laitteen kaikki käyttäjien sormenjäljet...
 device-cleared = Laite tyhjennetty.
 clear-device-confirm = Oletko varma, että haluat poistaa kaikki käyttäjien sormenjäljet?
+
+about-licenses = Lisenssit
+help-fprintd = Laitteellasi täytyy olla asennettuna ja toiminnassa fprintd niminen ohjelma. Lisätietoa heidän verkkosivuiltaan:
+help-pam = Jotta saat kaiken irti sormenjälkilukijastasi tulee PAM säätää kohdilleen. Esimerkkejä tältä sivulta:
 
 settings-ui = Käyttöliittymä
 alternative-ui = Toinen käyttöliittymä
@@ -46,20 +51,20 @@ verify-unknown-error = Tapahtui tuntematon virhe.
 verify-cancelled = Varmennus peruttu.
 
 page-right-thumb = Oikea Peukalo
-page-right-index-finger = Oikea Etusormi
-page-right-middle-finger = Oikea Keskisormi
+page-right-index-finger = Oikea Etu- sormi
+page-right-middle-finger = Oikea Keski- sormi
 page-right-ring-finger = Oikea Nimetön
-page-right-little-finger = Oikea Pikkusormi
+page-right-little-finger = Oikea Pikku- sormi
 page-left-thumb = Vasen Peukalo
-page-left-index-finger = Vasen Etusormi
-page-left-middle-finger = Vasen Keskisormi
+page-left-index-finger = Vasen Etu- sormi
+page-left-middle-finger = Vasen Keski- sormi
 page-left-ring-finger = Vasen Nimetön
-page-left-little-finger = Vasen Pikkusormi
+page-left-little-finger = Vasen Pikku- sormi
 page-delete-all-users-prints = Poista kaikki käyttäjien sormenjäljet
 
 status-connecting = Yhdistetään järjestelmäväylään...
 status-searching-device = Etsitään sormenjälkilukijaa...
-status-device-found = Laite löydetty. Valmis.
+status-device-found = Laite löydetty. Valmiina.
 status-no-device-found = Sormenjälkiä ei löytynyt.
 status-starting-enrollment = Aloitetaan rekisteröintiä...
 
@@ -73,9 +78,9 @@ enroll-unknown-error = Tuntematon virhe.
 enroll-completed = Rekisteröinti onnistui.
 enroll-failed = Rekisteröinti epäonnistui.
 enroll-disconnected = Laite katkaisi yhteyden.
-enroll-data-full = Sormenjälkien tallennus on täynnä. Poista jotkin sormenjälkit.
-enroll-too-fast = Pyyhkäisy liian nopea. Pyyhkäise hitaammin.
-enroll-duplicate = Tämä sormi on jo rekisteröity.
+enroll-data-full = Sormenjälkien tallennus on täynnä. Poista jotkin sormenjäljet.
+enroll-too-fast = Liian nopea pyyhkäisy. Tee uudelleen hitaammin.
+enroll-duplicate = Sormi on jo rekisteröity.
 enroll-cancelled = Rekisteröinti peruttu.
 
 error-permission-denied = Ei sallittu.
