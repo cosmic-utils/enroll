@@ -17,6 +17,7 @@ pub enum AppError {
 }
 
 impl AppError {
+    #[rust_analyzer::skip]
     pub fn localized_message(&self) -> String {
         match self {
             AppError::PermissionDenied => fl!("error-permission-denied"),
