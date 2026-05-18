@@ -46,7 +46,6 @@ pub enum Message {
 
 // Section for handling of Messages
 impl AppModel {
-
     /// Resets clear state
     ///
     /// **Returns** ***Task***()
@@ -367,7 +366,7 @@ impl AppModel {
             self.enrolled_fingers.clear();
         } else {
             self.enrolled_fingers
-                .retain(|f| f != self.selected_finger.as_finger_id().unwrap());
+                .retain(|f| Some(f.as_str()) != self.selected_finger.as_finger_id());
         }
 
         Task::none()
