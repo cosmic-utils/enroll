@@ -265,7 +265,10 @@ where
     S::Error: std::fmt::Debug + Send,
 {
     validate_username(&username)?;
-    let device = DeviceProxy::builder(&connection).path(path)?.build().await?;
+    let device = DeviceProxy::builder(&connection)
+        .path(path)?
+        .build()
+        .await?;
 
     device.claim(&username).await?;
 

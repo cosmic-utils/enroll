@@ -320,13 +320,12 @@ impl AppModel {
             return Task::none();
         }
 
-        if let (Some(path), Some(conn)) = (self.device_path.clone(), self.connection.clone()) {
+        if let (Some(path), Some(conn)) = (&self.device_path, &self.connection) {
             self.status = fl!("clearing-device");
             self.busy = true;
             self.confirm_clear = false;
-            let path = (*path).clone();
             let usernames: Vec<String> = self.users.iter().map(|u| (*u.username).clone()).collect();
-            return task_clear_device(path, usernames, conn);
+            return task_clear_device(path.as_ref().to_owned(), usernames, conn.clone());
         }
         Task::none()
     }
