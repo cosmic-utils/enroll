@@ -44,6 +44,8 @@ pub struct AppModel {
     status: String,
     // Currently selected device path
     device_path: Option<Arc<zbus::zvariant::OwnedObjectPath>>,
+    // All devices
+    devices: Vec<zbus::zvariant::OwnedObjectPath>,
     // Reused device proxy
     device_proxy: Option<DeviceProxy<'static>>,
     // Shared DBus connection

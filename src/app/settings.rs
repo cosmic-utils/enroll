@@ -63,12 +63,17 @@ impl AppModel {
                 ),
             );
 
+        let first_device_name = self.devices.first().unwrap().as_ref().to_ascii_lowercase();
+
+        let device_section = section().title(first_device_name);
+
         let clear_section = section()
             .title(fl!("danger"))
             .add(builder(fl!("settings-clear-device")).control(item_row(vec![clear_btn.into()])));
 
         let col = Column::new()
             .push(theme_section)
+            .push(device_section)
             .push(clear_section)
             .spacing(space_xs);
         view_column(vec![col.into()]).into()

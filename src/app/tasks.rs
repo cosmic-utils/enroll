@@ -62,6 +62,18 @@ pub fn task_delete_prints(
     )
 }
 
+pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>> {
+    Task::perform(
+        async move {
+            match find_all_devices(&conn).await {
+                Ok(devices) => Message::UpdateDevices(devices),
+                Err(e) => Message::OperationError(AppError::from(e)),
+            }
+        },
+        cosmic::Action::App,
+    )
+}
+
 /// **Returns** ***Task*** which:
 ///
 /// Requests deletion of given users given print

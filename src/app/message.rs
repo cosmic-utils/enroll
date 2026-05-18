@@ -26,6 +26,7 @@ pub enum Message {
     Register,
     ConnectionReady(zbus::Connection),
     DeviceFound(Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>),
+    UpdateDevices(Vec<zbus::zvariant::OwnedObjectPath>),
     OperationError(AppError),
     EnrollStart(Option<u32>),
     EnrollStatus(String, bool),
@@ -87,15 +88,16 @@ impl AppModel {
     /// After DBus connection is established searches queries it for fprintd default device
     ///
     /// **Returns** ***task_find_device***(*Connection*)
-    pub(crate) fn on_connection_ready(
-        &mut self,
-        conn: zbus::Connection,
-    ) -> Task<cosmic::Action<Message>> {
+    pub fn on_connection_ready(&mut self, conn: zbus::Connection) -> Task<cosmic::Action<Message>> {
         self.connection = Some(conn.clone());
         self.status = fl!("status-searching-device");
 
         let conn_clone = conn.clone();
-        task_find_device(conn_clone)
+        let clone_conn = conn.clone();
+        Task::batch(vec![
+            task_find_device(conn_clone),
+            get_devices_task(clone_conn),
+        ])
     }
 
     /// Toggles the context page
@@ -159,9 +161,20 @@ impl AppModel {
         Task::none()
     }
 
+    /// Stores fingerprint scanner devices received
+    ///
+    /// Return ***Task***::**none**()
+    pub(crate) fn on_devices_found(
+        &mut self,
+        devices: Vec<zbus::zvariant::OwnedObjectPath>,
+    ) -> Task<cosmic::Action<Message>> {
+        self.devices = devices;
+        Task::none()
+    }
+
     /// Requests users enrolled prints
     ///
-    /// **Returns** either ***Task***() or ***list_fingers_task***()
+    /// **Returns** either ***Task***::**none**() or ***list_fingers_task***()
     pub(crate) fn on_device_found(
         &mut self,
         device_info: Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>,

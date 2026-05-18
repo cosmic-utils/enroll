@@ -9,6 +9,7 @@ use zbus::proxy;
 )]
 pub trait Manager {
     fn get_default_device(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn get_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
 }
 
 #[proxy(

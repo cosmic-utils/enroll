@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
-use crate::app::message::Message;
-use crate::app::tasks::task_connect;
-use crate::app::{ContextPage, MenuAction};
-use crate::app::{finger::*, subscription::*, users::*};
+use crate::app::{
+    ContextPage, MenuAction, finger::*, message::Message, subscription::*, tasks::task_connect,
+    users::*,
+};
 use crate::config::{Config, read_config};
 use crate::fl;
 use cosmic::app::context_drawer;
@@ -61,6 +61,7 @@ impl cosmic::Application for AppModel {
             config_handler,
             status: fl!("status-connecting"),
             device_path: None,
+            devices: Vec::new(),
             device_proxy: None,
             connection: None,
             busy: true,
@@ -237,6 +238,7 @@ impl cosmic::Application for AppModel {
         match message {
             Message::ConnectionReady(conn) => self.on_connection_ready(conn),
             Message::FingerSelected(finger) => self.on_finger_selected(finger),
+            Message::UpdateDevices(devices) => self.on_devices_found(devices),
             Message::DeviceFound(path) => self.on_device_found(path),
             Message::EnrolledFingers(fingers) => self.on_fingers_listed(fingers),
             Message::OperationError(err) => self.on_error(err),
