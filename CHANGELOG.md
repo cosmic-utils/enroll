@@ -1,6 +1,8 @@
+### 1.1.0:
+	Choosing scanner device in Settings
 ### 1.0.9:
-  • New Help page into View menu
-  • Improved fi translations
+	• New Help page into View menu
+	• Improved fi translations
 ### 1.0.8:
 	• Updated sv & cz translation by @bittin, @lorduskordus
 	• Removed custom tab handling as updated libcosmic works now
