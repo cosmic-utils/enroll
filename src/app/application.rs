@@ -2,7 +2,7 @@
 use crate::app::message::Message;
 use crate::app::tasks::task_connect;
 use crate::app::{ContextPage, MenuAction};
-use crate::app::{error::*, finger::*, fprint::*, subscription::*, users::*};
+use crate::app::{finger::*, subscription::*, users::*};
 use crate::config::{Config, read_config};
 use crate::fl;
 use cosmic::app::context_drawer;
@@ -275,44 +275,5 @@ impl cosmic::Application for AppModel {
             .find(|user| self.nav.text(id).is_some_and(|f| f == user.to_string()));
 
         Task::batch(vec![self.update_title_task(), self.list_fingers_task()])
-    }
-}
-
-// TODO: move into tasks.
-impl AppModel {
-    /// Gets all registered prints for requested user
-    pub(crate) fn list_fingers_task(&self) -> Task<cosmic::Action<Message>> {
-        if let (Some(proxy), Some(user)) = (&self.device_proxy, &self.selected_user) {
-            let proxy = proxy.clone();
-            let username = (*user.username).clone();
-            return Task::perform(
-                async move {
-                    match list_enrolled_fingers_dbus(proxy, username).await {
-                        Ok(fingers) => Message::EnrolledFingers(fingers),
-                        Err(e) => Message::OperationError(
-                            AppError::from(e).with_context("Failed to list fingers"),
-                        ),
-                    }
-                },
-                cosmic::Action::App,
-            );
-        }
-        Task::none()
-    }
-
-    /// Updates the header and window titles.
-    fn update_title_task(&mut self) -> Task<cosmic::Action<Message>> {
-        let mut window_title = fl!("app-title");
-
-        if let Some(page) = self.nav.text(self.nav.active()) {
-            window_title.push_str(" — ");
-            window_title.push_str(page);
-        }
-
-        if let Some(id) = self.core.main_window_id() {
-            self.set_window_title(window_title, id)
-        } else {
-            Task::none()
-        }
     }
 }

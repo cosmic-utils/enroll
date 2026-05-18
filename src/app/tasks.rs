@@ -1,8 +1,47 @@
 // SPDX-License-Identifier: MPL-2.0
 
+use crate::app::AppModel;
 use crate::app::{error::AppError, fprint::*, message::Message};
-use crate::fprint_dbus::*;
-use cosmic::Task;
+use crate::{fl, fprint_dbus::*};
+use cosmic::{ApplicationExt, Task};
+
+impl AppModel {
+    /// Gets all registered prints for requested user
+    pub(crate) fn list_fingers_task(&self) -> Task<cosmic::Action<Message>> {
+        if let (Some(proxy), Some(user)) = (&self.device_proxy, &self.selected_user) {
+            let proxy = proxy.clone();
+            let username = (*user.username).clone();
+            return Task::perform(
+                async move {
+                    match list_enrolled_fingers_dbus(proxy, username).await {
+                        Ok(fingers) => Message::EnrolledFingers(fingers),
+                        Err(e) => Message::OperationError(
+                            AppError::from(e).with_context("Failed to list fingers"),
+                        ),
+                    }
+                },
+                cosmic::Action::App,
+            );
+        }
+        Task::none()
+    }
+
+    /// Updates the header and window titles.
+    pub fn update_title_task(&mut self) -> Task<cosmic::Action<Message>> {
+        let mut window_title = fl!("app-title");
+
+        if let Some(page) = self.nav.text(self.nav.active()) {
+            window_title.push_str(" — ");
+            window_title.push_str(page);
+        }
+
+        if let Some(id) = self.core.main_window_id() {
+            self.set_window_title(window_title, id)
+        } else {
+            Task::none()
+        }
+    }
+}
 
 /// **Returns** ***Task*** which:
 ///
@@ -58,7 +97,9 @@ pub fn task_enroll_stop(
             Ok::<(), zbus::Error>(())
         },
         |res| match res {
-            Ok(_) => cosmic::Action::App(Message::EnrollStatus("enroll-cancelled".to_string(), true)),
+            Ok(_) => {
+                cosmic::Action::App(Message::EnrollStatus("enroll-cancelled".to_string(), true))
+            }
             Err(e) => cosmic::Action::App(Message::OperationError(AppError::from(e))),
         },
     )
@@ -79,9 +120,10 @@ pub fn task_verify_stop(
             Ok::<(), zbus::Error>(())
         },
         |res| match res {
-            Ok(_) =>
-                cosmic::Action::App(Message::VerifyStatus("verify-cancelled".to_string(), true)),
-                Err(e) => cosmic::Action::App(Message::OperationError(AppError::from(e))),
+            Ok(_) => {
+                cosmic::Action::App(Message::VerifyStatus("verify-cancelled".to_string(), true))
+            }
+            Err(e) => cosmic::Action::App(Message::OperationError(AppError::from(e))),
         },
     )
 }
