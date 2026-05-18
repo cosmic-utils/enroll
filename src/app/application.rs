@@ -270,12 +270,9 @@ impl cosmic::Application for AppModel {
         self.confirm_clear = false;
         // Activate the page in the model.
         self.nav.activate(id);
-        let users = self.users.clone();
-        for user in users {
-            if self.nav.text(id).is_some_and(|f| f == user.to_string()) {
-                self.selected_user = Some(user);
-            }
-        }
+        self.users
+            .iter()
+            .find(|user| self.nav.text(id).is_some_and(|f| f == user.to_string()));
 
         Task::batch(vec![self.update_title_task(), self.list_fingers_task()])
     }
