@@ -85,8 +85,8 @@
     <keyword xml:lang="it">COSMIC</keyword>
   </keywords>
   <branding>
-    <color type="primary" scheme_preference="light">#7ea5ae</color>
-    <color type="primary" scheme_preference="dark">#381a38</color>
+    <color type="primary" scheme_preference="light">#faa298</color>
+    <color type="primary" scheme_preference="dark">#7f2c22</color>
   </branding>
   <content_rating type="oars-1.1" />
   <url type="homepage">https://cosmic-utils.org</url>
@@ -101,6 +101,18 @@
       <caption xml:lang="fi">Pääkäyttöliittymä</caption>
       <caption xml:lang="se">Huvudsida</caption>
       <caption xml:lang="it">Interfaccia principale</caption>
+    </screenshot>
+    <screenshot>
+      <image>
+        https://user.fm/files/v2-24d6c8fc18e84f95c0e38c10fc193bb6/settings.png
+      </image>
+      <caption>Settings sidebar</caption>
+    </screenshot>
+    <screenshot>
+      <image>
+        https://user.fm/files/v2-ea42cb8f02e66d95020cdde9529c6e19/user.png
+      </image>
+      <caption>User selection</caption>
     </screenshot>
   </screenshots>
   <releases>
