@@ -110,6 +110,7 @@
           Changes:
         </p>
         <ul>
+          <li>Change scanner device in Settings</li>
           <li>Avatars are now displayed next to users real name</li>
         </ul>
       </description>

@@ -1,5 +1,6 @@
 ### 1.1.0:
-	Display user avatar on multi-user systems
+	• Support for multiple scanner devices
+	• Display user avatar on multi-user systems
 ### 1.0.9:
 	• New Help page into View menu
 	• Improved fi translations
