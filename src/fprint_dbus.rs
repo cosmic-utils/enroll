@@ -9,6 +9,7 @@ use zbus::proxy;
 )]
 pub trait Manager {
     fn get_default_device(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn get_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
 }
 
 #[proxy(
@@ -36,4 +37,7 @@ pub trait Device {
 
     #[zbus(property, name = "num-enroll-stages")]
     fn num_enroll_stages(&self) -> zbus::Result<i32>;
+
+    #[zbus(property, name = "name")]
+    fn name(&self) -> zbus::Result<String>;
 }

@@ -24,6 +24,13 @@ pub async fn find_device(
     Ok((path, device))
 }
 
+pub async fn find_all_devices(
+    connection: &zbus::Connection,
+) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>> {
+    let manager = ManagerProxy::new(connection).await?;
+    Ok(manager.get_devices().await?)
+}
+
 /// fprintd DBus API function for requesting users registered prints
 /// # Return
 /// Array containing all users registered fingerprints as strings
@@ -265,7 +272,10 @@ where
     S::Error: std::fmt::Debug + Send,
 {
     validate_username(&username)?;
-    let device = DeviceProxy::builder(&connection).path(path)?.build().await?;
+    let device = DeviceProxy::builder(&connection)
+        .path(path)?
+        .build()
+        .await?;
 
     device.claim(&username).await?;
 

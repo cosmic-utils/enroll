@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
-use crate::app::message::Message;
-use crate::app::tasks::task_connect;
-use crate::app::{ContextPage, MenuAction};
-use crate::app::{error::*, finger::*, fprint::*, subscription::*, users::*};
+use crate::app::{
+    ContextPage, MenuAction, finger::*, message::Message, subscription::*, tasks::task_connect,
+    users::*,
+};
 use crate::config::{Config, read_config};
 use crate::fl;
 use cosmic::app::context_drawer;
@@ -61,6 +61,7 @@ impl cosmic::Application for AppModel {
             config_handler,
             status: fl!("status-connecting"),
             device_path: None,
+            devices: Vec::new(),
             device_proxy: None,
             connection: None,
             busy: true,
@@ -237,6 +238,7 @@ impl cosmic::Application for AppModel {
         match message {
             Message::ConnectionReady(conn) => self.on_connection_ready(conn),
             Message::FingerSelected(finger) => self.on_finger_selected(finger),
+            Message::UpdateDevices(devices) => self.on_devices_found(devices),
             Message::DeviceFound(path) => self.on_device_found(path),
             Message::EnrolledFingers(fingers) => self.on_fingers_listed(fingers),
             Message::OperationError(err) => self.on_error(err),
@@ -259,6 +261,7 @@ impl cosmic::Application for AppModel {
             Message::ThemeChanged(is_dark) => self.on_portal_color_scheme_changed(is_dark),
             Message::ThemeSetting(theme) => self.on_theme_setting(theme),
             Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),
+            Message::SelectDevice(index) => self.on_select_device(index),
         }
     }
 
@@ -270,52 +273,12 @@ impl cosmic::Application for AppModel {
         self.confirm_clear = false;
         // Activate the page in the model.
         self.nav.activate(id);
-        let users = self.users.clone();
-        for user in users {
-            if self.nav.text(id).is_some_and(|f| f == user.to_string()) {
-                self.selected_user = Some(user);
-            }
-        }
+        self.selected_user = self
+            .users
+            .iter()
+            .find(|user| self.nav.text(id).is_some_and(|f| f == user.to_string()))
+            .cloned();
 
         Task::batch(vec![self.update_title_task(), self.list_fingers_task()])
-    }
-}
-
-// TODO: move into tasks.
-impl AppModel {
-    /// Gets all registered prints for requested user
-    pub(crate) fn list_fingers_task(&self) -> Task<cosmic::Action<Message>> {
-        if let (Some(proxy), Some(user)) = (&self.device_proxy, &self.selected_user) {
-            let proxy = proxy.clone();
-            let username = (*user.username).clone();
-            return Task::perform(
-                async move {
-                    match list_enrolled_fingers_dbus(proxy, username).await {
-                        Ok(fingers) => Message::EnrolledFingers(fingers),
-                        Err(e) => Message::OperationError(
-                            AppError::from(e).with_context("Failed to list fingers"),
-                        ),
-                    }
-                },
-                cosmic::Action::App,
-            );
-        }
-        Task::none()
-    }
-
-    /// Updates the header and window titles.
-    fn update_title_task(&mut self) -> Task<cosmic::Action<Message>> {
-        let mut window_title = fl!("app-title");
-
-        if let Some(page) = self.nav.text(self.nav.active()) {
-            window_title.push_str(" — ");
-            window_title.push_str(page);
-        }
-
-        if let Some(id) = self.core.main_window_id() {
-            self.set_window_title(window_title, id)
-        } else {
-            Task::none()
-        }
     }
 }

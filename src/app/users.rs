@@ -35,7 +35,6 @@ pub fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption
         }
     }
 
-    // TODO: to use actual icon need custom nav
     let mut nav = nav_bar::Model::default();
 
     let mut selected_user = None;
@@ -44,13 +43,30 @@ pub fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption
         .flatten()
         .map(|u| u.name);
 
-    // TODO: use actual icon
     for user_opt in &users {
-        let id = nav
-            .insert()
-            .text(user_opt.to_string())
-            .icon(icon::from_name("user-idle-symbolic"))
-            .id();
+        let mut item = nav.insert().text(user_opt.to_string());
+        let mut icon_str = user_opt.icon.as_str();
+
+        if icon_str.starts_with("file://") {
+            icon_str = &icon_str[7..];
+        }
+
+        let icon: cosmic::widget::Icon = if icon_str.is_empty() {
+            icon::from_name("user-idle-symbolic").into()
+        } else if icon_str.contains('/') {
+            let path = std::path::PathBuf::from(icon_str);
+            if path.exists() {
+                icon::icon(icon::from_path(path)).size(24)
+            } else {
+                tracing::warn!("User icon path does not exist: {}", icon_str);
+                icon::from_name("user-idle-symbolic").into()
+            }
+        } else {
+            icon::from_name(icon_str).into()
+        };
+
+        item = item.icon(icon);
+        let id = item.id();
         if selected_user.is_none() || current_username.as_deref() == Some(&*user_opt.username) {
             nav.activate(id);
             selected_user = Some(user_opt.clone());

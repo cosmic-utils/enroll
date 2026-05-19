@@ -63,12 +63,31 @@ impl AppModel {
                 ),
             );
 
+        let device_count = self.devices.iter().count();
+
+        let mut device_section = section().title(fl!("settings-device", nbr = device_count));
+
+        for (index, device) in self.devices.iter().enumerate() {
+            let is_selected = self
+                .device_path
+                .as_ref()
+                .is_some_and(|p| **p == device.path);
+
+            device_section = device_section.add(radio(
+                text::heading(&device.name),
+                index,
+                if is_selected { Some(index) } else { None },
+                Message::SelectDevice,
+            ));
+        }
+
         let clear_section = section()
             .title(fl!("danger"))
             .add(builder(fl!("settings-clear-device")).control(item_row(vec![clear_btn.into()])));
 
         let col = Column::new()
             .push(theme_section)
+            .push(device_section)
             .push(clear_section)
             .spacing(space_xs);
         view_column(vec![col.into()]).into()

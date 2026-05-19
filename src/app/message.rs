@@ -17,6 +17,12 @@ pub const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 /// Messages emitted by the application and its widgets.
 #[derive(Debug, Clone)]
+pub struct DeviceOption {
+    pub path: zbus::zvariant::OwnedObjectPath,
+    pub name: String,
+}
+
+#[derive(Debug, Clone)]
 pub enum Message {
     OpenRepositoryUrl,
     ToggleContextPage(ContextPage),
@@ -26,6 +32,7 @@ pub enum Message {
     Register,
     ConnectionReady(zbus::Connection),
     DeviceFound(Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>),
+    UpdateDevices(Vec<DeviceOption>),
     OperationError(AppError),
     EnrollStart(Option<u32>),
     EnrollStatus(String, bool),
@@ -42,11 +49,11 @@ pub enum Message {
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
     SelectFingerByNumber(u8),
+    SelectDevice(usize),
 }
 
 // Section for handling of Messages
 impl AppModel {
-
     /// Resets clear state
     ///
     /// **Returns** ***Task***()
@@ -88,15 +95,16 @@ impl AppModel {
     /// After DBus connection is established searches queries it for fprintd default device
     ///
     /// **Returns** ***task_find_device***(*Connection*)
-    pub(crate) fn on_connection_ready(
-        &mut self,
-        conn: zbus::Connection,
-    ) -> Task<cosmic::Action<Message>> {
+    pub fn on_connection_ready(&mut self, conn: zbus::Connection) -> Task<cosmic::Action<Message>> {
         self.connection = Some(conn.clone());
         self.status = fl!("status-searching-device");
 
         let conn_clone = conn.clone();
-        task_find_device(conn_clone)
+        let clone_conn = conn.clone();
+        Task::batch(vec![
+            task_find_device(conn_clone),
+            get_devices_task(clone_conn),
+        ])
     }
 
     /// Toggles the context page
@@ -160,9 +168,20 @@ impl AppModel {
         Task::none()
     }
 
+    /// Stores fingerprint scanner devices received
+    ///
+    /// Return ***Task***::**none**()
+    pub(crate) fn on_devices_found(
+        &mut self,
+        devices: Vec<DeviceOption>,
+    ) -> Task<cosmic::Action<Message>> {
+        self.devices = devices;
+        Task::none()
+    }
+
     /// Requests users enrolled prints
     ///
-    /// **Returns** either ***Task***() or ***list_fingers_task***()
+    /// **Returns** either ***Task***::**none**() or ***list_fingers_task***()
     pub(crate) fn on_device_found(
         &mut self,
         device_info: Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>,
@@ -321,13 +340,12 @@ impl AppModel {
             return Task::none();
         }
 
-        if let (Some(path), Some(conn)) = (self.device_path.clone(), self.connection.clone()) {
+        if let (Some(path), Some(conn)) = (&self.device_path, &self.connection) {
             self.status = fl!("clearing-device");
             self.busy = true;
             self.confirm_clear = false;
-            let path = (*path).clone();
             let usernames: Vec<String> = self.users.iter().map(|u| (*u.username).clone()).collect();
-            return task_clear_device(path, usernames, conn);
+            return task_clear_device(path.as_ref().to_owned(), usernames, conn.clone());
         }
         Task::none()
     }
@@ -367,7 +385,7 @@ impl AppModel {
             self.enrolled_fingers.clear();
         } else {
             self.enrolled_fingers
-                .retain(|f| f != self.selected_finger.as_finger_id().unwrap());
+                .retain(|f| Some(f.as_str()) != self.selected_finger.as_finger_id());
         }
 
         Task::none()
@@ -458,6 +476,21 @@ impl AppModel {
         {
             self.confirm_clear = false;
             self.selected_finger = finger;
+        }
+        Task::none()
+    }
+
+    pub(crate) fn on_select_device(&mut self, index: usize) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
+
+        if let Some(device) = self.devices.get(index) {
+            if let Some(conn) = &self.connection {
+                self.status = fl!("status-searching-device");
+                self.busy = true;
+                return task_select_device(conn.clone(), device.path.clone());
+            }
         }
         Task::none()
     }
