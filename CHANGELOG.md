@@ -1,5 +1,5 @@
 ### 1.1.0:
-	Choosing scanner device in Settings
+	Display user avatar on multi-user systems
 ### 1.0.9:
 	• New Help page into View menu
 	• Improved fi translations

@@ -63,9 +63,11 @@ impl AppModel {
                 ),
             );
 
-        let first_device_name = self.devices.first().unwrap().as_ref().to_ascii_lowercase();
+        let device_count = self.devices.iter().count();
 
-        let device_section = section().title(first_device_name);
+        let device_section = section()
+            .title(fl!("settings-device", nbr = device_count))
+            .add(text(fl!("settings-device-info")));
 
         let clear_section = section()
             .title(fl!("danger"))

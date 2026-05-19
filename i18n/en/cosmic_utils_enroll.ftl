@@ -28,6 +28,12 @@ settings-ui = User Interface
 alternative-ui = Alternative UI
 settings-clear-device = Remove all fingerprints
 settings-theme = Theme
+settings-device =
+    { $nbr ->
+        [1] You have {$nbr} supported device
+        *[other] You have {$nbr} supported devices
+    }
+settings-device-info = If you have multiple unfortunately we currently only support the default device. It is the first device.
 
 theme-system = System
 theme-light = Light

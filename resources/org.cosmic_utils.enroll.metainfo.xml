@@ -104,13 +104,13 @@
     </screenshot>
   </screenshots>
   <releases>
-    <release version="1.1.0" date="2026-05-XX">
+    <release version="1.1.0" date="2026-05-19">
       <description>
         <p>
           Changes:
         </p>
         <ul>
-          <li>Support for multiple scanner devices</li>
+          <li>Avatars are now displayed next to users real name</li>
         </ul>
       </description>
     </release>
