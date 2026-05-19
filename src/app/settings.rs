@@ -65,12 +65,20 @@ impl AppModel {
 
         let device_count = self.devices.iter().count();
 
-        let mut device_section = section()
-            .title(fl!("settings-device", nbr = device_count))
-            .add(text(fl!("settings-device-info")));
+        let mut device_section = section().title(fl!("settings-device", nbr = device_count));
 
-        for device in &self.devices {
-            device_section = device_section.add(text(&device.name));
+        for (index, device) in self.devices.iter().enumerate() {
+            let is_selected = self
+                .device_path
+                .as_ref()
+                .is_some_and(|p| **p == device.path);
+
+            device_section = device_section.add(radio(
+                text::heading(&device.name),
+                index,
+                if is_selected { Some(index) } else { None },
+                Message::SelectDevice,
+            ));
         }
 
         let clear_section = section()

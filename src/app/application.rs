@@ -261,6 +261,7 @@ impl cosmic::Application for AppModel {
             Message::ThemeChanged(is_dark) => self.on_portal_color_scheme_changed(is_dark),
             Message::ThemeSetting(theme) => self.on_theme_setting(theme),
             Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),
+            Message::SelectDevice(index) => self.on_select_device(index),
         }
     }
 

@@ -49,7 +49,7 @@ pub enum Message {
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
     SelectFingerByNumber(u8),
-    SelectDevice(zbus::zvariant::OwnedObjectPath),
+    SelectDevice(usize),
 }
 
 // Section for handling of Messages
@@ -476,6 +476,21 @@ impl AppModel {
         {
             self.confirm_clear = false;
             self.selected_finger = finger;
+        }
+        Task::none()
+    }
+
+    pub(crate) fn on_select_device(&mut self, index: usize) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
+
+        if let Some(device) = self.devices.get(index) {
+            if let Some(conn) = &self.connection {
+                self.status = fl!("status-searching-device");
+                self.busy = true;
+                return task_select_device(conn.clone(), device.path.clone());
+            }
         }
         Task::none()
     }

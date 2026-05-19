@@ -174,6 +174,26 @@ pub fn task_clear_device(
     )
 }
 
+pub fn task_select_device(
+    conn: zbus::Connection,
+    path: zbus::zvariant::OwnedObjectPath,
+) -> Task<cosmic::Action<Message>> {
+    Task::perform(
+        async move {
+            match DeviceProxy::builder(&conn)
+                .path(path.clone())
+                .unwrap()
+                .build()
+                .await
+            {
+                Ok(proxy) => Message::DeviceFound(Some((path, proxy))),
+                Err(e) => Message::OperationError(AppError::from(e)),
+            }
+        },
+        cosmic::Action::App,
+    )
+}
+
 /// **Returns** ***Task*** which:
 /// Uses zbus to find and return default fingerprint scanner device
 pub fn task_find_device(conn_clone: zbus::Connection) -> Task<cosmic::Action<Message>> {
