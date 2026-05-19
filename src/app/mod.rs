@@ -8,7 +8,7 @@ use cosmic::{
 };
 
 use crate::{
-    app::{finger::Finger, message::Message, users::UserOption},
+    app::{finger::Finger, message::{DeviceOption, Message}, users::UserOption},
     config::Config,
     fprint_dbus::DeviceProxy,
 };
@@ -45,7 +45,7 @@ pub struct AppModel {
     // Currently selected device path
     device_path: Option<Arc<zbus::zvariant::OwnedObjectPath>>,
     // All devices
-    devices: Vec<zbus::zvariant::OwnedObjectPath>,
+    devices: Vec<DeviceOption>,
     // Reused device proxy
     device_proxy: Option<DeviceProxy<'static>>,
     // Shared DBus connection

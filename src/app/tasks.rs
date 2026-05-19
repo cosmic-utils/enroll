@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 use crate::app::AppModel;
-use crate::app::{error::AppError, fprint::*, message::Message};
+use crate::app::{error::AppError, fprint::*, message::{DeviceOption, Message}};
 use crate::{fl, fprint_dbus::*};
 use cosmic::{ApplicationExt, Task};
 
@@ -66,7 +66,22 @@ pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>>
     Task::perform(
         async move {
             match find_all_devices(&conn).await {
-                Ok(devices) => Message::UpdateDevices(devices),
+                Ok(paths) => {
+                    let mut devices = Vec::new();
+                    for path in paths {
+                        let name = match DeviceProxy::builder(&conn)
+                            .path(path.clone())
+                            .unwrap()
+                            .build()
+                            .await
+                        {
+                            Ok(proxy) => proxy.name().await.unwrap_or_else(|_| path.to_string()),
+                            Err(_) => path.to_string(),
+                        };
+                        devices.push(DeviceOption { path, name });
+                    }
+                    Message::UpdateDevices(devices)
+                }
                 Err(e) => Message::OperationError(AppError::from(e)),
             }
         },

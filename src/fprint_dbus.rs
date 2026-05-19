@@ -37,4 +37,7 @@ pub trait Device {
 
     #[zbus(property, name = "num-enroll-stages")]
     fn num_enroll_stages(&self) -> zbus::Result<i32>;
+
+    #[zbus(property, name = "name")]
+    fn name(&self) -> zbus::Result<String>;
 }

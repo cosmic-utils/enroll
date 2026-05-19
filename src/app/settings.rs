@@ -65,9 +65,13 @@ impl AppModel {
 
         let device_count = self.devices.iter().count();
 
-        let device_section = section()
+        let mut device_section = section()
             .title(fl!("settings-device", nbr = device_count))
             .add(text(fl!("settings-device-info")));
+
+        for device in &self.devices {
+            device_section = device_section.add(text(&device.name));
+        }
 
         let clear_section = section()
             .title(fl!("danger"))

@@ -17,6 +17,12 @@ pub const REPOSITORY: &str = env!("CARGO_PKG_REPOSITORY");
 
 /// Messages emitted by the application and its widgets.
 #[derive(Debug, Clone)]
+pub struct DeviceOption {
+    pub path: zbus::zvariant::OwnedObjectPath,
+    pub name: String,
+}
+
+#[derive(Debug, Clone)]
 pub enum Message {
     OpenRepositoryUrl,
     ToggleContextPage(ContextPage),
@@ -26,7 +32,7 @@ pub enum Message {
     Register,
     ConnectionReady(zbus::Connection),
     DeviceFound(Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>),
-    UpdateDevices(Vec<zbus::zvariant::OwnedObjectPath>),
+    UpdateDevices(Vec<DeviceOption>),
     OperationError(AppError),
     EnrollStart(Option<u32>),
     EnrollStatus(String, bool),
@@ -43,6 +49,7 @@ pub enum Message {
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
     SelectFingerByNumber(u8),
+    SelectDevice(zbus::zvariant::OwnedObjectPath),
 }
 
 // Section for handling of Messages
@@ -166,7 +173,7 @@ impl AppModel {
     /// Return ***Task***::**none**()
     pub(crate) fn on_devices_found(
         &mut self,
-        devices: Vec<zbus::zvariant::OwnedObjectPath>,
+        devices: Vec<DeviceOption>,
     ) -> Task<cosmic::Action<Message>> {
         self.devices = devices;
         Task::none()
