@@ -1,3 +1,5 @@
+### 1.1.1:
+	Fixes incorrect metadata
 ### 1.1.0:
 	• Support for multiple scanner devices
 	• Display user avatar on multi-user systems
