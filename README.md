@@ -1,6 +1,9 @@
+[![Flathub Installs](https://img.shields.io/flathub/downloads/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/io.github.cosmic_utils.enroll)
+[![Flathub Version](https://img.shields.io/flathub/v/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/io.github.cosmic_utils.enroll)
 # COSMIC™ Utils Enroll
 
 GUI application for fingerprint management. Designed for COSMIC DE.
+
 
 ## Prerequisites
 
