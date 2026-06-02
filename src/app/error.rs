@@ -17,6 +17,7 @@ pub enum AppError {
 }
 
 impl AppError {
+    /// Mapping of runtime errors to localized descriptions
     #[rust_analyzer::skip]
     pub fn localized_message(&self) -> String {
         match self {
@@ -33,6 +34,7 @@ impl AppError {
         }
     }
 
+    /// Creates a new instance with added context before message
     pub fn with_context(self, context: &str) -> Self {
         match self {
             AppError::Unknown(msg) => AppError::Unknown(format!("{}: {}", context, msg)),
