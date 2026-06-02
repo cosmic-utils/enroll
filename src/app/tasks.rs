@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: MPL-2.0
 
 use crate::app::AppModel;
-use crate::app::{error::AppError, fprint::*, message::{DeviceOption, Message}};
+use crate::app::{
+    error::AppError,
+    fprint::*,
+    message::{DeviceOption, Message},
+};
 use crate::{fl, fprint_dbus::*};
 use cosmic::{ApplicationExt, Task};
 
@@ -43,9 +47,7 @@ impl AppModel {
     }
 }
 
-/// **Returns** ***Task*** which:
-///
-/// Request deletion of users all prints
+/// **Returns** ***Task*** which request deletion of users all prints
 pub fn task_delete_prints(
     path: zbus::zvariant::OwnedObjectPath,
     username: String,
@@ -62,6 +64,7 @@ pub fn task_delete_prints(
     )
 }
 
+/// **Returns** a ***Task*** which updates vector of scanner devices
 pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
@@ -89,9 +92,7 @@ pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>>
     )
 }
 
-/// **Returns** ***Task*** which:
-///
-/// Requests deletion of given users given print
+/// **Returns** ***Task*** which requests deletion of given users given print
 pub fn task_delete_print(
     path: zbus::zvariant::OwnedObjectPath,
     username: String,
@@ -109,9 +110,7 @@ pub fn task_delete_print(
     )
 }
 
-/// **Returns** ***Task*** which:
-///
-/// Sends a signal to stop current enroll process
+/// **Returns** ***Task*** which sends a signal to stop current enroll process
 pub fn task_enroll_stop(
     path: zbus::zvariant::OwnedObjectPath,
     conn: zbus::Connection,
@@ -132,9 +131,7 @@ pub fn task_enroll_stop(
     )
 }
 
-/// **Returns** ***Task*** which:
-///
-/// Sends a signal to stop current verify process
+/// **Returns** ***Task*** which sends a signal to stop current verify process
 pub fn task_verify_stop(
     path: zbus::zvariant::OwnedObjectPath,
     conn: zbus::Connection,
@@ -155,9 +152,7 @@ pub fn task_verify_stop(
     )
 }
 
-/// **Returns** ***Task*** which:
-///
-/// Requests deletion of all prints for all users
+/// **Returns** ***Task*** which requests deletion of all prints for all users
 pub fn task_clear_device(
     path: zbus::zvariant::OwnedObjectPath,
     usernames: Vec<String>,
@@ -174,6 +169,7 @@ pub fn task_clear_device(
     )
 }
 
+/// **Returns** a ***Task*** which changes device used for all operations.
 pub fn task_select_device(
     conn: zbus::Connection,
     path: zbus::zvariant::OwnedObjectPath,
@@ -194,8 +190,7 @@ pub fn task_select_device(
     )
 }
 
-/// **Returns** ***Task*** which:
-/// Uses zbus to find and return default fingerprint scanner device
+/// **Returns** ***Task*** which finds and returns default fingerprint scanner device
 pub fn task_find_device(conn_clone: zbus::Connection) -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
@@ -215,8 +210,7 @@ pub fn task_find_device(conn_clone: zbus::Connection) -> Task<cosmic::Action<Mes
     )
 }
 
-/// **Returns** ***Task*** which:
-/// Connects to DBus
+/// **Returns** ***Task*** which connects to DBus
 pub fn task_connect() -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
