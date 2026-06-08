@@ -65,6 +65,7 @@ pub fn is_cosmic_desktop() -> bool {
     *IS_COSMIC
 }
 
+/// Attempts to read current version of a COSMIC Config or create one
 pub fn read_config(app_id: &str) -> (Option<cosmic_config::Config>, Config) {
     match cosmic_config::Config::new(app_id, Config::VERSION) {
         Ok(handler) => {

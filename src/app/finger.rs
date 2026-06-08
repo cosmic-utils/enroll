@@ -22,6 +22,7 @@ pub enum Finger {
 }
 
 impl Finger {
+    /// Static reference to a finger struct instance
     pub fn all() -> &'static [Self] {
         &[
             Self::RightThumb,
@@ -38,6 +39,7 @@ impl Finger {
         ]
     }
 
+    /// Maps a name to Fluent localized string
     pub fn localized_name(&self) -> String {
         match self {
             Self::RightThumb => fl!("page-right-thumb"),
@@ -71,6 +73,7 @@ impl Finger {
         }
     }
 
+    /// Maps to fprintd API name
     pub fn as_finger_id(&self) -> Option<&'static str> {
         match self {
             Finger::RightThumb => Some("right-thumb"),
