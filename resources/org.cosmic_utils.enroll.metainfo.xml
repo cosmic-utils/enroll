@@ -16,7 +16,7 @@
       Enables you in registering, verifying and deleting fingerprint records. Can also be used for managing them for another user.
     </p>
     <p xml:lang="cs">
-      Správa otisků prstů pro jednoho i více uživatelů. Umožňuje registrovat, ověřovat a mazat otisky.
+      Umožňuje vám registrovat, ověřovat a mazat otisky prstů. Lze použít také pro správu otisků jiného uživatele.
     </p>
     <p xml:lang="fi">
       Yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa sormenjälkiä yhteensopivilla lukijoilla.
@@ -30,20 +30,20 @@
     <p>
       Select the user you wish to register, by default the current user, and then the finger. Click either Register to enroll a print for a new finger, Verify to match against an existing one or Delete to remove it.
     </p>
-    <p xml:lang="fi">
-      Valitse käyttäjä jonka sormenjäljen haluat rekisteröidä. Valitse sormi jota haluat muokata. Rekisteröi lisätäksesi sormenjäljen, Varmenna vahvistaaksesi nykyisen jäljen tai Poista poistaaksesi sen.
-    </p>
     <p xml:lang="cs">
       Vyberte uživatele, pro kterého chcete otisk zaregistrovat (výchozí je aktuální uživatel), a poté prst. Klikněte na „Registrovat“ pro přidání nového otisku, „Ověřit“ pro porovnání s existujícím otiskem nebo „Smazat“ pro jeho odstranění.
+    </p>
+    <p xml:lang="fi">
+      Valitse käyttäjä jonka sormenjäljen haluat rekisteröidä. Valitse sormi jota haluat muokata. Rekisteröi lisätäksesi sormenjäljen, Varmenna vahvistaaksesi nykyisen jäljen tai Poista poistaaksesi sen.
     </p>
     <p>
       From View menu you can access Settings, About and Help pages for more information or configuration options.
     </p>
+    <p xml:lang="cs">
+      V nabídce „Zobrazení“ můžete otevřít stránky „Nastavení“, „O aplikaci“ a „Nápověda“, kde najdete další informace a možnosti nastavení.
+    </p>
     <p xml:lang="fi">
       Näkymä valikosta pääset Asetuksiin, Tietoa tai Apua valikkoihin joista saat tietoa ongelmiin tai voit muutta miten sovellus toimii.
-    </p>
-    <p xml:lang="cs">
-      V nabídce „Zobrazení“ najdete „Nastavení“, kde můžete upravit vzhled aplikace, nebo použít volbu „Smazat vše“, která se pokusí odstranit všechny registrované otisky ze zařízení snímače.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
@@ -107,12 +107,14 @@
         https://user.fm/files/v2-24d6c8fc18e84f95c0e38c10fc193bb6/settings.png
       </image>
       <caption>Settings sidebar</caption>
+      <caption xml:lang="cs">Nastavení - postranní panel</caption>
     </screenshot>
     <screenshot>
       <image>
         https://user.fm/files/v2-ea42cb8f02e66d95020cdde9529c6e19/user.png
       </image>
       <caption>User selection</caption>
+      <caption xml:lang="cs">Výběr uživatele</caption>
     </screenshot>
   </screenshots>
   <releases>
