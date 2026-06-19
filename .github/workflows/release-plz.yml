@@ -52,7 +52,7 @@ jobs:
       - name: Trigger Flatpak PR
         if: steps.release-plz.outputs.releases_created == 'true'
         env:
-          GH_TOKEN: ${{ secrets.FLATHUB_PAT }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           set -e
           
@@ -62,8 +62,8 @@ jobs:
           echo "Released Version: $VERSION"
           echo "Commit: $COMMIT"
           
-          # Clone flatpak repository
-          git clone https://x-access-token:${{ secrets.FLATHUB_PAT }}@github.com/flathub/org.cosmic_utils.enroll.git flatpak-repo
+          # Clone upstream flatpak repository
+          git clone https://github.com/flathub/org.cosmic_utils.enroll.git flatpak-repo
           
           # Setup python environment
           pip3 install aiohttp tomlkit
@@ -77,8 +77,10 @@ jobs:
           # Update manifest
           python3 .github/workflows/scripts/update-manifest.py flatpak-repo/org.cosmic_utils.enroll.yml "$VERSION" "$COMMIT"
           
-          # Commit and Push
+          # Commit and Push to Fork
           cd flatpak-repo
+          git remote add fork https://x-access-token:${{ secrets.GH_PAT }}@github.com/jotuel/org.cosmic_utils.enroll.git
+          
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
@@ -92,15 +94,16 @@ jobs:
           fi
           
           git commit -m "Update to version ${VERSION}"
-          git push -f origin "$BRANCH"
+          git push -f fork "$BRANCH"
           
           # Create pull request on Flathub using GitHub CLI
-          PR_EXISTS=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
+          PR_EXISTS=$(gh pr list --repo flathub/org.cosmic_utils.enroll --head "jotuel:${BRANCH}" --json number --jq '.[0].number')
           if [ -z "$PR_EXISTS" ]; then
             gh pr create \
+              --repo flathub/org.cosmic_utils.enroll \
               --title "Update to version ${VERSION}" \
               --body "Automated update to cosmic-utils-enroll version ${VERSION}" \
-              --head "$BRANCH" \
+              --head "jotuel:${BRANCH}" \
               --base master
           else
             echo "Pull request already exists: #$PR_EXISTS"
