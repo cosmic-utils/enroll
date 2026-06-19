@@ -39,10 +39,11 @@ Go to `Settings` -> `Actions` -> `General` -> `Workflow permissions`:
 - Set to **Read and write permissions**.
 - Check **Allow GitHub Actions to create and approve pull requests**.
 
-### 2. GitHub Secret for Flatpak PRs (`FLATHUB_PAT`)
-Since the workflow needs to push branches and open pull requests in a separate repository (`flathub/org.cosmic_utils.enroll`), you must configure a Personal Access Token (PAT):
-1. Create a GitHub PAT (Fine-Grained or Classic) with `repo` (write) access to the repository `flathub/org.cosmic_utils.enroll`.
-2. Save this token as a Repository Secret in the `enroll` repository named **`FLATHUB_PAT`**.
+### 2. GitHub Fork & Personal Access Token (`GH_PAT`)
+Since the workflow needs to push branches to your personal fork of the Flatpak repository, you must perform these setup steps:
+1. Go to [flathub/org.cosmic_utils.enroll](https://github.com/flathub/org.cosmic_utils.enroll) and **fork** it under your personal GitHub account (`jotuel`).
+2. Create a GitHub Personal Access Token (PAT) with write permission to your personal repositories (`repo` scope for classic tokens or a fine-grained token with access to your `org.cosmic_utils.enroll` fork).
+3. Save this token as a Repository Secret in the `enroll` repository named **`GH_PAT`**.
 
 ---
 
