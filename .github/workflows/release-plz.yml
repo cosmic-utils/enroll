@@ -1,0 +1,140 @@
+name: Release-plz
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  release-pr:
+    name: Create Release PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run release-plz release-pr
+        id: release-pr
+        uses: release-plz/action@v0.5
+        with:
+          command: release-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Metainfo XML in Release PR
+        if: steps.release-pr.outputs.prs_created == 'true'
+        run: |
+          set -e
+          
+          # Extract branch name from the JSON output of release-pr
+          BRANCH=$(echo '${{ steps.release-pr.outputs.pr }}' | jq -r '.head_branch')
+          echo "Target Release PR Branch: $BRANCH"
+          
+          # Checkout the release PR branch
+          git fetch origin "$BRANCH"
+          git checkout "$BRANCH"
+          
+          # Run the update script
+          python3 .github/workflows/scripts/update-metainfo.py CHANGELOG.md resources/org.cosmic_utils.enroll.metainfo.xml
+          
+          # Configure Git and Commit changes back to the PR branch
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add resources/org.cosmic_utils.enroll.metainfo.xml
+          
+          if git diff --quiet --cached; then
+            echo "No changes to metainfo.xml"
+            exit 0
+          fi
+          
+          git commit -m "chore: update metainfo.xml release notes"
+          git push origin "$BRANCH"
+
+  release:
+    name: Publish Release & Update Flatpak
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run release-plz release
+        id: release-plz
+        uses: release-plz/action@v0.5
+        with:
+          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Flatpak PR
+        if: steps.release-plz.outputs.releases_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          set -e
+          
+          # Get new version and commit
+          VERSION=$(cargo metadata --format-version 1 | jq -r '.packages[] | select(.name == "cosmic-utils-enroll") | .version')
+          COMMIT=$(git rev-parse HEAD)
+          echo "Released Version: $VERSION"
+          echo "Commit: $COMMIT"
+          
+          # Clone upstream flatpak repository
+          git clone https://github.com/flathub/org.cosmic_utils.enroll.git flatpak-repo
+          
+          # Setup python environment
+          pip3 install aiohttp tomlkit
+          
+          # Download cargo generator script
+          curl -Lo flatpak-cargo-generator.py https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/master/cargo/flatpak-cargo-generator.py
+          
+          # Generate cargo-sources.json
+          python3 flatpak-cargo-generator.py Cargo.lock -o flatpak-repo/cargo-sources.json
+          
+          # Update manifest
+          python3 .github/workflows/scripts/update-manifest.py flatpak-repo/org.cosmic_utils.enroll.yml "$VERSION" "$COMMIT"
+          
+          # Commit and Push to Fork
+          cd flatpak-repo
+          git remote add fork https://x-access-token:${{ secrets.GH_PAT }}@github.com/jotuel/org.cosmic_utils.enroll.git
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          BRANCH="update-to-${VERSION}"
+          git checkout -b "$BRANCH"
+          git add org.cosmic_utils.enroll.yml cargo-sources.json
+          
+          if git diff --quiet --cached; then
+            echo "No changes to commit. Flatpak is already up-to-date."
+            exit 0
+          fi
+          
+          git commit -m "Update to version ${VERSION}"
+          git push -f fork "$BRANCH"
+          
+          # Create pull request on Flathub using GitHub CLI
+          PR_EXISTS=$(gh pr list --repo flathub/org.cosmic_utils.enroll --head "jotuel:${BRANCH}" --json number --jq '.[0].number')
+          if [ -z "$PR_EXISTS" ]; then
+            gh pr create \
+              --repo flathub/org.cosmic_utils.enroll \
+              --title "Update to version ${VERSION}" \
+              --body "Automated update to cosmic-utils-enroll version ${VERSION}" \
+              --head "jotuel:${BRANCH}" \
+              --base master
+          else
+            echo "Pull request already exists: #$PR_EXISTS"
+          fi
