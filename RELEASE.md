@@ -1,6 +1,6 @@
 # Release Process
 
-This repository utilizes automated releases powered by **release-plz** combined with a custom CI/CD pipeline that automatically proposes updates to the Flatpak manifest in [org.cosmic_utils.enroll](https://github.com/flathub/org.cosmic_utils.enroll).
+This repository utilizes automated releases powered by **release-plz** combined with a custom CI/CD pipeline that automatically proposes updates to the Flatpak manifest in [org.cosmic_utils.enroll](https://github.com/flathub/org.cosmic_utils.enroll) and builds/uploads an AppImage.
 
 ---
 
@@ -12,6 +12,7 @@ sequenceDiagram
     participant enroll as enroll Repo (main branch)
     participant RP as Release-plz Action
     participant Flatpak as org.cosmic_utils.enroll Repo
+    participant GHRelease as GitHub Release Page
     
     Developer->>enroll: Push commits (feat:, fix:, etc.)
     enroll->>RP: Trigger Workflow
@@ -21,12 +22,14 @@ sequenceDiagram
     RP->>enroll: Tags commit with version (e.g. 1.1.2)
     RP->>Flatpak: Regenerate cargo-sources.json & update manifest
     RP->>Flatpak: Push branch & Open PR to update Flatpak to new version
+    RP->>enroll: Build cosmic-utils-enroll-x86_64.AppImage
+    RP->>GHRelease: Upload AppImage binary as release asset
 ```
 
 1. **Commit Stage**: Developers push changes to the `main` branch.
 2. **Release PR Creation**: On every push, `release-plz` checks for new commits, determines the next version bump based on Conventional Commits, updates `Cargo.toml`/`Cargo.lock` and `CHANGELOG.md`, and creates or updates a release Pull Request.
 3. **Merging**: When you are ready to make a release, merge the release Pull Request.
-4. **Tagging & Flatpak PR**: Once the release PR is merged, `release-plz` creates the Git tag. Immediately after, the CI pipeline checks out the Flatpak repository, regenerates `cargo-sources.json` based on the release's dependencies, updates `org.cosmic_utils.enroll.yml` with the new tag/commit, and opens a Pull Request on the Flatpak repository.
+4. **Tagging, Flatpak PR & AppImage**: Once the release PR is merged, `release-plz` creates the Git tag. Immediately after, the CI pipeline checks out the Flatpak repository, regenerates `cargo-sources.json`, updates `org.cosmic_utils.enroll.yml`, opens a Pull Request on the Flatpak repository, packages the application as a `.AppImage` file, and uploads the `.AppImage` to the GitHub Release page as an asset.
 
 ---
 
