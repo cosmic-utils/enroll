@@ -44,7 +44,7 @@ jobs:
           git checkout "$BRANCH"
           
           # Run the update script
-          python3 .github/workflows/scripts/update-metainfo.py CHANGELOG.md resources/org.cosmic_utils.enroll.metainfo.xml
+          python3 .github/workflows/scripts/update-metainfo.py docs/CHANGELOG.md resources/org.cosmic_utils.enroll.metainfo.xml
           
           # Configure Git and Commit changes back to the PR branch
           git config user.name "github-actions[bot]"

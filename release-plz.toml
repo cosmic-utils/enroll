@@ -4,3 +4,4 @@ git_tag_name = "{{ version }}"
 [[package]]
 name = "cosmic-utils-enroll"
 publish = false
+changelog_path = "docs/CHANGELOG.md"
