@@ -138,3 +138,40 @@ jobs:
           else
             echo "Pull request already exists: #$PR_EXISTS"
           fi
+
+      - name: Build and Upload AppImage
+        if: steps.release-plz.outputs.releases_created == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          
+          # 1. Compile the binary in release mode
+          cargo build --release
+          
+          # 2. Set up the AppDir structure
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/scalable/apps
+          
+          cp target/release/cosmic-utils-enroll AppDir/usr/bin/
+          cp resources/org.cosmic_utils.enroll.desktop AppDir/usr/share/applications/
+          cp resources/icons/hicolor/scalable/apps/enroll.svg AppDir/usr/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg
+          
+          # Create the required root symlinks
+          ln -s usr/share/applications/org.cosmic_utils.enroll.desktop AppDir/org.cosmic_utils.enroll.desktop
+          ln -s usr/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg AppDir/org.cosmic_utils.enroll.svg
+          ln -s usr/bin/cosmic-utils-enroll AppDir/AppRun
+          
+          # 3. Download the AppImage packaging tool
+          wget -O appimagetool https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          
+          # 4. Generate the AppImage
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          ARCH=x86_64 ./appimagetool AppDir cosmic-utils-enroll-x86_64.AppImage
+          
+          # 5. Extract the tag name and upload it to the GitHub Release
+          TAG=$(echo '${{ steps.release-plz.outputs.releases }}' | jq -r '.[0].tag')
+          echo "Uploading AppImage to release tag: $TAG"
+          gh release upload "$TAG" cosmic-utils-enroll-x86_64.AppImage --clobber
