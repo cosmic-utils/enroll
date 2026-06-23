@@ -74,6 +74,7 @@ impl cosmic::Application for AppModel {
             selected_finger: Finger::default(),
             enrolled_fingers: Vec::new(),
             confirm_clear: false,
+            confirm_delete_all: false,
         };
 
         let start_theme = cosmic::command::set_theme(app.config.app_theme.theme());
@@ -147,6 +148,21 @@ impl cosmic::Application for AppModel {
                     )
                     .secondary_action(
                         widget::button::standard(fl!("cancel")).on_press(Message::CancelClear),
+                    )
+                    .into(),
+            )
+        } else if self.confirm_delete_all {
+            Some(
+                dialog::dialog()
+                    .title(fl!("delete-all"))
+                    .body(fl!("delete-all-fallback"))
+                    .primary_action(
+                        widget::button::destructive(fl!("delete-all"))
+                            .on_press(Message::ConfirmDeleteAll),
+                    )
+                    .secondary_action(
+                        widget::button::standard(fl!("cancel"))
+                            .on_press(Message::CancelDeleteAll),
                     )
                     .into(),
             )
@@ -247,6 +263,9 @@ impl cosmic::Application for AppModel {
             Message::EnrollStop => self.on_enroll_stop(),
             Message::DeleteComplete(clear) => self.on_delete_complete(clear),
             Message::Delete => self.on_delete(),
+            Message::DeleteSingleUnsupported => self.on_delete_single_unsupported(),
+            Message::ConfirmDeleteAll => self.on_confirm_delete_all(),
+            Message::CancelDeleteAll => self.on_cancel_delete_all(),
             Message::ClearDevice => self.on_clear_device(),
             Message::CancelClear => self.on_cancel_clear(),
             Message::ClearComplete(res) => self.on_clear_completion(res),
@@ -271,6 +290,7 @@ impl cosmic::Application for AppModel {
             return Task::none();
         }
         self.confirm_clear = false;
+        self.confirm_delete_all = false;
         // Activate the page in the model.
         self.nav.activate(id);
         self.selected_user = self
