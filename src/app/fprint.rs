@@ -51,6 +51,24 @@ pub async fn list_enrolled_fingers_dbus(
     device.list_enrolled_fingers(&username).await
 }
 
+/// Returns true when the error means the running fprintd implementation does
+/// not provide the requested method (e.g. open-fprintd only implements the
+/// legacy `DeleteEnrolledFingers`).
+fn is_unsupported(err: &zbus::Error) -> bool {
+    AppError::from(err.clone()) == AppError::UnsupportedOperation
+}
+
+/// Deletes every enrolled fingerprint for a user, using the modern
+/// `DeleteEnrolledFingers2` when available and falling back to the legacy
+/// `DeleteEnrolledFingers(username)` for daemons like open-fprintd.
+async fn delete_all_fingers(device: &DeviceProxy<'_>, username: &str) -> zbus::Result<()> {
+    match device.delete_enrolled_fingers2().await {
+        Ok(()) => Ok(()),
+        Err(e) if is_unsupported(&e) => device.delete_enrolled_fingers(username).await,
+        Err(e) => Err(e),
+    }
+}
+
 /// Deletes chosen fingers print record for single user
 /// # Returns
 /// Ok()
@@ -99,8 +117,9 @@ pub async fn delete_fingers(
     let device = DeviceProxy::builder(connection).path(path)?.build().await?;
 
     device.claim(&username).await?;
-    let _ = device.delete_enrolled_fingers2().await;
-    device.release().await
+    let res = delete_all_fingers(&device, &username).await;
+    let rel_res = device.release().await;
+    res.and(rel_res)
 }
 
 /// Deletes all prints for all currently known users
@@ -133,8 +152,16 @@ pub async fn clear_all_fingers_dbus(
         match device.list_enrolled_fingers(&username).await {
             Ok(fingers) => {
                 for finger in fingers {
-                    if let Err(e) = device.delete_enrolled_finger(&finger).await {
-                        last_error = Some(e);
+                    match device.delete_enrolled_finger(&finger).await {
+                        Ok(()) => {}
+                        Err(e) if is_unsupported(&e) => {
+                            // Legacy daemon has no per-finger delete; remove all at once.
+                            if let Err(e) = device.delete_enrolled_fingers(&username).await {
+                                last_error = Some(e);
+                            }
+                            break;
+                        }
+                        Err(e) => last_error = Some(e),
                     }
                 }
             }
@@ -366,5 +393,31 @@ mod tests {
 
         let max_len_name = "a".repeat(255);
         assert!(validate_username(&max_len_name).is_ok());
+    }
+
+    #[test]
+    fn test_is_unsupported() {
+        use zbus::message::Message;
+        use zbus::names::ErrorName;
+
+        fn method_error(name: &str) -> zbus::Error {
+            let msg = Message::method_call("/", "Ping")
+                .unwrap()
+                .destination("org.freedesktop.DBus")
+                .unwrap()
+                .build(&())
+                .unwrap();
+            let error_name = ErrorName::try_from(name).unwrap();
+            zbus::Error::MethodError(error_name.into(), None, msg)
+        }
+
+        // Missing method on the daemon (e.g. open-fprintd) is "unsupported".
+        assert!(is_unsupported(&method_error(
+            "org.freedesktop.DBus.Error.UnknownMethod"
+        )));
+        // A normal fprintd error must not be treated as unsupported.
+        assert!(!is_unsupported(&method_error(
+            "net.reactivated.Fprint.Error.PermissionDenied"
+        )));
     }
 }
