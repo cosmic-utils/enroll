@@ -98,3 +98,4 @@ error-device-not-found = Fingerprint device not found.
 error-timeout = Operation timed out.
 error-prints-not-deleted = Could not delete fingerprints.
 error-connect-dbus = Failed to connect to DBus: {$err}
+error-unsupported-operation = This operation is not supported by the fingerprint service. The installed fprintd implementation may be incompatible.

@@ -12,6 +12,7 @@ pub enum AppError {
     PrintsNotDeleted,
     Timeout,
     DeviceNotFound,
+    UnsupportedOperation,
     ConnectDbus(String),
     Unknown(String),
 }
@@ -29,6 +30,7 @@ impl AppError {
             AppError::PrintsNotDeleted => fl!("error-prints-not-deleted"),
             AppError::Timeout => fl!("error-timeout"),
             AppError::DeviceNotFound => fl!("error-device-not-found"),
+            AppError::UnsupportedOperation => fl!("error-unsupported-operation"),
             AppError::ConnectDbus(msg) => fl!("error-connect-dbus", err = msg),
             AppError::Unknown(msg) => msg.clone(),
         }
@@ -55,6 +57,10 @@ impl From<zbus::Error> for AppError {
                 "net.reactivated.Fprint.Error.PrintsNotDeleted" => AppError::PrintsNotDeleted,
                 "net.reactivated.Fprint.Error.Timeout" => AppError::Timeout,
                 "net.reactivated.Fprint.Error.DeviceNotFound" => AppError::DeviceNotFound,
+                "org.freedesktop.DBus.Error.UnknownMethod"
+                | "org.freedesktop.DBus.Error.UnknownInterface"
+                | "org.freedesktop.DBus.Error.UnknownObject"
+                | "org.freedesktop.DBus.Error.UnknownProperty" => AppError::UnsupportedOperation,
                 _ => AppError::Unknown(err.to_string()),
             }
         } else {
@@ -109,6 +115,14 @@ mod tests {
             (
                 "net.reactivated.Fprint.Error.DeviceNotFound",
                 AppError::DeviceNotFound,
+            ),
+            (
+                "org.freedesktop.DBus.Error.UnknownMethod",
+                AppError::UnsupportedOperation,
+            ),
+            (
+                "org.freedesktop.DBus.Error.UnknownInterface",
+                AppError::UnsupportedOperation,
             ),
         ];
 

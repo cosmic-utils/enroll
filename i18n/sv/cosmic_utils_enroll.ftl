@@ -84,3 +84,4 @@ error-device-not-found = Fingeravtrycksenhet hittades inte.
 error-timeout = Åtgärd har nått tidsgränsen.
 error-prints-not-deleted = Kunde inte radera fingeravtryck.
 error-connect-dbus = Misslyckades att ansluta till DBus: {$err}
+error-unsupported-operation = Den här åtgärden stöds inte av fingeravtryckstjänsten. Den installerade fprintd-implementationen kan vara inkompatibel.

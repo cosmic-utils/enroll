@@ -99,3 +99,4 @@ error-device-not-found = Zařízení pro otisky prstů nebylo nalezeno.
 error-timeout = Operace vypršela.
 error-prints-not-deleted = Otisky se nepodařilo smazat.
 error-connect-dbus = Nepodařilo se připojit k DBus: {$err}
+error-unsupported-operation = Tato operace není podporována službou otisků prstů. Nainstalovaná implementace fprintd může být nekompatibilní.

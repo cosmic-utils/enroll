@@ -88,3 +88,4 @@ error-device-not-found = Dispositivo per impronte digitali non trovato.
 error-timeout = Operazione scaduta.
 error-prints-not-deleted = Impossibile eliminare le impronte digitali.
 error-connect-dbus = Connessione a DBus fallita: {$err}
+error-unsupported-operation = Questa operazione non è supportata dal servizio di impronte digitali. L'implementazione di fprintd installata potrebbe essere incompatibile.

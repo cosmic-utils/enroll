@@ -92,3 +92,4 @@ error-device-not-found = Sormenjälkilukijaa ei löytynyt.
 error-timeout = Aikakatkaisu.
 error-prints-not-deleted = Ei onnistuttu poistamaan sormenjälkeä.
 error-connect-dbus = Yhdistäminen järjestelmäväylään epäonnistui: {$err}
+error-unsupported-operation = Tätä toimintoa ei tueta sormenjälkipalvelussa. Asennettu fprintd-toteutus saattaa olla yhteensopimaton.
