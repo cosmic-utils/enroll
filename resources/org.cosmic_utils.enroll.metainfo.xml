@@ -118,6 +118,17 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.0" date="2026-06-24">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Prompt to delete all when single-finger delete is unsupported</li>
+          <li>Support deleting fingerprints with open-fprintd</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.1.1" date="2026-05-25">
       <description>
         <p>
