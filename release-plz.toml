@@ -1,6 +1,0 @@
-[workspace]
-git_tag_name = "{{ version }}"
-
-[[package]]
-name = "cosmic-utils-enroll"
-publish = false

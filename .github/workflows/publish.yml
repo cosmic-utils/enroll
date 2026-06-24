@@ -1,0 +1,124 @@
+name: Publish
+
+# Tag-driven: `just release X.Y.Z` creates and pushes tag vX.Y.Z, which fires
+# this workflow. The three jobs are intentionally independent so that a failure
+# in one (e.g. the Flathub PR) never suppresses another (e.g. the AppImage) the
+# way the old single-job pipeline did. Each builds from the tagged commit, whose
+# metainfo is guaranteed (by `just release` + ci.yml) to contain its own release.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create release if it does not exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists."
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes
+          fi
+
+  appimage:
+    name: Build & upload AppImage
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build (release)
+        run: cargo build --release
+      - name: Package AppImage
+        run: |
+          set -e
+          mkdir -p AppDir/usr/bin \
+                   AppDir/usr/share/applications \
+                   AppDir/usr/share/icons/hicolor/scalable/apps
+          cp target/release/cosmic-utils-enroll AppDir/usr/bin/
+          cp resources/org.cosmic_utils.enroll.desktop AppDir/usr/share/applications/
+          cp resources/icons/hicolor/scalable/apps/enroll.svg \
+             AppDir/usr/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg
+          ln -s usr/share/applications/org.cosmic_utils.enroll.desktop AppDir/org.cosmic_utils.enroll.desktop
+          ln -s usr/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg AppDir/org.cosmic_utils.enroll.svg
+          ln -s usr/bin/cosmic-utils-enroll AppDir/AppRun
+
+          wget -O appimagetool \
+            https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          ARCH=x86_64 ./appimagetool AppDir cosmic-utils-enroll-x86_64.AppImage
+      - name: Upload AppImage to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" cosmic-utils-enroll-x86_64.AppImage --clobber
+
+  flathub:
+    name: Open Flathub update PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Regenerate cargo-sources & update manifest
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          # The git tag pushed by `just release` (e.g. v1.3.0).
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+          COMMIT="${{ github.sha }}"
+          echo "version=$VERSION tag=$TAG commit=$COMMIT"
+
+          git clone https://github.com/flathub/org.cosmic_utils.enroll.git flatpak-repo
+
+          # Pinned + checksummed cargo source generator (was an unpinned curl|python).
+          GEN_SHA=737c0085912f9f7dabf9341d4608e2a77a51a73a
+          curl -fsSL "https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/${GEN_SHA}/cargo/flatpak-cargo-generator.py" \
+            -o flatpak-cargo-generator.py
+          echo "b373c8ab1a05378ec5d8ed0645c7b127bcec7d2f7a1798694fbc627d570d856c  flatpak-cargo-generator.py" | sha256sum -c -
+
+          pip3 install aiohttp tomlkit
+          python3 flatpak-cargo-generator.py Cargo.lock -o flatpak-repo/cargo-sources.json
+          python3 .github/workflows/scripts/update-manifest.py \
+            flatpak-repo/org.cosmic_utils.enroll.yml "$TAG" "$COMMIT"
+
+          cd flatpak-repo
+          git remote add fork "https://x-access-token:${GH_TOKEN}@github.com/jotuel/org.cosmic_utils.enroll.git"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="update-to-${VERSION}"
+          git checkout -b "$BRANCH"
+          git add org.cosmic_utils.enroll.yml cargo-sources.json
+          if git diff --quiet --cached; then
+            echo "No changes; Flathub manifest already up to date."
+            exit 0
+          fi
+          git commit -m "Update to version ${VERSION}"
+          git push -f fork "$BRANCH"
+
+          PR_EXISTS=$(gh pr list --repo flathub/org.cosmic_utils.enroll \
+            --head "jotuel:${BRANCH}" --json number --jq '.[0].number')
+          if [ -z "$PR_EXISTS" ]; then
+            gh pr create --repo flathub/org.cosmic_utils.enroll \
+              --title "Update to version ${VERSION}" \
+              --body "Automated update to cosmic-utils-enroll version ${VERSION}" \
+              --head "jotuel:${BRANCH}" --base master
+          else
+            echo "Pull request already exists: #$PR_EXISTS"
+          fi
