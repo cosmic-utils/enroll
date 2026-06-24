@@ -38,6 +38,9 @@ pub enum Message {
     EnrollStatus(String, bool),
     EnrollStop,
     DeleteComplete(bool),
+    DeleteSingleUnsupported,
+    ConfirmDeleteAll,
+    CancelDeleteAll,
     ClearDevice,
     CancelClear,
     ClearComplete(Result<(), AppError>),
@@ -388,6 +391,45 @@ impl AppModel {
                 .retain(|f| Some(f.as_str()) != self.selected_finger.as_finger_id());
         }
 
+        Task::none()
+    }
+
+    /// Single-finger delete is unsupported by the running fingerprint service;
+    /// offer to delete all of the user's prints instead via a dialog.
+    ///
+    /// **Returns** ***Task***()
+    pub(crate) fn on_delete_single_unsupported(&mut self) -> Task<cosmic::Action<Message>> {
+        self.busy = false;
+        self.confirm_delete_all = true;
+        self.status = fl!("delete-all-fallback");
+        Task::none()
+    }
+
+    /// User chose to delete all of the selected user's prints after the
+    /// single-finger delete fallback dialog.
+    ///
+    /// **Returns** ***task_delete_prints***() or ***Task***::**none**()
+    pub(crate) fn on_confirm_delete_all(&mut self) -> Task<cosmic::Action<Message>> {
+        self.confirm_delete_all = false;
+        if let (Some(path), Some(conn), Some(user)) = (
+            self.device_path.clone(),
+            self.connection.clone(),
+            self.selected_user.clone(),
+        ) {
+            self.status = fl!("deleting");
+            self.busy = true;
+            let path = (*path).clone();
+            let username = (*user.username).clone();
+            return task_delete_prints(path, username, conn);
+        }
+        Task::none()
+    }
+
+    /// User cancelled the single-finger delete fallback dialog.
+    ///
+    /// **Returns** ***Task***()
+    pub(crate) fn on_cancel_delete_all(&mut self) -> Task<cosmic::Action<Message>> {
+        self.confirm_delete_all = false;
         Task::none()
     }
 

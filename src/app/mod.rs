@@ -70,6 +70,9 @@ pub struct AppModel {
     enrolled_fingers: Vec<String>,
     // Confirmation state for clearing the device
     confirm_clear: bool,
+    // Confirmation state for falling back to deleting all of a user's prints
+    // when single-finger delete is unsupported (e.g. open-fprintd).
+    confirm_delete_all: bool,
 }
 
 mod application;

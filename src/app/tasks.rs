@@ -103,7 +103,14 @@ pub fn task_delete_print(
         async move {
             match delete_fingerprint_dbus(&conn, path, finger_name, username).await {
                 Ok(_) => Message::DeleteComplete(false),
-                Err(e) => Message::OperationError(AppError::from(e)),
+                Err(e) => {
+                    let err = AppError::from(e);
+                    if err == AppError::UnsupportedOperation {
+                        Message::DeleteSingleUnsupported
+                    } else {
+                        Message::OperationError(err)
+                    }
+                }
             }
         },
         cosmic::Action::App,
