@@ -7,7 +7,7 @@ GUI application for fingerprint management. Designed for COSMIC DE.
 
 ## Prerequisites
 
-You're using Linux or freedesktop compatible system with a supported fingerprint scanner. You also need [fprintd][fprintd] running.
+You're using Linux or freedesktop compatible system with a supported fingerprint scanner. You also need [fprintd][fprintd] or [open-fprintd][open-fprintd] running.
 
 Tested with: 
 | Distribution | Desktop | Architecture | Fingerprint scanner |
@@ -38,3 +38,4 @@ If you don't have correct rights or incorrect password your attempt is just dism
 
 [just]: https://github.com/
 [fprintd]: https://gitlab.freedesktop.org/libfprint/fprintd
+[open-fprintd]: https://github.com/uunicorn/open-fprintd
