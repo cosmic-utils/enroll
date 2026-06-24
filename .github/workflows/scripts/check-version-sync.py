@@ -48,11 +48,9 @@ def main() -> int:
 
     if cargo_ver != metainfo_ver:
         print(
-            f"\nerror: Cargo.toml ({cargo_ver}) and metainfo.xml ({metainfo_ver}) "
-            f"are out of sync.\n"
-            f"       A tag would ship a build whose metainfo is missing its own "
-            f"release entry (breaks Flathub).\n"
-            f"       Run `just release {cargo_ver}` to regenerate the metainfo entry.",
+            f"\nerror: Cargo.toml ({cargo_ver}) and metainfo.xml ({metainfo_ver}) are out of sync.\n"
+            + "       A tag would ship a build whose metainfo is missing its own release entry (breaks Flathub).\n"
+            + f"       Run `just release {cargo_ver}` to regenerate the metainfo entry.",
             file=sys.stderr,
         )
         return 1

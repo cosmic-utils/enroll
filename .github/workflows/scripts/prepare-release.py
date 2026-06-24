@@ -57,7 +57,7 @@ def main() -> int:
             file=sys.stderr,
         )
         return 1
-    cargo.write_text(ct)
+    _ = cargo.write_text(ct)
 
     cl = root / "CHANGELOG.md"
     t = cl.read_text()
@@ -79,11 +79,11 @@ def main() -> int:
         found = top.group(1) if top else "(none)"
         print(
             f"error: CHANGELOG top entry is [{found}], expected [Unreleased] or [{version}].\n"
-            f"       Add your release notes under a '## [Unreleased]' section first.",
+            + "       Add your release notes under a '## [Unreleased]' section first.",
             file=sys.stderr,
         )
         return 1
-    cl.write_text(t2)
+    _ = cl.write_text(t2)
 
     print(f"Bumped Cargo.toml -> {version}; finalized CHANGELOG header ({today}).")
     return 0
