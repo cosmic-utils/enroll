@@ -26,16 +26,4 @@ If you don't have correct rights or incorrect password your attempt is just dism
 ## Installation
 
 ### Flathub
-<a href='https://flathub.org/apps/io.github.cosmic_utils.enroll'><img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?svg&locale=en'/></a>
-
-### Build from source
-
-[justfile](./justfile) is included by default for the [casey/just][just] command runner.
-
-- `just` builds the application with the default `just build-release` recipe
-- `just run` builds and runs the application
-- `just install` installs the project into the system
-
-[just]: https://github.com/
-[fprintd]: https://gitlab.freedesktop.org/libfprint/fprintd
-[open-fprintd]: https://github.com/uunicorn/open-fprintd
+<a href='https://flathub.org/apps/org.github.cosmic_utils.enroll'><img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?svg&locale=en'/></a>
