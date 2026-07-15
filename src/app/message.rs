@@ -497,6 +497,7 @@ impl AppModel {
         };
         command::set_theme(theme)
     }
+
     pub fn on_theme_setting(&mut self, theme: AppTheme) -> Task<cosmic::Action<Message>> {
         let mut tasks = vec![self.on_update_config(Config {
             app_theme: theme,
