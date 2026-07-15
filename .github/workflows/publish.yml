@@ -74,8 +74,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Regenerate cargo-sources & update manifest
+        id: prep
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
           # The git tag pushed by `just release` (e.g. v1.3.0).
           TAG: ${{ github.ref_name }}
         run: |
@@ -83,7 +83,11 @@ jobs:
           VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
           COMMIT="${{ github.sha }}"
           echo "version=$VERSION tag=$TAG commit=$COMMIT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+          # Clone the Flathub manifest repository. create-pull-request pushes
+          # the update branch directly here (no fork) — the Flathub-maintainer
+          # pattern for opening update PRs on upstream tag creation.
           git clone https://github.com/flathub/org.cosmic_utils.enroll.git flatpak-repo
 
           # Pinned + checksummed cargo source generator (was an unpinned curl|python).
@@ -97,28 +101,18 @@ jobs:
           python3 .github/workflows/scripts/update-manifest.py \
             flatpak-repo/org.cosmic_utils.enroll.yml "$TAG" "$COMMIT"
 
-          cd flatpak-repo
-          git remote add fork "https://x-access-token:${GH_TOKEN}@github.com/jotuel/org.cosmic_utils.enroll.git"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          BRANCH="update-to-${VERSION}"
-          git checkout -b "$BRANCH"
-          git add org.cosmic_utils.enroll.yml cargo-sources.json
-          if git diff --quiet --cached; then
-            echo "No changes; Flathub manifest already up to date."
-            exit 0
-          fi
-          git commit -m "Update to version ${VERSION}"
-          git push -f fork "$BRANCH"
-
-          PR_EXISTS=$(gh pr list --repo flathub/org.cosmic_utils.enroll \
-            --head "jotuel:${BRANCH}" --json number --jq '.[0].number')
-          if [ -z "$PR_EXISTS" ]; then
-            gh pr create --repo flathub/org.cosmic_utils.enroll \
-              --title "Update to version ${VERSION}" \
-              --body "Automated update to cosmic-utils-enroll version ${VERSION}" \
-              --head "jotuel:${BRANCH}" --base master
-          else
-            echo "Pull request already exists: #$PR_EXISTS"
-          fi
+      - name: Open/update Flathub PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # PAT with write access to flathub/org.cosmic_utils.enroll; used for
+          # both pushing the branch and opening the PR in the same repository.
+          # If there are no changes the action exits without creating a PR.
+          token: ${{ secrets.GH_PAT }}
+          path: flatpak-repo
+          base: master
+          branch: update-to-${{ steps.prep.outputs.version }}
+          author: Joonas Tuomi <102735115+jotuel@users.noreply.github.com>
+          commit-message: Update to version ${{ steps.prep.outputs.version }}
+          title: Update to version ${{ steps.prep.outputs.version }}
+          body: |
+            Automated update to cosmic-utils-enroll version ${{ steps.prep.outputs.version }}.

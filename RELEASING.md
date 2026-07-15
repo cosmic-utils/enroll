@@ -61,22 +61,33 @@ silently skips another:
 - **appimage** — `cargo build --release`, package with `appimagetool`, upload
   to the release. Needs `create-release` (a release must exist to attach to).
 - **flathub** — regenerates `cargo-sources.json` with a **pinned +
-  checksummed** cargo generator, updates the manifest, force-pushes to your
-  fork and opens/updates the Flathub PR. Fully parallel to `appimage`.
+  checksummed** cargo generator, updates the manifest, then uses
+  [`peter-evans/create-pull-request`](https://github.com/peter-evans/create-pull-request)
+  to push an update branch directly to `flathub/org.cosmic_utils.enroll` and
+  open/update the PR there (no fork — the Flathub maintainer pattern). Fully
+  parallel to `appimage`.
 
 ## Required repository configuration
 
 ### `GH_PAT` (for the Flathub job only)
 
-The workflow pushes to your fork `jotuel/org.cosmic_utils.enroll` and opens a
-PR on `flathub/org.cosmic_utils.enroll` using a PAT. The PAT must have:
+The workflow pushes a branch directly to `flathub/org.cosmic_utils.enroll`
+and opens the PR there (no fork), using a PAT. Your account already has write
+access to the Flathub repo (standard for the upstream author), so a **classic
+PAT with the `repo` scope** is all that's needed — the classic `repo` scope
+inherits your collaborator rights and works against the Flathub repo at
+runtime.
 
-- **Contents: write** on `jotuel/org.cosmic_utils.enroll` (fine-grained), or
-  the `repo` scope (classic).
+> **Use a classic PAT, not fine-grained.** Fine-grained PATs can only target
+> repositories you *own*, so `flathub/org.cosmic_utils.enroll` (where you're a
+> collaborator, not the owner) does not appear in their repository picker. A
+> classic PAT with `repo` scope has no such limitation. This is why the
+> Flathub docs say *"the maintainer can use their personal token for this."*
 
-Store it as the repository secret **`GH_PAT`**. If the Flathub job fails with
-`403 ... denied to jotuel`, the PAT is missing this scope (this is exactly
-what failed before).
+Create it at *Settings → Developer settings → Personal access tokens → Tokens
+(classic)*, give it the **`repo`** scope, and store it as the repository
+secret **`GH_PAT`**. If the Flathub job fails with `403 ... denied to
+flathub`, the PAT is missing the `repo` scope.
 
 ### GitHub Actions settings
 
