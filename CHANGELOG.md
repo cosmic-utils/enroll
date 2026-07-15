@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+ - Updated libcosmic to support new Frosted Glass theme
+
 ## [1.2.0](https://github.com/cosmic-utils/enroll/releases/tag/1.2.0) - 2026-06-24
 
 ### Added
