@@ -4,7 +4,7 @@ Check whether an issue already exist if not then open an issue on the tracker.
 
 ## Submitting PR's
 
-This project adheres to [Semantic Versioning][SemVer], [Conventional Commits][CoCo] and [Keep a Changelog][KeCh] so for your changes to make it to a release they MUST do so. Please also consider opening an issue beforehand.
+This project adheres to [Semantic Versioning][SemVer], [Conventional Commits][CoCo] and [Keep a Changelog][KeCh] so for your changes to make it to a release they MUST do so. The `release` section for distributing is automatically generated from the [Unreleased] section of [CHANGELOG.md](../CHANGELOG.md) and it the version number change is derived from the commits after last release. Please also consider opening an issue beforehand.
 
 ## Translators
 
