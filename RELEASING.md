@@ -1,18 +1,13 @@
 # Release Process
 
-Releases are **tag-driven**. There is no release-plz: a maintainer runs one
-command locally, and pushing the tag publishes everything.
+Releases are **tag-driven**. Maintainer runs one command locally, and pushing the tag publishes everything.
 
-## The invariant that matters
+## The tag that matters
 
 The Flathub build compiles the app from a git tag and ships the
 `metainfo.xml` found at that tag. So **the commit a tag points at must already
 contain the `<release>` entry for that version** — otherwise Flathub ships a
 build whose latest `<release>` is stale and AppStream validation fails.
-
-This was the bug that broke the old release-plz pipeline (it tagged from
-`Cargo.toml` while the metainfo entry landed later, on a separate PR branch).
-The new flow makes the invariant structural:
 
 ```mermaid
 flowchart TD
@@ -88,18 +83,3 @@ Create it at *Settings → Developer settings → Personal access tokens → Tok
 (classic)*, give it the **`repo`** scope, and store it as the repository
 secret **`GH_PAT`**. If the Flathub job fails with `403 ... denied to
 flathub`, the PAT is missing the `repo` scope.
-
-### GitHub Actions settings
-
-This workflow no longer creates pull requests with `GITHUB_TOKEN` (the Flathub
-PR uses `GH_PAT`), so the repository setting
-*Settings → Actions → General → Workflow permissions → Allow GitHub Actions to
-create and approve pull requests* is **no longer required**. You may leave it
-on or disable it; it does not affect this pipeline.
-
-## Commit messages
-
-Conventional Commit prefixes (`feat:`, `fix:`, …) are no longer required —
-nothing auto-derives the version or changelog from them. They remain good
-practice for a readable history, but the CHANGELOG is now written by hand and
-the version is chosen explicitly via `just release`.
