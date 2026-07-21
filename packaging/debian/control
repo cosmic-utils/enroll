@@ -1,0 +1,29 @@
+Source: cosmic-utils-enroll
+Section: utils
+Priority: optional
+Maintainer: Joonas Tuomi <joonas@cosmic-utils.org>
+Build-Depends:
+ debhelper-compat (= 13),
+ cargo (>= 1.85),
+ rustc (>= 1.85),
+ just,
+ pkg-config,
+ libfontconfig1-dev,
+ libfreetype-dev,
+ libxkbcommon-dev,
+ libwayland-dev,
+Standards-Version: 4.7.0
+Homepage: https://github.com/cosmic-utils/enroll
+Rules-Requires-Root: no
+
+Package: cosmic-utils-enroll
+Architecture: any
+Depends:
+ fprintd,
+ libxkbcommon0,
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: GUI for fprintd fingerprint enrolling (COSMIC)
+ Enroll is a COSMIC GUI for fprintd fingerprint enrolling. It can register,
+ verify and delete fingerprint records, and manage prints for another user on
+ multi-user systems.

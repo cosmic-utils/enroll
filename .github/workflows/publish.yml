@@ -40,6 +40,20 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+      - name: Install build dependencies
+        # libcosmic's native deps (fontconfig, freetype, expat, xkbcommon) need
+        # their headers + pkg-config present to link. The stock ubuntu-latest
+        # runner ships none of them, so the build failed without this step.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            libexpat1-dev \
+            libfontconfig1-dev \
+            libfreetype6-dev \
+            libwayland-dev \
+            libxkbcommon-dev \
+            pkg-config
       - name: Build (release)
         run: cargo build --release
       - name: Package AppImage
@@ -116,3 +130,254 @@ jobs:
           title: Update to version ${{ steps.prep.outputs.version }}
           body: |
             Automated update to cosmic-utils-enroll version ${{ steps.prep.outputs.version }}.
+
+  # ---------------------------------------------------------------------------
+  # Native distribution packaging (AUR / Copr / Launchpad).
+  #
+  # Mirrors the AppImage/Flathub jobs above: independent of them, also gated on
+  # create-release so a GitHub release exists to attach artifacts to. vendoring
+  # is required because libcosmic is a git dep (not on crates.io) and Copr /
+  # Launchpad build chroots are network-isolated. See packaging/README.md.
+  # ---------------------------------------------------------------------------
+
+  vendor-tar:
+    name: Build & upload vendor.tar
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Produce vendor.tar (reproducible VERGEN)
+        env:
+          # Pin VERGEN to the release commit so the binary reports the tag,
+          # not the build host's git state. `just vendor` bakes these into
+          # .cargo/config.toml inside the tarball.
+          SOURCE_DATE_EPOCH: ${{ github.event.repository.pushed_at }}
+          SOURCE_GIT_HASH: ${{ github.sha }}
+        run: just vendor
+      - name: Upload vendor.tar to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" vendor.tar --clobber
+
+  aur:
+    name: Publish PKGBUILD to AUR
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install makepkg (needed to regenerate .SRCINFO)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pacman-package-manager || true
+      - name: Resolve version + checksums
+        id: prep
+        run: |
+          set -e
+          VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+          TAG="${GITHUB_REF_NAME}"
+          # sha256 of the GitHub source tarball backing Source0 in the PKGBUILD.
+          URL="https://github.com/cosmic-utils/enroll/archive/refs/tags/${TAG}.tar.gz"
+          SUM=$(curl -fsSL "$URL" | sha256sum | awk '{print $1}')
+          {
+            echo "version=$VERSION"
+            echo "tag=$TAG"
+            echo "sha256=$SUM"
+          } >> "$GITHUB_OUTPUT"
+      - name: Render PKGBUILD
+        env:
+          VERSION: ${{ steps.prep.outputs.version }}
+          SHA256: ${{ steps.prep.outputs.sha256 }}
+        run: |
+          set -e
+          mkdir -p out
+          # Stamp pkgver + sha256sums into the committed PKGBUILD.
+          awk -v v="$VERSION" -v s="$SHA256" '
+            /^pkgver=/      { print "pkgver=" v; next }
+            /^sha256sums=/ { print "sha256sums=(\x27" s "\x27)"; next }
+            { print }
+          ' packaging/aur/PKGBUILD > out/PKGBUILD
+      - name: Push to AUR
+        env:
+          # Private key whose public half is registered on the AUR account.
+          AUR_SSH_KEY: ${{ secrets.AUR_SSH_KEY }}
+          VERSION: ${{ steps.prep.outputs.version }}
+        run: |
+          set -e
+          mkdir -p ~/.ssh
+          printf '%s\n' "$AUR_SSH_KEY" > ~/.ssh/aur
+          chmod 600 ~/.ssh/aur
+          {
+            echo "Host aur.archlinux.org"
+            echo "  HostName aur.archlinux.org"
+            echo "  User aur"
+            echo "  IdentityFile ~/.ssh/aur"
+            echo "  StrictHostKeyChecking accept-new"
+          } > ~/.ssh/config
+          ssh-keyscan -t ed25519,rsa aur.archlinux.org >> ~/.ssh/known_hosts 2>/dev/null
+
+          git config --global user.email "102735115+jotuel@users.noreply.github.com"
+          git config --global user.name "enroll-release-bot"
+
+          # PKGBUILD name in the repo matches `pkgname` in the file.
+          git clone ssh://aur@aur.archlinux.org/cosmic-utils-enroll.git aur-repo
+          cp out/PKGBUILD aur-repo/PKGBUILD
+
+          cd aur-repo
+          # Render .SRCINFO from the rendered PKGBUILD. makepkg ships on Arch
+          # (and via the pacman-package-manager apt port as a fallback). If
+          # makepkg is unavailable, fall back to the namcap-free mksrcinfo.
+          if command -v makepkg >/dev/null 2>&1; then
+            makepkg --printsrcinfo > .SRCINFO
+          elif command -v mksrcinfo >/dev/null 2>&1; then
+            mksrcinfo
+          else
+            echo "::warning::no makepkg/mksrcinfo on runner; .SRCINFO not regenerated"
+          fi
+
+          git add PKGBUILD .SRCINFO
+          git commit -m "Update to v$VERSION" || exit 0
+          git push
+
+  copr:
+    name: Submit SRPM to Copr
+    needs: vendor-tar
+    runs-on: ubuntu-latest
+    container: fedora:42
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          # rustc/cargo 1.85+ ships in the Fedora 42 base; no rust toolchain
+          # install needed. copr-cli submits an SRPM (no in-runner build).
+          dnf install -y rpmdevtools copr-cli
+      - name: Download vendor.tar from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download "${{ github.ref_name }}" --pattern vendor.tar
+      - name: Resolve version
+        id: prep
+        run: |
+          set -e
+          VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Build SRPM
+        env:
+          VERSION: ${{ steps.prep.outputs.version }}
+        run: |
+          set -e
+          rpmdev-setuptree
+          # Source0: git archive of the tag, named as the spec expects.
+          git archive --format=tar.gz --prefix="cosmic-utils-enroll-${VERSION}/" \
+            -o "${HOME}/rpmbuild/SOURCES/cosmic-utils-enroll-${VERSION}.tar.gz" HEAD
+          cp vendor.tar "${HOME}/rpmbuild/SOURCES/vendor.tar"
+          cp packaging/copr/cosmic-utils-enroll.spec "${HOME}/rpmbuild/SPECS/"
+          rpmbuild -bs "${HOME}/rpmbuild/SPECS/cosmic-utils-enroll.spec"
+          echo "srpm=$(ls ${HOME}/rpmbuild/SRPMS/*.src.rpm)" >> "$GITHUB_OUTPUT"
+      - name: Submit to Copr
+        env:
+          # Whole ~/.config/copr INI: login/token/username/copr_url.
+          COPR_API_TOKEN: ${{ secrets.COPR_API_TOKEN }}
+          SRPM: ${{ steps.prep.outputs.srpm }}
+        run: |
+          set -e
+          mkdir -p ~/.config
+          printf '%s\n' "$COPR_API_TOKEN" > ~/.config/copr
+          # Default project name "enroll" under the token's account; override
+          # by setting the COPR_PROJECT repo variable if you host elsewhere.
+          copr-cli build "${COPR_PROJECT:-enroll}" "$SRPM" --nowait
+
+  launchpad:
+    name: dput source package to Launchpad PPA
+    needs: vendor-tar
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:25.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            devscripts dput debhelper-compat dh-make just pkg-config \
+            libfontconfig1-dev libfreetype-dev libxkbcommon-dev libwayland-dev \
+            cargo rustc gnupg ca-certificates
+      - name: Download vendor.tar from the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download "${{ github.ref_name }}" --pattern vendor.tar
+      - name: Resolve version
+        id: prep
+        run: |
+          set -e
+          VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+          # Debian target series; override via the DEB_SERIES repo variable.
+          SERIES="${DEB_SERIES:-plucky}"
+          {
+            echo "version=$VERSION"
+            echo "series=$SERIES"
+          } >> "$GITHUB_OUTPUT"
+      - name: Import GPG signing key
+        env:
+          LP_GPG_KEY: ${{ secrets.LP_GPG_KEY }}
+          LP_GPG_PASSPHRASE: ${{ secrets.LP_GPG_PASSPHRASE }}
+        run: |
+          set -e
+          # Import the ASCII-armored private key registered to the Launchpad
+          # account that owns the PPA. debsign signs the .changes with it.
+          gpg --batch --import <<< "$LP_GPG_KEY"
+          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+          # Enable loopback pinentry so gpg can be unlocked non-interactively
+          # inside the container (no pinentry-tty/tty agent available there).
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          printf '%s\n' "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+          # Preset the passphrase into the agent so later gpg calls don't prompt.
+          gpg-connect-agent "PRESET_PASSPHRASE $KEYID 1 $LP_GPG_PASSPHRASE" /bye \
+            >/dev/null 2>&1 || true
+          gpg-connect-agent reloadagent /bye >/dev/null 2>&1 || true
+          echo "keyid=$KEYID" >> "$GITHUB_OUTPUT"
+      - name: Build source package
+        env:
+          VERSION: ${{ steps.prep.outputs.version }}
+          SERIES: ${{ steps.prep.outputs.series }}
+        run: |
+          set -e
+          PKG=cosmic-utils-enroll
+          STAGE="$PKG-$VERSION"
+
+          # Stage the upstream source at the tag (pristine, no debian/ yet).
+          git archive --format=tar --prefix="$STAGE/" HEAD | tar x
+
+          # Embed vendored deps into the source tree so the offline sbuild
+          # build in Launchpad finds them — .cargo/config.toml + vendor/.
+          tar xf vendor.tar -C "$STAGE"
+
+          # Reproducible orig tarball (.tar.xz); vendor deps live inside it.
+          tar --sort=name --owner=0 --group=0 --numeric-owner \
+            --mtime="@${SOURCE_DATE_EPOCH:-0}" \
+            -cJf "${PKG}_${VERSION}.orig.tar.xz" "$STAGE"
+
+          # debian/ is supplied separately (3.0 (quilt) source format keeps it
+          # out of the orig tarball).
+          cp -a packaging/debian "$STAGE/debian"
+          # Stamp the target series into the top changelog entry.
+          sed -i "1s/) [^;]*; /) $SERIES; /" "$STAGE/debian/changelog"
+
+          cd "$STAGE"
+          # Build unsigned source package; signed in the next step via debsign,
+          # which is the standard non-interactive path (debuild -k passphrase
+          # handling is fragile in containers).
+          debuild -S -sa --unsigned-source --unsigned-changes
+      - name: Sign & dput to PPA
+        env:
+          KEYID: ${{ steps.prep.outputs.keyid }}
+          LP_GPG_PASSPHRASE: ${{ secrets.LP_GPG_PASSPHRASE }}
+          # Override if your PPA lives under a different user/name.
+          LP_DPUT_HOST: ${{ vars.LP_DPUT_HOST || 'ppa:cosmic-utils/enroll' }}
+        run: |
+          set -e
+          # debsign re-signs the .changes (and .dsc) with the registered key.
+          DEBSIGN_KEYID="$KEYID" debsign -p\
+            "gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0"\
+            ../*.changes <<< "$LP_GPG_PASSPHRASE"
+          dput "$LP_DPUT_HOST" ../*.changes

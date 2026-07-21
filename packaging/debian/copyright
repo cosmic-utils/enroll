@@ -1,0 +1,33 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: cosmic-utils-enroll
+Upstream-Contact: Joonas Tuomi <joonas@cosmic-utils.org>
+Source: https://github.com/cosmic-utils/enroll
+
+Files: *
+Copyright: 2025-2026 Joonas Tuomi
+License: MPL-2.0
+
+Files: resources/org.cosmic_utils.enroll.metainfo.xml
+Copyright: 2025-2026 Joonas Tuomi
+License: CC0-1.0
+
+Files: packaging/debian/*
+Copyright: 2026 Joonas Tuomi
+License: MPL-2.0
+
+License: MPL-2.0
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ package, You can obtain one at https://mozilla.org/MPL/2.0/.
+ .
+ On Debian systems, the full text of the Mozilla Public License 2.0 can be
+ found in /usr/share/common-licenses/MPL-2.0.
+
+License: CC0-1.0
+ To the extent possible under law, the author(s) have dedicated all
+ copyright and related and neighboring rights to this software to the
+ public domain worldwide. This software is distributed without any
+ warranty.
+ .
+ On Debian systems, the full text of the CC0 1.0 license can be
+ found in /usr/share/common-licenses/CC0-1.0.
