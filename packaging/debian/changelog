@@ -1,0 +1,6 @@
+cosmic-utils-enroll (1.2.1-1) unstable; urgency=medium
+
+  * Initial Debian packaging for Launchpad PPA.
+  * Vendored build: libcosmic is a git dependency and sbuild has no network.
+
+ -- Joonas Tuomi <joonas@cosmic-utils.org>  Tue, 15 Jul 2026 00:00:00 +0000

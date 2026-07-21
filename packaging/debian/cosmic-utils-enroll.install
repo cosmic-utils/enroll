@@ -1,0 +1,7 @@
+# Explicit install manifest. The justfile `install` recipe already lays these
+# files down under debian/cosmic-utils-enroll/ during override_dh_auto_install,
+# but we list them here so dh_install is a no-op safety net and the layout is
+# self-documenting. Path is relative to debian/tmp by convention; here we
+# install directly to debian/cosmic-utils-enroll via just, so this file is
+# intentionally empty — kept so dh behaves predictably with the install
+# debhelper sequence.

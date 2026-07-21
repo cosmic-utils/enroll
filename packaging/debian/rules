@@ -1,0 +1,38 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: MPL-2.0
+#
+# Vendored, fully offline build. Launchpad sbuild chroots have no network,
+# and libcosmic is a git dependency (not on crates.io), so vendor.tar is
+# rolled into the upstream source by CI before debuild (see
+# .github/workflows/publish.yml, job `launchpad`). That tarball contains
+# .cargo/config.toml + vendor/, exactly what `just vendor` produces.
+
+export CARGO_HOME = $(CURDIR)/.cargo-home
+# Honor Cargo.lock exactly; never touch the network.
+export CARGO_NET_OFFLINE = 1
+
+# Reproducible: VERGEN values are baked into .cargo/config.toml by the
+# vendor step, so the binary reports the release commit, not the build
+# host's git state.
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	# Unpack the vendored deps the CI rolled into the source tree.
+	just vendor-extract
+
+override_dh_auto_build:
+	cargo build --release --frozen --offline
+
+override_dh_auto_install:
+	# Single source of truth for the on-disk layout: the upstream justfile.
+	just rootdir=debian/cosmic-utils-enroll install
+
+override_dh_auto_test:
+	# Upstream has no test suite; `cargo build --frozen` is the compile gate.
+	# Keep the override so a future harness is wired in automatically.
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf vendor .cargo
