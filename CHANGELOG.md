@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Ctrl + Q quits application
 - Improved Help theming and added open-fprintd link
 - Updated application dependencies 
 
