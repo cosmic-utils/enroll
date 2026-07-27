@@ -21,6 +21,7 @@ const FPRINT_ICON: &[u8] = include_bytes!("../../resources/icons/hicolor/scalabl
 const STATUS_TEXT_SIZE: u16 = 16;
 const LICENSES: &str = "https://cosmic-utils.org/enroll/licenses";
 const FREEDESKTOP_FPRINT: &str = "https://fprint.freedesktop.org/";
+const OPEN_FPRINTD: &str = "https://github.com/uunicorn/open-fprintd";
 const WIKI_ARCH: &str = "https://wiki.archlinux.org/title/Fprint#Login_configuration";
 pub(crate) const MAIN_PADDING: u16 = 20;
 pub(crate) const MAIN_SPACING: u16 = 20;
@@ -71,22 +72,30 @@ impl AppModel {
     pub fn help(&self) -> Element<'_, Message> {
         let cosmic_theme::Spacing { space_xxs, .. } = theme::active().cosmic().spacing;
         let help = Column::new();
-        let title_fprintd = text::title3("Fprintd");
         let help_section_fprintd = text(fl!("help-fprintd"));
         let fprintd_url = button::link(FREEDESKTOP_FPRINT)
             .on_press(Message::LaunchUrl(FREEDESKTOP_FPRINT.into()))
             .padding(0);
-        let title_pam = text::title3("PAM");
+        let validity_scanner_help_text = text(fl!("help-validity"));
+        let open_fprintd_url = button::link(OPEN_FPRINTD)
+            .on_press(Message::LaunchUrl(OPEN_FPRINTD.into()))
+            .padding(0);
+        let fprintd_section = cosmic::widget::settings::section()
+            .title("Fprintd")
+            .add(help_section_fprintd)
+            .add(fprintd_url)
+            .add(validity_scanner_help_text)
+            .add(open_fprintd_url);
         let help_section_pam = text(fl!("help-pam"));
         let wiki_arch_url = button::link(WIKI_ARCH)
             .on_press(Message::LaunchUrl(WIKI_ARCH.into()))
             .padding(0);
-        help.push(title_fprintd)
-            .push(help_section_fprintd)
-            .push(fprintd_url)
-            .push(title_pam)
-            .push(help_section_pam)
-            .push(wiki_arch_url)
+        let pam_section = cosmic::widget::settings::section()
+            .title("PAM")
+            .add(help_section_pam)
+            .add(wiki_arch_url);
+        help.push(fprintd_section)
+            .push(pam_section)
             .align_x(Alignment::Center)
             .spacing(space_xxs)
             .into()

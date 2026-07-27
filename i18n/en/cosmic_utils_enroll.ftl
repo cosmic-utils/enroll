@@ -24,6 +24,7 @@ clear-device-confirm = Are you sure you want to clear fingerprints for ALL known
 
 about-licenses = License information
 help-fprintd = If you have any issues please first check you have fprintd correctly installed. You can find more information from their website:
+help-validity = For some hardware, like Validity scanners for example, you need to currently use open-fprintd instead.
 help-pam = Also to be able to utilize fingerprint effectively PAM must be configured to use fprintd module for authentication. You can find examples here:
 
 settings-ui = User Interface
