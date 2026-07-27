@@ -44,6 +44,7 @@ pub enum Message {
     ClearDevice,
     CancelClear,
     ClearComplete(Result<(), AppError>),
+    CloseApplication,
     EnrolledFingers(Vec<String>),
     FingerSelected(String),
     VerifyFinger,
@@ -57,6 +58,13 @@ pub enum Message {
 
 // Section for handling of Messages
 impl AppModel {
+    /// Closes the application
+    ///
+    /// **Return** ***Task***::*done*()
+    pub(crate) fn on_close(&mut self) -> Task<cosmic::Action<Message>> {
+        Task::done(cosmic::app::Action::Close).map(cosmic::Action::Cosmic)
+    }
+
     /// Resets clear state
     ///
     /// **Returns** ***Task***()

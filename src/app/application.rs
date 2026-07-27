@@ -161,8 +161,7 @@ impl cosmic::Application for AppModel {
                             .on_press(Message::ConfirmDeleteAll),
                     )
                     .secondary_action(
-                        widget::button::standard(fl!("cancel"))
-                            .on_press(Message::CancelDeleteAll),
+                        widget::button::standard(fl!("cancel")).on_press(Message::CancelDeleteAll),
                     )
                     .into(),
             )
@@ -269,6 +268,7 @@ impl cosmic::Application for AppModel {
             Message::ClearDevice => self.on_clear_device(),
             Message::CancelClear => self.on_cancel_clear(),
             Message::ClearComplete(res) => self.on_clear_completion(res),
+            Message::CloseApplication => self.on_close(),
             Message::Register => self.on_register(),
             Message::OpenRepositoryUrl => self.on_clicked_link(),
             Message::ToggleContextPage(context_page) => self.on_context_page_toggle(context_page),

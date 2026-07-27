@@ -1,5 +1,8 @@
 use crate::app::{
-    Message, error::AppError, finger::Finger, fprint::{enroll_fingerprint_process, verify_finger_process}
+    Message,
+    error::AppError,
+    finger::Finger,
+    fprint::{enroll_fingerprint_process, verify_finger_process},
 };
 use ashpd::desktop::settings::{ColorScheme, Settings};
 use cosmic::iced::{
@@ -106,8 +109,9 @@ pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
                 &data.device_path,
                 &data.finger.as_finger_id().unwrap_or_default(),
                 &data.username,
-                &mut output)
-                .await
+                &mut output,
+            )
+            .await
             {
                 Ok(_) => {}
                 Err(e) => {
@@ -163,7 +167,7 @@ pub fn portal_theme_subscription(app_theme: crate::config::AppTheme) -> Subscrip
     }
 }
 
-/// **Returns** a subscription to key events 0-9, r, v, c, Ctrl + d, Tab, Shift + Tab, F1, and Ctrl + ,
+/// **Returns** a subscription to key events 0-9, r, v, c, Ctrl + d/,/q and F1
 pub fn key_subscription() -> Subscription<Message> {
     cosmic::iced::event::listen_raw(|event, _status, _window| {
         let Event::Keyboard(keyboard::Event::KeyPressed { key, modifiers, .. }) = event else {
@@ -175,13 +179,17 @@ pub fn key_subscription() -> Subscription<Message> {
         use cosmic::iced::keyboard::key::Named;
 
         match &key {
-            Key::Named(Named::F1) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
+            Key::Named(Named::F1)
+                if !modifiers.control() && !modifiers.logo() && !modifiers.alt() =>
+            {
                 Some(Message::ToggleContextPage(ContextPage::About))
             }
-            Key::Character(c) if modifiers.control() && c == "," => {
-                Some(Message::ToggleContextPage(ContextPage::Settings))
-            }
-            Key::Character(c) if modifiers.control() && c == "d" => Some(Message::Delete),
+            Key::Character(c) if modifiers.control() => match c.as_str() {
+                "," => Some(Message::ToggleContextPage(ContextPage::Settings)),
+                "q" => Some(Message::CloseApplication),
+                "d" => Some(Message::Delete),
+                _ => None,
+            },
             Key::Character(c) if !modifiers.control() && !modifiers.logo() && !modifiers.alt() => {
                 match c.as_str() {
                     "r" => Some(Message::Register),
