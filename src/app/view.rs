@@ -174,9 +174,10 @@ impl AppModel {
     /// **Returns** an instance of custom_image_button widget
     fn finger_button(&self, finger: Finger, height: f32) -> Element<'_, Message> {
         let is_selected = self.selected_finger == finger;
-        let is_enrolled = finger
-            .as_finger_id()
-            .is_some_and(|id| self.enrolled_fingers.iter().any(|ef| ef == id));
+        let is_enrolled = self
+            .enrolled_fingers
+            .iter()
+            .any(|ef| ef == finger.as_finger_id());
         let mut svg = svg(svg::Handle::from_memory(FPRINT_ICON)).symbolic(true);
         let label = text(finger.localized_name()).size(10);
         if is_enrolled {
@@ -295,18 +296,16 @@ impl AppModel {
         let buttons_enabled =
             !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none();
 
-        let current_finger = self.selected_finger.as_finger_id();
-        let is_enrolled = if let Some(f) = current_finger {
-            self.enrolled_fingers.iter().any(|ef| ef == f)
-        } else {
-            !self.enrolled_fingers.is_empty()
-        };
+        let is_enrolled = self
+            .enrolled_fingers
+            .iter()
+            .any(|ef| ef == self.selected_finger.as_finger_id());
 
         let register_btn = button::text(fl!("register")).tooltip(fl!("register-tooltip"));
         let verify_btn = button::text(fl!("verify")).tooltip(fl!("verify-tooltip"));
         let delete_btn = button::text(fl!("delete")).tooltip(fl!("delete-tooltip"));
 
-        let register_btn = if buttons_enabled && current_finger.is_some() {
+        let register_btn = if buttons_enabled {
             register_btn.on_press(Message::Register)
         } else {
             register_btn

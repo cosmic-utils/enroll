@@ -225,9 +225,9 @@ impl AppModel {
             return Task::none();
         }
         if self
-            .selected_finger
-            .as_finger_id()
-            .is_some_and(|id| self.enrolled_fingers.iter().any(|ef| ef == id))
+            .enrolled_fingers
+            .iter()
+            .any(|ef| ef == self.selected_finger.as_finger_id())
         {
             self.busy = true;
             self.verifying_finger = true;
@@ -368,9 +368,9 @@ impl AppModel {
         Task::none()
     }
 
-    /// Deletes chosen print or users all prints depending on choices from the user
+    /// Deletes the selected finger's print for the current user.
     ///
-    /// **Returns** either ***Task***(), ***task_delete_print***() or ***task_delete_prints***()
+    /// **Returns** either ***Task***() or ***task_delete_print***()
     pub(crate) fn on_delete(&mut self) -> Task<cosmic::Action<Message>> {
         if self.busy {
             return Task::none();
@@ -386,12 +386,8 @@ impl AppModel {
             let path = (*path).clone();
             let username = (*user.username).clone();
 
-            if let Some(finger_name) = self.selected_finger.as_finger_id() {
-                let finger_name = finger_name.to_string();
-                return task_delete_print(path, username, finger_name, conn);
-            } else {
-                return task_delete_prints(path, username, conn);
-            }
+            let finger_name = self.selected_finger.as_finger_id().to_string();
+            return task_delete_print(path, username, finger_name, conn);
         }
         Task::none()
     }
@@ -407,7 +403,7 @@ impl AppModel {
             self.enrolled_fingers.clear();
         } else {
             self.enrolled_fingers
-                .retain(|f| Some(f.as_str()) != self.selected_finger.as_finger_id());
+                .retain(|f| f.as_str() != self.selected_finger.as_finger_id());
         }
 
         Task::none()
@@ -471,9 +467,7 @@ impl AppModel {
     pub(crate) fn on_register(&mut self) -> Task<cosmic::Action<Message>> {
         if !self.busy && self.device_path.is_some() && self.enrolling_finger.is_none() {
             self.busy = true;
-            if let Some(finger_id) = self.selected_finger.as_finger_id() {
-                self.enrolling_finger = Some(Arc::new(finger_id.to_string()));
-            }
+            self.enrolling_finger = Some(Arc::new(self.selected_finger.as_finger_id().to_string()));
             self.status = fl!("status-starting-enrollment");
         }
         Task::none()
@@ -557,18 +551,14 @@ impl AppModel {
         Task::none()
     }
 
-    /// Cycles through selectable fingers (excludes DeleteAllUsersPrints).
+    /// Cycles through selectable fingers.
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_cycle_finger(&mut self, direction: i8) -> Task<cosmic::Action<Message>> {
         if self.busy {
             return Task::none();
         }
-        let fingers: Vec<Finger> = Finger::all()
-            .iter()
-            .filter(|f| f.as_finger_id().is_some())
-            .copied()
-            .collect();
+        let fingers = Finger::all();
         if let Some(pos) = fingers.iter().position(|f| *f == self.selected_finger) {
             let len = fingers.len() as i8;
             let next = ((pos as i8 + direction) % len + len) % len;
