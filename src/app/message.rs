@@ -114,11 +114,11 @@ impl AppModel {
         self.connection = Some(conn.clone());
         self.status = fl!("status-searching-device");
 
-        let conn_clone = conn.clone();
-        let clone_conn = conn.clone();
+        let find_conn = conn.clone();
+        let devices_conn = conn.clone();
         Task::batch(vec![
-            task_find_device(conn_clone),
-            get_devices_task(clone_conn),
+            task_find_device(find_conn),
+            get_devices_task(devices_conn),
         ])
     }
 
