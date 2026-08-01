@@ -6,10 +6,6 @@ mod config;
 mod fprint_dbus;
 mod i18n;
 
-extern crate ashpd;
-extern crate tracing;
-extern crate zbus;
-
 const WINDOW_MIN_WIDTH: f32 = 360.0;
 const WINDOW_MIN_HEIGHT: f32 = 600.0;
 
