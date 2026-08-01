@@ -512,15 +512,15 @@ impl AppModel {
     }
 
     pub fn on_theme_setting(&mut self, theme: AppTheme) -> Task<cosmic::Action<Message>> {
-        let mut tasks = vec![self.on_update_config(Config {
-            app_theme: theme,
-            ..self.config.clone()
-        })];
+        self.config.app_theme = theme;
 
-        let task = cosmic::command::set_theme(theme.theme());
+        if let Some(handler) = &self.config_handler
+            && let Err(err) = self.config.write_entry(handler)
+        {
+            tracing::error!("failed to write config: {}", err);
+        }
 
-        tasks.push(task);
-        Task::batch(tasks)
+        cosmic::command::set_theme(theme.theme())
     }
 
     /// Selects a finger by numeric key (1-0).
