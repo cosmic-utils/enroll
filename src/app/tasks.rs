@@ -72,13 +72,13 @@ pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>>
                 Ok(paths) => {
                     let mut devices = Vec::new();
                     for path in paths {
-                        let name = match DeviceProxy::builder(&conn)
-                            .path(path.clone())
-                            .unwrap()
-                            .build()
-                            .await
-                        {
-                            Ok(proxy) => proxy.name().await.unwrap_or_else(|_| path.to_string()),
+                        let name = match DeviceProxy::builder(&conn).path(path.clone()) {
+                            Ok(builder) => match builder.build().await {
+                                Ok(proxy) => {
+                                    proxy.name().await.unwrap_or_else(|_| path.to_string())
+                                }
+                                Err(_) => path.to_string(),
+                            },
                             Err(_) => path.to_string(),
                         };
                         devices.push(DeviceOption { path, name });
@@ -183,13 +183,11 @@ pub fn task_select_device(
 ) -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
-            match DeviceProxy::builder(&conn)
-                .path(path.clone())
-                .unwrap()
-                .build()
-                .await
-            {
-                Ok(proxy) => Message::DeviceFound(Some((path, proxy))),
+            match DeviceProxy::builder(&conn).path(path.clone()) {
+                Ok(builder) => match builder.build().await {
+                    Ok(proxy) => Message::DeviceFound(Some((path, proxy))),
+                    Err(e) => Message::OperationError(AppError::from(e)),
+                },
                 Err(e) => Message::OperationError(AppError::from(e)),
             }
         },
