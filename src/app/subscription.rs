@@ -104,20 +104,10 @@ pub(crate) fn verify_subscription(data: VerifyData) -> Subscription<Message> {
     Subscription::run_with(data, |data| {
         let data = data.clone();
         channel(100, move |mut output: Sender<Message>| async move {
-            let Some(finger_id) = data.finger.as_finger_id() else {
-                let _ = output
-                    .send(Message::OperationError(AppError::Unknown(
-                        "Cannot verify: no valid finger selected".to_string(),
-                    )))
-                    .await;
-                futures_util::future::pending::<()>().await;
-                return;
-            };
-
             match verify_finger_process(
                 data.connection,
                 &data.device_path,
-                finger_id,
+                data.finger.as_finger_id(),
                 &data.username,
                 &mut output,
             )
