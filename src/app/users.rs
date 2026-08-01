@@ -1,29 +1,27 @@
 // SPDX-License-Identifier: MPL-2.0
 
-pub(crate) use crate::accounts_dbus::{AccountsProxyBlocking, UserProxyBlocking};
+pub(crate) use crate::accounts_dbus::{AccountsProxy, UserProxy};
 use cosmic::widget::{icon, nav_bar};
 use nix::unistd::{Uid, User};
 use std::sync::Arc;
 
-/// Uses DBus synchronously to initialize users, also creates nav_bar with information
+/// Fetches users from accounts-daemon asynchronously.
 ///
-/// Was an asynchronous task but chose that I'd like initialize nav_bar before use
-///
-/// **Returns** tuple of users, nav and current user
-pub fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption>) {
+/// **Returns** list of users
+pub async fn fetch_users() -> Vec<UserOption> {
     let mut users = Vec::new();
 
-    if let Ok(conn) = zbus::blocking::Connection::system()
-        && let Ok(accounts) = AccountsProxyBlocking::new(&conn)
-        && let Ok(user_paths) = accounts.list_cached_users()
+    if let Ok(conn) = zbus::Connection::system().await
+        && let Ok(accounts) = AccountsProxy::new(&conn).await
+        && let Ok(user_paths) = accounts.list_cached_users().await
     {
         for path in user_paths {
-            if let Ok(builder) = UserProxyBlocking::builder(&conn).path(&path)
-                && let Ok(user_proxy) = builder.build()
+            if let Ok(builder) = UserProxy::builder(&conn).path(&path)
+                && let Ok(user_proxy) = builder.build().await
                 && let (Ok(name), Ok(real_name), Ok(icon)) = (
-                    user_proxy.user_name(),
-                    user_proxy.real_name(),
-                    user_proxy.icon_file(),
+                    user_proxy.user_name().await,
+                    user_proxy.real_name().await,
+                    user_proxy.icon_file().await,
                 )
             {
                 users.push(UserOption {
@@ -35,15 +33,21 @@ pub fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption
         }
     }
 
-    let mut nav = nav_bar::Model::default();
+    users
+}
 
+/// Builds the nav bar model from a list of users and selects the current user.
+///
+/// **Returns** tuple of nav model and selected user
+pub fn build_nav(users: &[UserOption]) -> (nav_bar::Model, Option<UserOption>) {
+    let mut nav = nav_bar::Model::default();
     let mut selected_user = None;
     let current_username = User::from_uid(Uid::current())
         .ok()
         .flatten()
         .map(|u| u.name);
 
-    for user_opt in &users {
+    for user_opt in users {
         let mut item = nav.insert().text(user_opt.to_string());
         let mut icon_str = user_opt.icon.as_str();
 
@@ -72,7 +76,7 @@ pub fn initialize_users() -> (Vec<UserOption>, nav_bar::Model, Option<UserOption
             selected_user = Some(user_opt.clone());
         }
     }
-    (users, nav, selected_user)
+    (nav, selected_user)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

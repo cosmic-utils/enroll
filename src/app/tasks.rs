@@ -5,6 +5,7 @@ use crate::app::{
     error::AppError,
     fprint::*,
     message::{DeviceOption, Message},
+    users::fetch_users,
 };
 use crate::{fl, fprint_dbus::*};
 use cosmic::{ApplicationExt, Task};
@@ -224,6 +225,14 @@ pub fn task_connect() -> Task<cosmic::Action<Message>> {
                 Err(e) => Message::OperationError(AppError::ConnectDbus(e.to_string())),
             }
         },
+        cosmic::Action::App,
+    )
+}
+
+/// **Returns** ***Task*** which fetches users from accounts-daemon asynchronously
+pub fn task_load_users() -> Task<cosmic::Action<Message>> {
+    Task::perform(
+        async move { Message::UsersLoaded(fetch_users().await) },
         cosmic::Action::App,
     )
 }

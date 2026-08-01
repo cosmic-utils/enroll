@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MPL-2.0
 use crate::app::{
-    ContextPage, MenuAction, finger::*, message::Message, subscription::*, tasks::task_connect,
-    users::*,
+    ContextPage, MenuAction,
+    finger::*,
+    message::Message,
+    subscription::*,
+    tasks::{task_connect, task_load_users},
 };
 use crate::config::{Config, read_config};
 use crate::fl;
@@ -43,9 +46,6 @@ impl cosmic::Application for AppModel {
         mut core: cosmic::Core,
         _flags: Self::Flags,
     ) -> (Self, Task<cosmic::Action<Self::Message>>) {
-        // Gets users
-        let (users, nav, selected_user) = initialize_users();
-
         // Load configuration
         let (config_handler, config) = read_config(Self::APP_ID);
 
@@ -55,7 +55,7 @@ impl cosmic::Application for AppModel {
         let mut app = AppModel {
             core,
             context_page: ContextPage::About,
-            nav,
+            nav: nav_bar::Model::default(),
             key_binds: HashMap::new(),
             config,
             config_handler,
@@ -69,8 +69,8 @@ impl cosmic::Application for AppModel {
             verifying_finger: false,
             enroll_progress: 0,
             enroll_total_stages: None,
-            users,
-            selected_user,
+            users: Vec::new(),
+            selected_user: None,
             selected_finger: Finger::default(),
             enrolled_fingers: Vec::new(),
             confirm_clear: false,
@@ -80,8 +80,12 @@ impl cosmic::Application for AppModel {
         let start_theme = cosmic::command::set_theme(app.config.app_theme.theme());
         let command = app.update_title_task();
         let connect_task = task_connect();
+        let users_task = task_load_users();
 
-        (app, Task::batch(vec![command, connect_task, start_theme]))
+        (
+            app,
+            Task::batch(vec![command, connect_task, users_task, start_theme]),
+        )
     }
 
     /// Elements to pack at the start of the header bar.
@@ -281,6 +285,7 @@ impl cosmic::Application for AppModel {
             Message::ThemeSetting(theme) => self.on_theme_setting(theme),
             Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),
             Message::SelectDevice(index) => self.on_select_device(index),
+            Message::UsersLoaded(users) => self.on_users_loaded(users),
         }
     }
 

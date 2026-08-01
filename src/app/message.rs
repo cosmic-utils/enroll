@@ -3,7 +3,10 @@
 use crate::app::AppModel;
 use crate::app::error::AppError;
 use crate::app::tasks::*;
-use crate::app::{ContextPage, Finger};
+use crate::app::{
+    ContextPage, Finger,
+    users::{UserOption, build_nav},
+};
 use crate::config::{AppTheme, Config};
 use crate::fl;
 use crate::fprint_dbus::DeviceProxy;
@@ -54,6 +57,7 @@ pub enum Message {
     ThemeSetting(AppTheme),
     SelectFingerByNumber(u8),
     SelectDevice(usize),
+    UsersLoaded(Vec<UserOption>),
 }
 
 // Section for handling of Messages
@@ -572,5 +576,20 @@ impl AppModel {
             self.selected_finger = fingers[next as usize];
         }
         Task::none()
+    }
+
+    /// Handles asynchronously loaded user list, builds nav bar and selects current user.
+    ///
+    /// **Returns** ***update_title_task***() and ***list_fingers_task***()
+    pub(crate) fn on_users_loaded(
+        &mut self,
+        users: Vec<UserOption>,
+    ) -> Task<cosmic::Action<Message>> {
+        let (nav, selected_user) = build_nav(&users);
+        self.nav = nav;
+        self.users = users;
+        self.selected_user = selected_user;
+
+        Task::batch(vec![self.update_title_task(), self.list_fingers_task()])
     }
 }
