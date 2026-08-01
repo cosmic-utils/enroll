@@ -46,7 +46,7 @@ pub enum Message {
     ClearComplete(Result<(), AppError>),
     CloseApplication,
     EnrolledFingers(Vec<String>),
-    FingerSelected(String),
+    FingerSelected(Finger),
     VerifyFinger,
     VerifyStatus(String, bool),
     VerifyStop,
@@ -140,10 +140,11 @@ impl AppModel {
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_error(&mut self, err: AppError) -> Task<cosmic::Action<Message>> {
-        self.status = err.localized_message();
-        if self.status == fl!("error-no-enrolled-prints") {
+        if err == AppError::NoEnrolledPrints {
             self.enrolled_fingers.clear();
             self.status = fl!("success");
+        } else {
+            self.status = err.localized_message();
         }
         self.busy = false;
         self.enrolling_finger = None;
@@ -165,17 +166,12 @@ impl AppModel {
     /// the selected one
     ///
     /// **Returns** ***Task***()
-    pub(crate) fn on_finger_selected(&mut self, finger: String) -> Task<cosmic::Action<Message>> {
+    pub(crate) fn on_finger_selected(&mut self, finger: Finger) -> Task<cosmic::Action<Message>> {
         if self.busy {
             return Task::none();
         }
         self.confirm_clear = false;
-        for fingers in Finger::all() {
-            if fingers.localized_name() == finger {
-                self.selected_finger = *fingers;
-                break;
-            }
-        }
+        self.selected_finger = finger;
         Task::none()
     }
 

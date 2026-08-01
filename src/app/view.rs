@@ -192,7 +192,7 @@ impl AppModel {
         button::custom_image_button(container, None)
             .width(40)
             .height(Length::Fixed(height))
-            .on_press(Message::FingerSelected(finger.localized_name()))
+            .on_press(Message::FingerSelected(finger))
             .selected(is_selected)
             .into()
     }
@@ -235,16 +235,10 @@ impl AppModel {
     ///
     /// **Returns** pick_list widget with all Fingers localized names
     pub(crate) fn view_finger_picker(&self) -> Option<Element<'_, Message>> {
-        let mut vec = Vec::new();
-
-        for page in Finger::all() {
-            vec.push(page.localized_name())
-        }
-
         Some(
             pick_list(
-                vec,
-                Some(self.selected_finger.localized_name()),
+                Finger::all().to_vec(),
+                Some(self.selected_finger),
                 Message::FingerSelected,
             )
             .width(Length::Fixed(200.0))

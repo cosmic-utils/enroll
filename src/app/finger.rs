@@ -91,6 +91,12 @@ impl Finger {
     }
 }
 
+impl std::fmt::Display for Finger {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.localized_name())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
