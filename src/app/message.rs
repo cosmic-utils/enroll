@@ -324,8 +324,8 @@ impl AppModel {
             self.enrolling_finger = None;
 
             if status == "enroll-completed" {
-                let _ = self.on_cycle_finger(1);
-                return self.list_fingers_task();
+                let cycle = self.on_cycle_finger(1);
+                return Task::batch(vec![cycle, self.list_fingers_task()]);
             }
         }
         Task::none()
