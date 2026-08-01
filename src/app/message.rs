@@ -217,6 +217,9 @@ impl AppModel {
     ///
     /// **Returns** ***Task***()
     pub(crate) fn on_verify_finger(&mut self) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
         if self
             .selected_finger
             .as_finger_id()
@@ -342,6 +345,10 @@ impl AppModel {
     ///
     /// **Returns** either ***Task***() or ***task_clear_device***()
     pub(crate) fn on_clear_device(&mut self) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
+
         if !self.confirm_clear {
             self.confirm_clear = true;
             return Task::none();
@@ -361,6 +368,10 @@ impl AppModel {
     ///
     /// **Returns** either ***Task***(), ***task_delete_print***() or ***task_delete_prints***()
     pub(crate) fn on_delete(&mut self) -> Task<cosmic::Action<Message>> {
+        if self.busy {
+            return Task::none();
+        }
+
         if let (Some(path), Some(conn), Some(user)) = (
             self.device_path.clone(),
             self.connection.clone(),
@@ -533,11 +544,12 @@ impl AppModel {
         }
 
         if let Some(device) = self.devices.get(index)
-            && let Some(conn) = &self.connection {
-                self.status = fl!("status-searching-device");
-                self.busy = true;
-                return task_select_device(conn.clone(), device.path.clone());
-            }
+            && let Some(conn) = &self.connection
+        {
+            self.status = fl!("status-searching-device");
+            self.busy = true;
+            return task_select_device(conn.clone(), device.path.clone());
+        }
         Task::none()
     }
 
