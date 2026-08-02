@@ -94,13 +94,18 @@
   <screenshots>
     <screenshot type="default">
       <image>
-        https://user.fm/files/v2-3c00f9a00451da9a7c3e51420129b7f7/enroll-view.png
+          https://user.fm/files/v2-cc02d7b079267b7013fd35983d1f80ac/enroll-frosted-1.png
       </image>
       <caption>Main UI</caption>
       <caption xml:lang="cs">Hlavní UI</caption>
       <caption xml:lang="fi">Pääkäyttöliittymä</caption>
       <caption xml:lang="se">Huvudsida</caption>
       <caption xml:lang="it">Interfaccia principale</caption>
+    </screenshot>
+    <screenshot>
+      <image>
+          https://user.fm/files/v2-d137513e976d3dcc73e9db16ce385894/enroll-frosted.png      </image>
+      <caption>Starting view</caption>
     </screenshot>
     <screenshot>
       <image>
