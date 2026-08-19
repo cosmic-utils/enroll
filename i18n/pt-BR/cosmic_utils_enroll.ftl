@@ -1,0 +1,15 @@
+app-title = Biometria
+about = Sobre
+settings = Configurações
+help = Ajuda
+view = Exibir
+fprint = Enroll
+welcome = Cadastre e/ou exclua impressões digitais
+git-description = Git commit { $hash } de { $date }
+register = Cadastrar
+verify = Verificar
+delete = Excluir
+danger = Risco
+cancel = Cancelar
+success = Sucesso. Agora cadastre uma impressão digital.
+deleted = Impressão digital apagada.
