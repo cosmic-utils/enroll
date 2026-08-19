@@ -151,6 +151,7 @@ impl AppModel {
             self.status = err.localized_message();
         }
         self.busy = false;
+        self.verifying_finger = false;
         self.enrolling_finger = None;
         Task::none()
     }
