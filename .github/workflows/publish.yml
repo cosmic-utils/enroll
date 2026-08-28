@@ -172,7 +172,7 @@ jobs:
         run: |
           # rustc/cargo 1.85+ ships in the Fedora 42 base; no rust toolchain
           # install needed. copr-cli submits an SRPM (no in-runner build).
-          dnf install -y rpmdevtools copr-cli
+          dnf install -y rpmdevtools copr-cli gh
       - name: Download vendor.tar from the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -223,7 +223,7 @@ jobs:
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             devscripts dput debhelper-compat dh-make just pkg-config \
             libfontconfig1-dev libfreetype-dev libxkbcommon-dev libwayland-dev \
-            cargo rustc gnupg ca-certificates gh
+            cargo rustc gnupg ca-certificates gh git
       - name: Download vendor.tar from the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
