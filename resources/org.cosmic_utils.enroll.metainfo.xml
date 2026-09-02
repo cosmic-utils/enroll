@@ -7,6 +7,7 @@
   <summary>Fingerprint record management</summary>
   <summary xml:lang="cs">Správa otisků prstů</summary>
   <summary xml:lang="fi">Sormenjälkien hallinointi</summary>
+  <summary xml:lang="pl">Zarządzanie odciskami palców</summary>
   <summary xml:lang="se">Fingerprint registreringshantering</summary>
   <developer id="org.cosmic-utils">
     <name>Joonas Tuomi</name>
@@ -20,6 +21,9 @@
     </p>
     <p xml:lang="fi">
       Yhden ja useamman käyttäjän järjestelmille. Sallii sinun luoda, varmentaa sekä poistaa sormenjälkiä yhteensopivilla lukijoilla.
+    </p>
+    <p xml:lang="pl">
+      Pozwala ci zapisywać, weryfikować i usuwać odciski palców. Może również być użyte do zarządzania nimi dla innych użytkowników.
     </p>
     <p xml:lang="se">
       Fingerprint registreringshantering för enskilda och flera användare. Tillåter dig att registrera, verifiera och ta bort fingeravtryck.
@@ -36,6 +40,9 @@
     <p xml:lang="fi">
       Valitse käyttäjä jonka sormenjäljen haluat rekisteröidä. Valitse sormi jota haluat muokata. Rekisteröi lisätäksesi sormenjäljen, Varmenna vahvistaaksesi nykyisen jäljen tai Poista poistaaksesi sen.
     </p>
+    <p xml:lang="pl">
+      Wybierz użytkownika dla którego chcesz je zapisywać, domyślnie obecnego użytkownika, a później palec. Kliknij Dodaj by zapisać odcisk palca dla nowego palca, Zwerywikuj by porównać z bazą istniejących lub Usuń by go usunąć
+    </p>
     <p>
       From View menu you can access Settings, About and Help pages for more information or configuration options.
     </p>
@@ -44,6 +51,9 @@
     </p>
     <p xml:lang="fi">
       Näkymä valikosta pääset Asetuksiin, Tietoa tai Apua valikkoihin joista saat tietoa ongelmiin tai voit muutta miten sovellus toimii.
+    </p>
+    <p xml:lang="pl">
+      Z menu Widok możesz zmienić ustawienia, stronę o aplikacji i pomocy by dowiedzieć się o opcjach konfiguracji i większej ilości informacji.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
@@ -77,6 +87,11 @@
     <keyword xml:lang="fi">Sormenjälki</keyword>
     <keyword xml:lang="fi">Tunnistautuminen</keyword>
     <keyword xml:lang="fi">COSMIC</keyword>
+    <keyword xml:lang="pl">Odciki palca</keyword>
+    <keyword xml:lang="pl">Uwierzytelnienie</keyword>
+    <keyword xml:lang="pl">COSMIC</keyword>
+    <keyword xml:lang="pl">Linie papilarne</keyword>
+    <keyword xml:lang="pl">Autentykacja</keyword>
     <keyword xml:lang="se">Fingerprint</keyword>
     <keyword xml:lang="se">Autentisering</keyword>
     <keyword xml:lang="se">COSMIC</keyword>
@@ -99,6 +114,7 @@
       <caption>Main UI</caption>
       <caption xml:lang="cs">Hlavní UI</caption>
       <caption xml:lang="fi">Pääkäyttöliittymä</caption>
+      <caption xml:lang="pl">Główny Interfejs Użytkownika</caption>
       <caption xml:lang="se">Huvudsida</caption>
       <caption xml:lang="it">Interfaccia principale</caption>
     </screenshot>
@@ -113,6 +129,7 @@
       </image>
       <caption>Settings sidebar</caption>
       <caption xml:lang="cs">Nastavení - postranní panel</caption>
+      <caption xml:lang="pl">Panel boczny ustawień</caption>
     </screenshot>
     <screenshot>
       <image>
@@ -120,6 +137,7 @@
       </image>
       <caption>User selection</caption>
       <caption xml:lang="cs">Výběr uživatele</caption>
+      <caption xml:lang="cs">Wybór użytkownika</caption>
     </screenshot>
   </screenshots>
   <releases>
