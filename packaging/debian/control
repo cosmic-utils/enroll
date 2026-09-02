@@ -1,7 +1,7 @@
 Source: cosmic-utils-enroll
 Section: utils
 Priority: optional
-Maintainer: Joonas Tuomi <joonas@cosmic-utils.org>
+Maintainer: Joonas Tuomi <git@joonastuomi.fi>
 Build-Depends:
  debhelper-compat (= 13),
  cargo (>= 1.85),

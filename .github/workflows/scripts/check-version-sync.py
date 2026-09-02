@@ -37,6 +37,19 @@ def main() -> int:
     if not m:
         sys.exit("error: no <release> entry found in metainfo.xml")
     metainfo_ver = m.group(1)
+    deb_changelog = root / "packaging" / "debian" / "changelog"
+    deb_ver = "(missing)"
+    if deb_changelog.exists():
+        m = re.search(r"^[a-zA-Z0-9_\-]+ \(([0-9.]+)-[^\)]+\)", deb_changelog.read_text(), re.MULTILINE)
+        if m:
+            deb_ver = m.group(1)
+
+    copr_spec = root / "packaging" / "copr" / "cosmic-utils-enroll.spec"
+    copr_ver = "(missing)"
+    if copr_spec.exists():
+        m = re.search(r"^Version:\s+([0-9.]+)", copr_spec.read_text(), re.MULTILINE)
+        if m:
+            copr_ver = m.group(1)
 
     cl = (root / "CHANGELOG.md").read_text()
     m = re.search(r"^##\s+\[([^\]]+)\]", cl, re.MULTILINE)
@@ -45,12 +58,29 @@ def main() -> int:
     print(f"Cargo.toml:    {cargo_ver}")
     print(f"metainfo.xml:  {metainfo_ver}")
     print(f"CHANGELOG top: {changelog_top}")
+    print(f"debian/changelog: {deb_ver}")
+    print(f"copr .spec:    {copr_ver}")
 
+    errors = []
     if cargo_ver != metainfo_ver:
+        errors.append(
+            f"Cargo.toml ({cargo_ver}) and metainfo.xml ({metainfo_ver}) are out of sync."
+        )
+    if deb_changelog.exists() and deb_ver != cargo_ver:
+        errors.append(
+            f"Cargo.toml ({cargo_ver}) and debian/changelog ({deb_ver}) are out of sync."
+        )
+    if copr_spec.exists() and copr_ver != cargo_ver:
+        errors.append(
+            f"Cargo.toml ({cargo_ver}) and copr .spec ({copr_ver}) are out of sync."
+        )
+
+    if errors:
+        print("\nerror: Version synchronization check failed:", file=sys.stderr)
+        for err in errors:
+            print(f"       - {err}", file=sys.stderr)
         print(
-            f"\nerror: Cargo.toml ({cargo_ver}) and metainfo.xml ({metainfo_ver}) are out of sync.\n"
-            + "       A tag would ship a build whose metainfo is missing its own release entry (breaks Flathub).\n"
-            + f"       Run `just release {cargo_ver}` to regenerate the metainfo entry.",
+            f"\n       Run `just release {cargo_ver}` to sync all release metadata.",
             file=sys.stderr,
         )
         return 1

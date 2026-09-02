@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: cosmic-utils-enroll
-Upstream-Contact: Joonas Tuomi <joonas@cosmic-utils.org>
+Upstream-Contact: Joonas Tuomi <git@joonastuomi.fi>
 Source: https://github.com/cosmic-utils/enroll
 
 Files: *
