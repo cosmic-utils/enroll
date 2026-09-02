@@ -9,7 +9,7 @@ release flow described in [`RELEASING.md`](RELEASING.md).
 | Copr | `copr/cosmic-utils-enroll.spec` | **vendored** | Fedora 42+ |
 | Launchpad | `debian/*` | **vendored** | Ubuntu 25.04+ |
 
-## Why some targets are vendored
+## Some targets are vendored
 
 `libcosmic` is a **git dependency** (pinned to a specific rev in `Cargo.lock`),
 not published to crates.io. AUR builders have network at build time, so the
@@ -24,7 +24,7 @@ which needs **Rust ≥ 1.85**. That pins the minimum Fedora series to 42 and
 the minimum Ubuntu series to 25.04 (plucky). Older series' distro `rustc` is
 too old to compile the crate.
 
-## Install layout — single source of truth
+## Install layout
 
 All three packagings install via the upstream `just` recipe:
 
