@@ -2,8 +2,6 @@
 
 Releases are **tag-driven**. Maintainer runs one command locally, and pushing the tag publishes everything.
 
-## The tag that matters
-
 The Flathub build compiles the app from a git tag and ships the
 `metainfo.xml` found at that tag. So **the commit a tag points at must already
 contain the `<release>` entry for that version** — otherwise Flathub ships a
@@ -97,9 +95,9 @@ Create it at *Settings → Developer settings → Personal access tokens → Tok
 secret **`GH_PAT`**. If the Flathub job fails with `403 ... denied to
 flathub`, the PAT is missing the `repo` scope.
 
-### Native packaging secrets (Copr / Launchpad)
+### Native packaging secrets
 
-These power the four native-distro jobs added with the packaging in
+These power the three native-distro jobs added with the packaging in
 `packaging/`. Create each as a repository secret under *Settings → Secrets
 and variables → Actions*. The jobs run without the ones they don't need, so
 you can roll them out one distro at a time.
@@ -122,5 +120,5 @@ and variables → Actions → Variables*:
 > The Launchpad upload must be signed by a key registered to the *same*
 > Launchpad account that owns the PPA, or `dput` rejects it server-side.
 
-The native package targets themselves (the AUR package, the Copr project, the
+The native package targets themselves (the Copr project, the
 PPA) are one-time out-of-band setup — see `packaging/README.md`.
