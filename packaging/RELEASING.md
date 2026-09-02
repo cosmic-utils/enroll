@@ -15,7 +15,8 @@ flowchart TD
   R --> B[bump Cargo.toml + finalize CHANGELOG]
   B --> C[cargo check: sync Cargo.lock + verify it compiles]
   C --> M[regenerate metainfo &lt;release&gt; from CHANGELOG]
-  M --> S[check-version-sync.py: Cargo == metainfo]
+  M --> D[update debian/changelog and copr .spec]
+  D --> S[check-version-sync.py: Cargo == metainfo == debian == copr]
   S --> G[commit + tag vX.Y.Z]
   G --> P[git push origin main + tag vX.Y.Z]
   P --> W[(Publish workflow)]
@@ -39,8 +40,10 @@ every push/PR as defence in depth.
    ```
 
    The recipe bumps `Cargo.toml`, finalizes the CHANGELOG header, regenerates
-   the metainfo `<release>`, runs `cargo check`, verifies version sync, then
-   commits, tags `v1.3.0` and asks before pushing.
+   the metainfo `<release>`, updates `packaging/debian/changelog` and
+   `packaging/copr/cosmic-utils-enroll.spec`, runs `cargo check`, verifies
+   version sync across all files, then commits, tags `v1.3.0` and asks before
+   pushing.
 3. Confirm the push. The `Publish` workflow builds the AppImage and opens the
    Flathub update PR.
 

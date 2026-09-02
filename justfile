@@ -128,18 +128,21 @@ release version:
     # 3. Regenerate the metainfo <release> entry from the CHANGELOG section.
     python3 .github/workflows/scripts/update-metainfo.py CHANGELOG.md resources/org.cosmic_utils.enroll.metainfo.xml
 
-    # 4. Hard gate: Cargo.toml version must equal the metainfo top <release>.
-    python3 .github/workflows/scripts/check-version-sync.py
+    # 4. Update Debian changelog and Copr RPM spec from CHANGELOG.
+    python3 .github/workflows/scripts/update-packaging.py "{{ version }}"
 
-    # 5. Optional strict AppStream validation when the tool is available.
+    # 5. Hard gate: Cargo.toml, metainfo, debian/changelog, and copr .spec must be in sync.
+    python3 .github/workflows/scripts/check-version-sync.py
+    # 6. Optional strict AppStream validation when the tool is available.
     if command -v appstreamcli >/dev/null 2>&1; then
         appstreamcli validate resources/org.cosmic_utils.enroll.metainfo.xml
     else
         echo "note: appstreamcli not installed; skipping strict AppStream validation"
     fi
 
-    # 6. Commit, tag, then confirm the push that triggers publishing.
-    git add Cargo.toml Cargo.lock CHANGELOG.md resources/org.cosmic_utils.enroll.metainfo.xml
+    # 7. Commit, tag, then confirm the push that triggers publishing.
+    git add Cargo.toml Cargo.lock CHANGELOG.md resources/org.cosmic_utils.enroll.metainfo.xml \
+            packaging/debian/changelog packaging/copr/cosmic-utils-enroll.spec
     git commit -m "release: v{{ version }}" >/dev/null
     git tag "v{{ version }}"
 
