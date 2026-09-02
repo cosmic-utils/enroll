@@ -61,7 +61,7 @@ def main() -> int:
     print(f"debian/changelog: {deb_ver}")
     print(f"copr .spec:    {copr_ver}")
 
-    errors = []
+    errors: list[str] = []
     if cargo_ver != metainfo_ver:
         errors.append(
             f"Cargo.toml ({cargo_ver}) and metainfo.xml ({metainfo_ver}) are out of sync."

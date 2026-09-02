@@ -50,7 +50,7 @@ def parse_latest_changelog(filepath: pathlib.Path) -> tuple[str, list[str]]:
     items: list[str] = []
     for line in section.splitlines():
         line = line.strip()
-        if line.startswith("-") or line.startswith("*"):
+        if line.startswith(("-", "*")):
             item_text = line.lstrip("-* ").strip()
             if item_text:
                 items.append(item_text)
@@ -86,7 +86,7 @@ def update_debian_changelog(
     else:
         updated = new_entry
 
-    deb_path.write_text(updated, encoding="utf-8")
+    _ = deb_path.write_text(updated, encoding="utf-8")
     print(f"Updated {deb_path.relative_to(repo_root())} -> {entry_version}")
 
 
@@ -141,7 +141,7 @@ def update_copr_spec(
         updated_rest = new_changelog_entry + "\n" + rest.lstrip("\n")
 
     updated = content[: idx + len(changelog_marker)] + updated_rest
-    spec_path.write_text(updated, encoding="utf-8")
+    _ = spec_path.write_text(updated, encoding="utf-8")
     print(f"Updated {spec_path.relative_to(repo_root())} -> {version}-1")
 
 

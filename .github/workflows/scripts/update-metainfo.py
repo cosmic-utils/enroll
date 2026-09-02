@@ -20,7 +20,7 @@ def parse_changelog(filepath: str) -> tuple[str, str, list[str]]:
     version = match.group(1)
     date = match.group(2)
     if not date:
-        date = datetime.date.today().isoformat()
+        date = datetime.datetime.now(tz=datetime.timezone(name='Helsinki/Europe', offset=datetime.timedelta(hours=3))).isoformat()
 
     start_pos = match.end()
     end_pos = matches[1].start() if len(matches) > 1 else len(content)
@@ -30,7 +30,7 @@ def parse_changelog(filepath: str) -> tuple[str, str, list[str]]:
     items: list[str] = []
     for line in section.splitlines():
         line = line.strip()
-        if line.startswith("-") or line.startswith("*"):
+        if line.startswith(("-", "*")):
             item_text = line.lstrip("-* ").strip()
             if item_text:
                 items.append(item_text)
