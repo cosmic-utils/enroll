@@ -78,9 +78,9 @@ just rootdir=%{buildroot} install
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 
 %changelog
-* Wed Sep 02 2026 Joonas Tuomi <joonas@cosmic-utils.org> - 1.2.5-1
+* Wed Sep 02 2026 Joonas Tuomi <git@joonastuomi.fi> - 1.2.5-1
 - Weblate recommended switching three dots to ellipsis character
 - Updated Chinese (Simplified Han script) translation by @Gerseneck
 
-* Tue Jul 15 2026 Joonas Tuomi <joonas@cosmic-utils.org> - 1.2.1-1
+* Tue Jul 15 2026 Joonas Tuomi <git@joonastuomi.fi> - 1.2.1-1
 - Initial Fedora spec for Copr.

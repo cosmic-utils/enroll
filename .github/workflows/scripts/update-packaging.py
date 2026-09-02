@@ -16,7 +16,7 @@ import re
 import sys
 
 MAINTAINER_NAME = "Joonas Tuomi"
-MAINTAINER_EMAIL = "joonas@cosmic-utils.org"
+MAINTAINER_EMAIL = "git@joonastuomi.fi"
 PACKAGE_NAME = "cosmic-utils-enroll"
 
 
