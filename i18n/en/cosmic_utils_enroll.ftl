@@ -1,3 +1,11 @@
+### Enroll is fingerprint manager software
+###
+### Most of these strings are text on buttons that perform actions and tooltips for those.
+### Tooltip is text that is shown when you hover over the button meant to clarify what it does.
+### Few things are also from the Settings or Help, unfortunately the links in Help lead to English sites.
+### Rest are attempting to translate status & error messages written for programmers to be more helpful for regural users.
+### You don't have to follow these exactly just keep the users in mind.
+
 app-title = Enroll Fingerprint
 about = About
 settings = Settings
