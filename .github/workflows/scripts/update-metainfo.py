@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import re
 import sys
 
@@ -20,7 +20,7 @@ def parse_changelog(filepath: str) -> tuple[str, str, list[str]]:
     version = match.group(1)
     date = match.group(2)
     if not date:
-        date = datetime.datetime.now(tz=datetime.timezone(name='Helsinki/Europe', offset=datetime.timedelta(hours=3))).date().isoformat()
+        date = dt.datetime.now(tz=dt.timezone(name='Helsinki/Europe', offset=dt.timedelta(hours=3))).date().isoformat()
 
     start_pos = match.end()
     end_pos = matches[1].start() if len(matches) > 1 else len(content)

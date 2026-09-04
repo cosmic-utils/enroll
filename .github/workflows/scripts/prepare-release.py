@@ -12,7 +12,7 @@ concerns separate makes the release ordering invariant provable: by the time a
 tag exists, Cargo.toml, CHANGELOG and metainfo all already agree on the version.
 """
 
-import datetime
+import datetime as dt
 import pathlib
 import re
 import sys
@@ -39,7 +39,7 @@ def main() -> int:
         )
         return 2
 
-    today = datetime.datetime.now(datetime.timezone(name='Helsinki/Europe', offset=datetime.timedelta(hours=3))).date().isoformat()
+    today = dt.datetime.now(dt.timezone(name='Helsinki/Europe', offset=dt.timedelta(hours=3))).date().isoformat()
     url = f"https://github.com/cosmic-utils/enroll/releases/tag/v{version}"
     root = repo_root()
 
