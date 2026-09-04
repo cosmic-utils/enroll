@@ -39,7 +39,7 @@ def main() -> int:
         )
         return 2
 
-    today = datetime.datetime.now(datetime.timezone(offset=datetime.timedelta(hours=3))).isoformat()
+    today = datetime.datetime.now(datetime.timezone(name='Helsinki/Europe', offset=datetime.timedelta(hours=3))).date().isoformat()
     url = f"https://github.com/cosmic-utils/enroll/releases/tag/v{version}"
     root = repo_root()
 
