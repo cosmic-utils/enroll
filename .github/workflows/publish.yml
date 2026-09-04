@@ -172,7 +172,7 @@ jobs:
         run: |
           # rustc/cargo 1.85+ ships in the Fedora 42 base; no rust toolchain
           # install needed. copr-cli submits an SRPM (no in-runner build).
-          dnf install -y rpmdevtools copr-cli gh
+          dnf install -y rpmdevtools copr-cli gh git
       - name: Download vendor.tar from the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
