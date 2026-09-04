@@ -189,6 +189,8 @@ jobs:
         run: |
           set -e
           rpmdev-setuptree
+          git config --global user.email "git@joonastuomi.fi"
+          git config --global user.name "Joonas Tuomi"
           # Source0: git archive of the tag, named as the spec expects.
           git archive --format=tar.gz --prefix="cosmic-utils-enroll-${VERSION}/" \
             -o "${HOME}/rpmbuild/SOURCES/cosmic-utils-enroll-${VERSION}.tar.gz" HEAD
@@ -266,6 +268,9 @@ jobs:
           set -e
           PKG=cosmic-utils-enroll
           STAGE="$PKG-$VERSION"
+
+          git config --global user.email "git@joonastuomi.fi"
+          git config --global user.name "Joonas Tuomi"
 
           # Stage the upstream source at the tag (pristine, no debian/ yet).
           git archive --format=tar --prefix="$STAGE/" HEAD | tar x
