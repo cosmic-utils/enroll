@@ -141,6 +141,16 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.6" date="2026-09-04">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Polish translation by @VandaLHJ</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.2.5" date="2026-08-27">
       <description>
         <p>

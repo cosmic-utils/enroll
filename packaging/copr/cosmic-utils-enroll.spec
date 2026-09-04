@@ -18,7 +18,7 @@
 %global __provides_exclude_from ^%{_libdir}/%{name}/.*$
 
 Name:           cosmic-utils-enroll
-Version:        1.2.5
+Version:        1.2.6
 Release:        1%{?dist}
 Summary:        GUI for fprintd fingerprint enrolling (COSMIC)
 
@@ -78,6 +78,9 @@ just rootdir=%{buildroot} install
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 
 %changelog
+* Fri Sep 04 2026 Joonas Tuomi <git@joonastuomi.fi> - 1.2.6-1
+- Polish translation by @VandaLHJ
+
 * Wed Sep 02 2026 Joonas Tuomi <git@joonastuomi.fi> - 1.2.5-1
 - Weblate recommended switching three dots to ellipsis character
 - Updated Chinese (Simplified Han script) translation by @Gerseneck

@@ -1,3 +1,9 @@
+cosmic-utils-enroll (1.2.6-1) unstable; urgency=medium
+
+  * Polish translation by @VandaLHJ
+
+ -- Joonas Tuomi <git@joonastuomi.fi>  Fri, 04 Sep 2026 09:38:31 +0000
+
 cosmic-utils-enroll (1.2.5-1) unstable; urgency=medium
 
   * Weblate recommended switching three dots to ellipsis character
