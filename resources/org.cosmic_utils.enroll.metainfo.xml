@@ -41,7 +41,7 @@
       Valitse käyttäjä jonka sormenjäljen haluat rekisteröidä. Valitse sormi jota haluat muokata. Rekisteröi lisätäksesi sormenjäljen, Varmenna vahvistaaksesi nykyisen jäljen tai Poista poistaaksesi sen.
     </p>
     <p xml:lang="pl">
-      Wybierz użytkownika dla którego chcesz je zapisywać, domyślnie obecnego użytkownika, a później palec. Kliknij Dodaj by zapisać odcisk palca dla nowego palca, Zwerywikuj by porównać z bazą istniejących lub Usuń by go usunąć
+      Wybierz użytkownika dla którego chcesz je zapisywać, domyślnie jest to obecny użytkownik, a później palec. Kliknij Dodaj by zapisać odcisk palca dla nowego palca, Zweryfikuj by porównać z bazą istniejących lub Usuń by go usunąć.
     </p>
     <p>
       From View menu you can access Settings, About and Help pages for more information or configuration options.
@@ -53,7 +53,7 @@
       Näkymä valikosta pääset Asetuksiin, Tietoa tai Apua valikkoihin joista saat tietoa ongelmiin tai voit muutta miten sovellus toimii.
     </p>
     <p xml:lang="pl">
-      Z menu Widok możesz zmienić ustawienia, stronę o aplikacji i pomocy by dowiedzieć się o opcjach konfiguracji i większej ilości informacji.
+      Z menu Widok możesz zmienić Ustawienia, dostać się na strony Pomocy i O Aplikacji na których dowiesz się więcej o projekcie oraz spersonalizować aplikację.
     </p>
   </description>
   <icon type="remote" width="64" height="64" scale="1">
