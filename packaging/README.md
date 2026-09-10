@@ -1,40 +1,29 @@
 # Native packaging
 
-Distribution packaging for Enroll, alongside the existing Flathub build and
-AppImage. Each target builds from a `vX.Y.Z` tag, exactly like the Flathub
-release flow described in [`RELEASING.md`](RELEASING.md).
+Packaging files for distro build services (Fedora Copr and Ubuntu Launchpad), alongside our Flathub and AppImage releases. Builds trigger on `v*` tags following the process in [`RELEASING.md`](RELEASING.md).
 
-| Target | Layout | Build model | Distros |
+| Target | Definitions | Build model | Distros |
 |---|---|---|---|
-| Copr | `copr/cosmic-utils-enroll.spec` | **vendored** | Fedora 42+ |
-| Launchpad | `debian/*` | **vendored** | Ubuntu 25.04+ |
+| Copr | `copr/cosmic-utils-enroll.spec` | vendored | Fedora 42+ |
+| Launchpad | `debian/*` | vendored | Ubuntu 25.04+ |
 
-## Some targets are vendored
+## Why vendoring is necessary
 
-`libcosmic` is a **git dependency** (pinned to a specific rev in `Cargo.lock`),
-not published to crates.io. AUR builders have network at build time, so the
-PKGBUILD just runs `cargo fetch --locked` and lets Cargo pull libcosmic from
-GitHub. Copr and Launchpad build chroots are network-isolated, so those two
-targets bundle a **`vendor.tar`** — produced by `just vendor` — which contains
-`.cargo/config.toml` + `vendor/` for every transitive dep *including* the
-libcosmic git source. The result is a fully reproducible, offline build.
+`libcosmic` is not on crates.io; Cargo pulls it as a git dependency pinned to a revision in `Cargo.lock`.
 
-The Rust-version constraint comes from `edition = "2024"` in `Cargo.toml`,
-which needs **Rust ≥ 1.85**. That pins the minimum Fedora series to 42 and
-the minimum Ubuntu series to 25.04 (plucky). Older series' distro `rustc` is
-too old to compile the crate.
+That works on local systems and the AUR where builders can hit the network, but Copr and Launchpad build chroots block outbound internet. To build offline, the release workflow runs `just vendor` to produce a `vendor.tar`. It packages `.cargo/config.toml` and a `vendor/` tree containing all transitive dependencies, including `libcosmic`'s git source.
+
+We also require Rust 1.85 or newer because `Cargo.toml` uses `edition = "2024"`. Distro packages for older releases ship with older compilers, so Fedora 42 and Ubuntu 25.04 (Plucky) are our lower bounds.
 
 ## Install layout
 
-All three packagings install via the upstream `just` recipe:
+Both targets install using the `install` recipe from [`../justfile`](../justfile):
 
 ```sh
 just rootdir=<destdir> install
 ```
 
-so the on-disk layout is defined in exactly one place — the `install` recipe
-in [`../justfile`](../justfile). Change that recipe and every package follows
-automatically. The layout is:
+Keeping paths in the root `justfile` means file locations are defined once instead of duplicated across specs:
 
 ```
 /usr/bin/cosmic-utils-enroll
@@ -45,45 +34,34 @@ automatically. The layout is:
 
 ## CI automation
 
-`.github/workflows/publish.yml` adds four jobs that fire on `v*` tag push,
-alongside the existing `appimage` and `flathub` jobs. They are **independent**:
-a failure in one never suppresses another.
+Tag pushes fire the workflow in `.github/workflows/publish.yml`. It adds three packaging jobs that run alongside the AppImage and Flathub builds:
 
-| Job | Produces | Needs |
+| Job | Artifact | Depends on |
 |---|---|---|
-| `vendor-tar` | `vendor.tar` uploaded to the GitHub release | `create-release` |
-| `copr` | builds an SRPM, submits via `copr-cli` | `vendor-tar` |
-| `launchpad` | builds a source package, `dput`s to the PPA | `vendor-tar` |
+| `vendor-tar` | Uploads `vendor.tar` to GitHub release | `create-release` |
+| `copr` | Builds an SRPM, submits via `copr-cli` | `vendor-tar` |
+| `launchpad` | Builds a source package, `dput`s to PPA | `vendor-tar` |
 
-`vendor-tar` is an enabler — it runs `just vendor` with `SOURCE_DATE_EPOCH` +
-`SOURCE_GIT_HASH` set so VERGEN reports the release commit (not the build
-host), then uploads the tarball to the GitHub release for `copr` and
-`launchpad` to download.
+The `vendor-tar` job runs first to build the offline source archive. It sets `SOURCE_DATE_EPOCH` and `SOURCE_GIT_HASH` so `vergen` bakes the release commit into the binary rather than the runner's host state. Once uploaded, `copr` and `launchpad` fetch the tarball and run their builds. A failure in one job won't cancel the others.
 
 ## Required secrets
 
-Set these under *Settings → Secrets and variables → Actions*. The Flathub job
-already needs `GH_PAT`; the others are new with this packaging.
+Add these in GitHub (*Settings → Secrets and variables → Actions*). The Flathub job already relies on `GH_PAT`; the rest are for the native builds:
 
-| Secret | Used by | How to create |
+| Secret | Used by | Value |
 |---|---|---|
-| `COPR_API_TOKEN` | `copr` | Copr → *My Account → API* — paste the whole `~/.config/copr` INI (it holds `login`, `token`, `username`, `copr_url`). Stored as a single multiline secret. |
-| `LP_GPG_KEY` | `launchpad` | The **ASCII-armored private key** you've uploaded to Launchpad under *Your profile → OpenPGP keys*. Used to sign the `.changes` file. |
-| `LP_GPG_PASSPHRASE` | `launchpad` | The passphrase for `LP_GPG_KEY`. |
-| `LP_DPUT_HOST` | `launchpad` | (Optional, override) The `dput` host entry. Defaults to `ppa:cosmic-utils/enroll`. Set if your PPA lives under a different user/name. |
+| `COPR_API_TOKEN` | `copr` | Raw `~/.config/copr` INI (from Copr → *My Account → API*). Contains `login`, `token`, `username`, and `copr_url`. Paste the whole block as one multiline secret. |
+| `LP_GPG_KEY` | `launchpad` | ASCII-armored private key registered with the Launchpad account that owns the PPA (*Your profile → OpenPGP keys*). Signs the `.changes` file. |
+| `LP_GPG_PASSPHRASE` | `launchpad` | Passphrase for `LP_GPG_KEY`. |
+| `LP_DPUT_HOST` | `launchpad` | Optional. Defaults to `ppa:cosmic-utils/enroll`. Override if using a different PPA name or owner. |
 
-> The Launchpad job also needs the upload to be signed by a key registered to
-> the *same* Launchpad account that owns the PPA, or `dput` will reject the
-> upload server-side.
+Launchpad will reject the upload if the GPG signature does not match the account that owns the PPA.
 
-## One-time setup per service (out of band)
+## One-time setup
 
-This repo only contains the packaging files and the CI. Creating the actual
-package *targets* on each service is a one-time manual step:
+The repository configures the builds, but the target repositories must exist on the remote services before tags are pushed:
 
-- **Copr** — create a project named `enroll` (or whatever you configure),
-  enable the Fedora 42+ chroots you want.
-- **Launchpad** — create the PPA and register your GPG key.
+- **Copr**: Create the project (default is `enroll`) and enable whichever Fedora 42+ chroots you want to build.
+- **Launchpad**: Create the PPA and upload your public GPG key to your profile.
 
-See [`RELEASING.md`](RELEASING.md) for how a release triggers all of
-this.
+See [`RELEASING.md`](RELEASING.md) for the step-by-step release checklist.

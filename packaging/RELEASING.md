@@ -1,127 +1,82 @@
-# Release Process
+# Release process
 
-Releases are **tag-driven**. Maintainer runs one command locally, and pushing the tag publishes everything.
+Releases are tag-driven: run one command locally, confirm the prompt, and pushing the tag handles publishing across Flathub, AppImage, Copr, and Launchpad.
 
-The Flathub build compiles the app from a git tag and ships the
-`metainfo.xml` found at that tag. So **the commit a tag points at must already
-contain the `<release>` entry for that version** — otherwise Flathub ships a
-build whose latest `<release>` is stale and AppStream validation fails.
+Flathub builds directly from git tags and validates `metainfo.xml` against the tagged commit. Because of this, the commit targeted by the tag must already contain the `<release>` entry for that version, or AppStream validation fails and rejects the build.
 
 ```mermaid
 flowchart TD
-  U[Add changes under ## Unreleased in CHANGELOG.md] --> R[just release X.Y.Z]
-  R --> B[bump Cargo.toml + finalize CHANGELOG]
-  B --> C[cargo check: sync Cargo.lock + verify it compiles]
-  C --> M[regenerate metainfo &lt;release&gt; from CHANGELOG]
-  M --> D[update debian/changelog and copr .spec]
-  D --> S[check-version-sync.py: Cargo == metainfo == debian == copr]
-  S --> G[commit + tag vX.Y.Z]
-  G --> P[git push origin main + tag vX.Y.Z]
+  U[Add notes under ## Unreleased in CHANGELOG.md] --> R[just release X.Y.Z]
+  R --> B[Bump Cargo.toml and finalize CHANGELOG]
+  B --> C[cargo check: sync Cargo.lock and verify build]
+  C --> M[Regenerate metainfo release entry from CHANGELOG]
+  M --> D[Update debian/changelog and copr spec]
+  D --> S[check-version-sync.py validates version alignment]
+  S --> G[Commit and tag vX.Y.Z]
+  G --> P[git push origin main --tags]
   P --> W[(Publish workflow)]
-  W --> APP[Build & upload AppImage]
-  W --> FH[Open Flathub update PR]
+  W --> APP[AppImage]
+  W --> FH[Flathub PR]
+  W --> VT[vendor.tar]
+  VT --> CP[Copr SRPM]
+  VT --> LP[Launchpad PPA]
 ```
 
-The tag is the **last** step, so it is impossible to tag a commit whose
-metainfo is missing the release entry. `ci.yml` re-runs the same sync check on
-every push/PR as defence in depth.
+Because tagging happens as the final step in the script, you won't accidentally push a tag with out-of-sync metadata. CI also runs `check-version-sync.py` on pull requests to catch version drift before tagging.
 
 ## Making a release
 
-1. Add your release notes under a `## [Unreleased]` section at the top of
-   `CHANGELOG.md` (Keep a Changelog style: `### Added`, `### Changed`,
-   `### Fixed`, …).
-2. From `main`, with a clean tree:
+1. Write your release notes under a `## [Unreleased]` section at the top of `CHANGELOG.md` (following Keep a Changelog: `### Added`, `### Changed`, `### Fixed`, etc.).
+2. On `main` with a clean working tree, run:
 
    ```sh
    just release 1.3.0
    ```
 
-   The recipe bumps `Cargo.toml`, finalizes the CHANGELOG header, regenerates
-   the metainfo `<release>`, updates `packaging/debian/changelog` and
-   `packaging/copr/cosmic-utils-enroll.spec`, runs `cargo check`, verifies
-   version sync across all files, then commits, tags `v1.3.0` and asks before
-   pushing.
-3. Confirm the push. The `Publish` workflow builds the AppImage and opens the
-   Flathub update PR.
+   The recipe bumps `Cargo.toml`, stamps the changelog header, regenerates the metainfo XML, updates both `packaging/debian/changelog` and `packaging/copr/cosmic-utils-enroll.spec`, runs `cargo check`, verifies version sync across every file, creates the commit, and tags `v1.3.0`. It prompts for confirmation before pushing.
+3. Confirm the push. GitHub Actions picks up the tag and runs `.github/workflows/publish.yml`.
 
-> Tags are `vX.Y.Z`. Older releases used bare `X.Y.Z` tags (history); new
-> releases are all `v`-prefixed.
+Note: Tags use `vX.Y.Z` format. Earliest releases used bare version tags, but everything going forward uses the `v` prefix.
 
-## The Publish workflow (`.github/workflows/publish.yml`)
+## The publish workflow
 
-Triggered by a `v*` tag push. Jobs are **independent** — one failing never
-silently skips another:
+Pushing a `v*` tag triggers the jobs in `.github/workflows/publish.yml`. Jobs run independently; a failure in one target won't stop the others from finishing:
 
-- **create-release** — creates the GitHub release (idempotent).
-- **appimage** — `cargo build --release`, package with `appimagetool`, upload
-  to the release. Needs `create-release` (a release must exist to attach to).
-- **flathub** — regenerates `cargo-sources.json` with a **pinned +
-  checksummed** cargo generator, updates the manifest, then uses
-  [`peter-evans/create-pull-request`](https://github.com/peter-evans/create-pull-request)
-  to push an update branch directly to `flathub/org.cosmic_utils.enroll` and
-  open/update the PR there (no fork — the Flathub maintainer pattern). Fully
-  parallel to `appimage`.
-- **vendor-tar** — runs `just vendor` (with VERGEN pinned to the tag commit)
-  and uploads `vendor.tar` to the release. Enabler for `copr` and
-  `launchpad`, which build offline because libcosmic is a git dep. Needs
-  `create-release`.
-- **copr** — builds an SRPM from the spec (`packaging/copr/*.spec`) using the
-  tag source + `vendor.tar`, submits it to Copr via `copr-cli`. Needs
-  `vendor-tar`.
-- **launchpad** — rolls a Debian source package (`packaging/debian/*`) with
-  vendored deps inside the orig tarball, signs with GPG, and `dput`s to the
-  PPA. Needs `vendor-tar`.
+- **create-release**: Creates the GitHub release entry if missing.
+- **appimage**: Compiles with `--release`, packages via `appimagetool`, and uploads to the GitHub release.
+- **flathub**: Re-generates pinned `cargo-sources.json`, bumps the Flathub manifest, and opens an update PR on `flathub/org.cosmic_utils.enroll` using `create-pull-request`.
+- **vendor-tar**: Runs `just vendor` with `SOURCE_DATE_EPOCH` and `SOURCE_GIT_HASH` tied to the release commit, uploading `vendor.tar` for offline distro builds.
+- **copr**: Takes the tagged source and `vendor.tar`, generates an SRPM from `packaging/copr/*.spec`, and submits it to Copr.
+- **launchpad**: Combines the upstream source and vendored crates into a Debian source package, signs it with your GPG key, and uploads it to the PPA via `dput`.
 
-The Copr/Launchpad targets are documented in
-[`packaging/README.md`](packaging/README.md).
+For distro packaging details and local test builds, see [`packaging/README.md`](packaging/README.md).
 
 ## Required repository configuration
 
-### `GH_PAT` (for the Flathub job only)
+### `GH_PAT` (Flathub job)
 
-The workflow pushes a branch directly to `flathub/org.cosmic_utils.enroll`
-and opens the PR there (no fork), using a PAT. Your account already has write
-access to the Flathub repo (standard for the upstream author), so a **classic
-PAT with the `repo` scope** is all that's needed — the classic `repo` scope
-inherits your collaborator rights and works against the Flathub repo at
-runtime.
+The workflow opens a PR directly against `flathub/org.cosmic_utils.enroll` without a fork. As an upstream maintainer, you already have collaborator permissions on that repository.
 
-> **Use a classic PAT, not fine-grained.** Fine-grained PATs can only target
-> repositories you *own*, so `flathub/org.cosmic_utils.enroll` (where you're a
-> collaborator, not the owner) does not appear in their repository picker. A
-> classic PAT with `repo` scope has no such limitation. This is why the
-> Flathub docs say *"the maintainer can use their personal token for this."*
+A classic personal access token with `repo` scope is required. Do not use fine-grained tokens here: fine-grained PATs cannot target repositories owned by other organizations where you are only a collaborator.
 
-Create it at *Settings → Developer settings → Personal access tokens → Tokens
-(classic)*, give it the **`repo`** scope, and store it as the repository
-secret **`GH_PAT`**. If the Flathub job fails with `403 ... denied to
-flathub`, the PAT is missing the `repo` scope.
+Generate the token at *Settings → Developer settings → Personal access tokens → Tokens (classic)*, check the `repo` scope, and add it under repository secrets as `GH_PAT`. If the workflow throws a 403 error during PR creation, the token is likely missing this scope or expired.
 
 ### Native packaging secrets
 
-These power the three native-distro jobs added with the packaging in
-`packaging/`. Create each as a repository secret under *Settings → Secrets
-and variables → Actions*. The jobs run without the ones they don't need, so
-you can roll them out one distro at a time.
+Configured under *Settings → Secrets and variables → Actions*. If you only maintain one distro target, you can omit the secrets for the other.
 
-| Secret | Job | What it holds |
+| Secret | Job | Description |
 |---|---|---|
-| `COPR_API_TOKEN` | `copr` | The full `~/.config/copr` INI from Copr → *My Account → API* (holds `login`, `token`, `username`, `copr_url`). Paste as one multiline secret. |
-| `LP_GPG_KEY` | `launchpad` | ASCII-armored private key registered to the Launchpad account that owns the PPA (*Your profile → OpenPGP keys*). Signs the `.changes`. |
+| `COPR_API_TOKEN` | `copr` | Full INI contents of `~/.config/copr` from Copr (*My Account → API*). Stored as a single multiline secret. |
+| `LP_GPG_KEY` | `launchpad` | ASCII-armored private key uploaded to Launchpad (*Your profile → OpenPGP keys*). Used to sign `.changes`. |
 | `LP_GPG_PASSPHRASE` | `launchpad` | Passphrase for `LP_GPG_KEY`. |
 
-Optional **repository variables** (not secrets) under *Settings → Secrets
-and variables → Actions → Variables*:
+Optional repository variables (under *Settings → Secrets and variables → Actions → Variables*):
 
 | Variable | Job | Default | Purpose |
 |---|---|---|---|
-| `COPR_PROJECT` | `copr` | `enroll` | `owner/project` to submit to if you don't host it as `enroll` under your own account. |
-| `DEB_SERIES` | `launchpad` | `plucky` | Ubuntu series to target. Constrained to 25.04+ by Rust edition 2024. |
-| `LP_DPUT_HOST` | `launchpad` | `ppa:cosmic-utils/enroll` | `dput` host entry / PPA name. |
+| `COPR_PROJECT` | `copr` | `enroll` | Copr project name (`owner/project`) if different from default. |
+| `DEB_SERIES` | `launchpad` | `plucky` | Ubuntu series name. Must be 25.04 or newer due to Rust 2024 edition requirements. |
+| `LP_DPUT_HOST` | `launchpad` | `ppa:cosmic-utils/enroll` | Target PPA name for `dput`. |
 
-> The Launchpad upload must be signed by a key registered to the *same*
-> Launchpad account that owns the PPA, or `dput` rejects it server-side.
-
-The native package targets themselves (the Copr project, the
-PPA) are one-time out-of-band setup — see `packaging/README.md`.
+Note: Launchpad requires uploads to be signed by a key registered to the Launchpad account owning the destination PPA. Unmatched keys are rejected on upload.
