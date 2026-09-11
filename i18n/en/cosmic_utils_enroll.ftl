@@ -1,12 +1,10 @@
 ### Enroll is fingerprint manager software
 ###
-### Most of these strings are text on buttons that perform actions and tooltips for those.
-### Tooltip is text that is shown when you hover over the button meant to clarify what it does.
-### Few things are also from the Settings or Help, unfortunately the links in Help lead to English sites.
-### Rest are attempting to translate status & error messages written for programmers to be more helpful for regural users.
 ### You don't have to follow these exactly just keep the users in mind.
+###
 
 ## Most prominent parts of user interface.
+##
 # Header message.
 app-title = Enroll Fingerprint
 # View menu item for opening About section.
@@ -55,6 +53,8 @@ device-cleared = Device cleared for all known users.
 clear-device-confirm = Are you sure you want to clear fingerprints for ALL known users?
 
 ## Licensing, Settings and Help related content. Some links are still English only.
+##
+
 # Section that contains link to licensing information of it and all its dependencies.
 about-licenses = License information
 # Tells user that fprintd is needed (in Flathub it is not possible to mandate this) and has a link to fprintd webpage.
@@ -85,6 +85,8 @@ theme-light = Light
 theme-dark = Dark
 
 ## Messages that appear when you hover a button or icon for additional context.
+##
+'
 # Message displayed when you hover over Register button.
 register-tooltip = Registers a new fingerprint
 # Message displayed when you hover over Delete button.
@@ -95,6 +97,8 @@ clear-tooltip = Only works for still existing users
 verify-tooltip = Verifies the fingerprint against the enrolled fingerprints
 
 ## Messages from fprintd Verify API adjusted to be less technical and more helpful.
+##
+
 # Status when you started to Verify.
 verify-finger = Place { $finger } on reader
 # Displayed when Verify returns no.
@@ -119,6 +123,8 @@ verify-unknown-error = There was an unknown error.
 verify-cancelled = Verification cancelled.
 
 ## Finger names. page is left as a historical artifact.
+##
+
 # Name of right thumb
 page-right-thumb = Right Thumb
 # Name of right index
@@ -143,6 +149,8 @@ page-left-little-finger = Left Little Finger
 page-delete-all-users-prints = Delete All User's Prints
 
 ## These cover gap states left by fprintd in the application to keep users informed.
+##
+
 # Message displayed whilst application connects to DBus.
 status-connecting = Connecting to system bus…
 # Message displayed whilst fprintd searches for compatible devices.
@@ -157,6 +165,8 @@ status-starting-enrollment = Starting enrollment…
 status-starting-verification = Starting verification…
 
 ## Fprintd Enroll API messages converted into less technical, more human, ones.
+##
+
 # When the device is ready and waiting for the first touch.
 enroll-starting = Place your finger on the reader to start.
 # Previous touch succesfully registered but more are needed to complete a record.
@@ -187,6 +197,8 @@ enroll-duplicate = This finger is already enrolled.
 enroll-cancelled = Enrollment cancelled.
 
 ## Fprintd API Error messages programmer to human conversions.
+##
+
 # Whatever you tried to do fprintd could not get permission for it from the system.
 error-permission-denied = Permission denied.
 # Scanner hardware is already in use for something else.
