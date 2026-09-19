@@ -1,4 +1,4 @@
-app-title = Ujjlenyomat hozzáadása
+app-title = Enroll
 about = Névjegy
 settings = Beállítások
 help = Súgó
@@ -8,3 +8,8 @@ git-description = Git commit { $hash } ekkor: { $date }
 register = Regisztrálás
 verify = Ellenőrzés
 delete = Törlés
+cancel = Mégse
+settings-theme = Téma
+theme-system = Rendszertéma
+theme-light = Világos
+theme-dark = Sötét
