@@ -28,6 +28,7 @@ pub enum Message {
     ToggleContextPage(ContextPage),
     UpdateConfig(Config),
     LaunchUrl(String),
+    Stop,
     Delete,
     Register,
     Cancel,
@@ -48,18 +49,36 @@ pub enum Message {
     CloseApplication,
     EnrolledFingers(Vec<String>),
     FingerSelected(Finger),
+    SelectFingerByNumber(u8),
     VerifyFinger,
     VerifyStatus(String, bool),
     VerifyStop,
     ThemeChanged(bool),
     ThemeSetting(AppTheme),
-    SelectFingerByNumber(u8),
     SelectDevice(usize),
     UsersLoaded(Vec<UserOption>),
 }
 
 // Section for handling of Messages
 impl AppModel {
+    /// Cancels anything cancelleable on progress
+    ///
+    /// **Returns** ***Task***()
+    pub(crate) fn on_stop(&mut self) -> Task<cosmic::Action<Message>> {
+        if self.verifying_finger {
+            return self.on_verify_stop();
+        } else if self.enrolling_finger.is_some() {
+            return self.on_enroll_stop();
+        } else if self.confirm_clear {
+            return self.on_cancel_clear();
+        } else if self.confirm_delete {
+            return self.on_cancel();
+        } else if self.confirm_delete_all {
+            return self.on_cancel_delete_all();
+        }
+        Task::none()
+    }
+
     /// Resets delete state
     ///
     /// **Returns** ***Task***()
