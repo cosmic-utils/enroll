@@ -90,6 +90,12 @@ pub enum MenuAction {
     About,
     Settings,
     Help,
+    SelectFinger(u8),
+    Delete,
+    Register,
+    Verify,
+    Cancel,
+    Quit,
 }
 
 impl menu::action::MenuAction for MenuAction {
@@ -100,6 +106,12 @@ impl menu::action::MenuAction for MenuAction {
             MenuAction::About => Message::ToggleContextPage(ContextPage::About),
             MenuAction::Settings => Message::ToggleContextPage(ContextPage::Settings),
             MenuAction::Help => Message::ToggleContextPage(ContextPage::Help),
+            MenuAction::SelectFinger(x) => Message::SelectFingerByNumber(*x),
+            MenuAction::Delete => Message::Delete,
+            MenuAction::Register => Message::Register,
+            MenuAction::Verify => Message::VerifyFinger,
+            MenuAction::Cancel => Message::Stop,
+            MenuAction::Quit => Message::CloseApplication,
         }
     }
 }
@@ -131,6 +143,50 @@ pub fn default_key_binds() -> HashMap<menu::KeyBind, MenuAction> {
             key: Key::Character("i".into()),
         },
         MenuAction::About,
+    );
+    key_binds.insert(
+        KeyBind {
+            modifiers: vec![Modifier::Ctrl],
+            key: Key::Character("q".into()),
+        },
+        MenuAction::Quit,
+    );
+    key_binds.insert(
+        KeyBind {
+            modifiers: vec![Modifier::Ctrl],
+            key: Key::Character("c".into()),
+        },
+        MenuAction::Cancel,
+    );
+    for x in 0..=9 {
+        key_binds.insert(
+            KeyBind {
+                modifiers: vec![],
+                key: Key::Character(x.to_string().into()),
+            },
+            MenuAction::SelectFinger(x),
+        );
+    }
+    key_binds.insert(
+        KeyBind {
+            modifiers: vec![Modifier::Ctrl],
+            key: Key::Character("d".into()),
+        },
+        MenuAction::Delete,
+    );
+    key_binds.insert(
+        KeyBind {
+            modifiers: vec![],
+            key: Key::Character("r".into()),
+        },
+        MenuAction::Register,
+    );
+    key_binds.insert(
+        KeyBind {
+            modifiers: vec![],
+            key: Key::Character("v".into()),
+        },
+        MenuAction::Verify,
     );
     key_binds
 }
