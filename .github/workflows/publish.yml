@@ -104,6 +104,9 @@ jobs:
           # pattern for opening update PRs on upstream tag creation.
           git clone https://github.com/flathub/org.cosmic_utils.enroll.git flatpak-repo
 
+          # Copy in-tree manifest over Flathub's copy
+          cp packaging/flatpak/org.cosmic_utils.enroll.yml flatpak-repo/org.cosmic_utils.enroll.yml
+
           # Pinned + checksummed cargo source generator (was an unpinned curl|python).
           GEN_SHA=737c0085912f9f7dabf9341d4608e2a77a51a73a
           curl -fsSL "https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/${GEN_SHA}/cargo/flatpak-cargo-generator.py" \
