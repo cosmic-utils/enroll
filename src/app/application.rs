@@ -15,11 +15,12 @@ use cosmic::{
     prelude::*,
     theme,
     widget::{
-        self, RcElementWrapper, button, dialog, icon, menu,
+        self, RcElementWrapper,
+        about::About,
+        button, dialog, icon, menu,
         menu::{ItemHeight, ItemWidth},
         nav_bar,
     },
-    widget::{self, about::About, dialog, icon, menu, nav_bar},
 };
 
 use super::AppModel;
