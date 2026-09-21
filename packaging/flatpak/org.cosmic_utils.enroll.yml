@@ -1,0 +1,44 @@
+app-id: org.cosmic_utils.enroll
+runtime: org.freedesktop.Platform
+runtime-version: "26.08"
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+base: com.system76.Cosmic.BaseApp
+base-version: stable
+command: cosmic-utils-enroll
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+  - --filesystem=xdg-config/cosmic:rw
+  - --filesystem=~/.face:ro
+  - --system-talk-name=net.reactivated.Fprint
+  - --system-talk-name=org.freedesktop.PolicyKit1
+  - --system-talk-name=org.freedesktop.Accounts
+  - --talk-name=com.system76.CosmicSettingsDaemon
+
+modules:
+  - name: cosmic-utils-enroll
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin
+      env:
+        CARGO_HOME: /run/build/cosmic-utils-enroll/cargo
+        CARGO_NET_OFFLINE: "true"
+    build-commands:
+      - cargo --offline fetch --manifest-path Cargo.toml
+      - cargo build --offline --release
+
+      - install -Dm0755 target/release/cosmic-utils-enroll /app/bin/cosmic-utils-enroll
+      - install -Dm0644 resources/org.cosmic_utils.enroll.desktop /app/share/applications/org.cosmic_utils.enroll.desktop
+      - install -Dm0644 resources/org.cosmic_utils.enroll.metainfo.xml /app/share/appdata/org.cosmic_utils.enroll.metainfo.xml
+      - install -Dm0644 resources/icons/hicolor/scalable/apps/enroll.svg /app/share/icons/hicolor/scalable/apps/org.cosmic_utils.enroll.svg
+
+    sources:
+      - type: git
+        url: https://github.com/cosmic-utils/enroll.git
+        tag: v1.2.7
+        commit: 9bac16430994b33ed707db250fbb2aaefe2b39f9
+      - cargo-sources.json
