@@ -22,14 +22,15 @@ clear-device-confirm = Deseja realmente limpar as impressões digitais de TODOS 
 help-fprintd = Se você tiver algum problema, verifique primeiro se o fprintd está instalado corretamente. Você pode encontrar mais informações no site do projeto:
 help-validity = Para alguns hardwares, como os leitores da Validity, por exemplo, você precisa usar o open-fprintd.
 help-pam = Além disso, para utilizar a autenticação por impressão digital de forma eficaz, o PAM deve ser configurado para usar o módulo fprintd. Você pode encontrar exemplos aqui:
-settings-ui = Interface
+settings-ui = Aparência
 alternative-ui = UI Alternativa
 settings-clear-device = Remover todas as impressões digitais
 settings-theme = Tema
 settings-device =
     { $nbr ->
-        [1] Você tem { $nbr } dispositivo compatível
-       *[other] Você tem { $nbr } dispositivos compatíveis
+        [0] Nenhum dispositivo
+        [1] { $nbr } dispositivo
+       *[other] { $nbr } dispositivos
     }
 theme-system = Sistema
 theme-light = Claro
@@ -95,3 +96,5 @@ menu-help = Ajuda...
 menu-settings = Configurações...
 repository = Repositório
 support = Suporte
+settings-section-devices = Dispositivos
+settings-supported = Compatível
