@@ -63,6 +63,7 @@ pub enum Message {
 
 // Section for handling of Messages
 impl AppModel {
+    /// This is just a fitter because on_update_configs Message signature was wrong.
     pub(crate) fn on_ui_change(&mut self, state: bool) -> Task<cosmic::Action<Message>> {
         let conf = Config {
             app_theme: self.config.app_theme,
@@ -70,6 +71,7 @@ impl AppModel {
         };
         self.on_update_config(conf)
     }
+
     /// Cancels anything cancelleable on progress
     ///
     /// **Returns** ***Task***()

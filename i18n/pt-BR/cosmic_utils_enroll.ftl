@@ -1,4 +1,4 @@
-app-title = Biometria
+app-title = Enroll
 about = Sobre
 settings = Configurações
 help = Ajuda
@@ -90,3 +90,8 @@ error-timeout = A operação excedeu o tempo limite.
 error-prints-not-deleted = Não foi possível excluir as impressões digitais.
 error-connect-dbus = Falha ao conectar ao DBus: { $err }
 error-unsupported-operation = Esta operação não é suportada pelo serviço de impressão digital. A implementação do fprintd instalada pode ser incompatível.
+menu-about = Sobre o Enroll...
+menu-help = Ajuda...
+menu-settings = Configurações...
+repository = Repositório
+support = Suporte

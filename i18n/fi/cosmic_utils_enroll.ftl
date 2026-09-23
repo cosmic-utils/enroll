@@ -1,4 +1,4 @@
-app-title = Lisää sormenjälki
+app-title = Enroll
 about = Tietoa
 settings = Asetukset
 view = Näkymä
@@ -90,3 +90,8 @@ settings-device =
        *[other] Sinulla on { $nbr } tuettua laitetta
     }
 status-starting-verification = Aloitetaan varmennusta…
+menu-about = Tietoa
+menu-help = Apua
+menu-settings = Asetukset
+repository = Lähdekoodi
+support = Tuki

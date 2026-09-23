@@ -1,4 +1,4 @@
-app-title = Registrazione Impronta Digitale
+app-title = Enroll
 about = Informazioni
 settings = Impostazioni
 view = Vista
@@ -81,3 +81,7 @@ error-timeout = Operazione scaduta.
 error-prints-not-deleted = Impossibile eliminare le impronte digitali.
 error-connect-dbus = Connessione a DBus fallita: { $err }
 error-unsupported-operation = Questa operazione non è supportata dal servizio di impronte digitali. L'implementazione di fprintd installata potrebbe essere incompatibile.
+menu-about = Informazioni Enroll...
+menu-help = Aiuto...
+menu-settings = Impostazioni...
+help = Aiuto
