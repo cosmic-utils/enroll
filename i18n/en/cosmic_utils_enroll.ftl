@@ -65,18 +65,23 @@ help-validity = For some hardware, like Validity scanners for example, you need 
 # Link to English written Arch Wiki section about Pluggable Authentication Modules to set it up.
 help-pam = Also to be able to utilize fingerprint effectively PAM must be configured to use fprintd module for authentication. You can find examples here:
 # Section where there still is a toggle for using the old interface.
-settings-ui = User Interface
+settings-ui = Appearance
 # The toggle of old interface.
 alternative-ui = Alternative UI
 # Settings section for removal of all fingerprints.
 settings-clear-device = Remove all fingerprints
 # Theme related Setting
 settings-theme = Theme
+# Section for Devices in Settings
+settings-section-devices = Devices
+# Title for device radio button
+settings-supported = Supported
 # Tells you how many supported devices fprintd found. Then lists them by name and lets you select which to use.
 settings-device =
     { $nbr ->
-        [1] You have { $nbr } supported device
-       *[other] You have { $nbr } supported devices
+        [0] No devices
+        [1] { $nbr } device
+       *[other] { $nbr } devices
     }
 # Follow System Theme.
 theme-system = System

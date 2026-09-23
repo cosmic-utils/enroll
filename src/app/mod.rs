@@ -4,7 +4,7 @@ use std::{collections::HashMap, sync::Arc};
 
 use cosmic::{
     cosmic_config,
-    widget::{about::About, menu, nav_bar},
+    widget::{about::About, menu, nav_bar, segmented_button},
 };
 
 use crate::{
@@ -13,7 +13,8 @@ use crate::{
         message::{DeviceOption, Message},
         users::UserOption,
     },
-    config::Config,
+    config::{AppTheme, Config},
+    fl,
     fprint_dbus::DeviceProxy,
 };
 
@@ -40,6 +41,8 @@ pub struct AppModel {
     about: About,
     /// Contains items assigned to the nav bar panel.
     nav: nav_bar::Model,
+    /// Theme selection
+    theme: segmented_button::SingleSelectModel,
     /// Key bindings for the application's menu bar.
     key_binds: HashMap<menu::KeyBind, MenuAction>,
     // Configuration data that persists between application runs.
@@ -198,6 +201,18 @@ pub enum ContextPage {
     About,
     Settings,
     Help,
+}
+
+fn theme_button_model() -> segmented_button::SingleSelectModel {
+    segmented_button::SingleSelectModel::builder()
+        .insert(|b| {
+            b.text(fl!("theme-system"))
+                .data(AppTheme::System)
+                .activate()
+        })
+        .insert(|b| b.text(fl!("theme-dark")).data(AppTheme::Dark))
+        .insert(|b| b.text(fl!("theme-light")).data(AppTheme::Light))
+        .build()
 }
 
 #[cfg(test)]

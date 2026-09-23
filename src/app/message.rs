@@ -11,6 +11,7 @@ use crate::config::{AppTheme, Config};
 use crate::fl;
 use crate::fprint_dbus::DeviceProxy;
 use cosmic::cosmic_config::CosmicConfigEntry;
+use cosmic::widget::segmented_button::{self};
 use cosmic::{Task, command};
 use std::sync::Arc;
 use tracing::info;
@@ -54,13 +55,21 @@ pub enum Message {
     VerifyStatus(String, bool),
     VerifyStop,
     ThemeChanged(bool),
-    ThemeSetting(AppTheme),
+    ThemeSetting(segmented_button::Entity),
     SelectDevice(usize),
     UsersLoaded(Vec<UserOption>),
+    UpdateUI(bool),
 }
 
 // Section for handling of Messages
 impl AppModel {
+    pub(crate) fn on_ui_change(&mut self, state: bool) -> Task<cosmic::Action<Message>> {
+        let conf = Config {
+            app_theme: self.config.app_theme,
+            experimental_ui: state,
+        };
+        self.on_update_config(conf)
+    }
     /// Cancels anything cancelleable on progress
     ///
     /// **Returns** ***Task***()
@@ -526,16 +535,27 @@ impl AppModel {
         }
 
         info!(is_dark, "Portal color scheme changed, updating theme");
-        let theme = if is_dark {
+
+        command::set_theme(if is_dark {
             cosmic::Theme::dark()
         } else {
             cosmic::Theme::light()
-        };
-        command::set_theme(theme)
+        })
     }
 
-    pub fn on_theme_setting(&mut self, theme: AppTheme) -> Task<cosmic::Action<Message>> {
-        self.config.app_theme = theme;
+    pub fn on_theme_setting(
+        &mut self,
+        theme: segmented_button::Entity,
+    ) -> Task<cosmic::Action<Message>> {
+        self.theme.activate(theme);
+
+        if let Some(data) = self.theme.data::<AppTheme>(theme) {
+            match data {
+                AppTheme::System => self.config.app_theme = AppTheme::System,
+                AppTheme::Dark => self.config.app_theme = AppTheme::Dark,
+                AppTheme::Light => self.config.app_theme = AppTheme::Light,
+            }
+        }
 
         if let Some(handler) = &self.config_handler
             && let Err(err) = self.config.write_entry(handler)
@@ -543,7 +563,7 @@ impl AppModel {
             tracing::error!("failed to write config: {}", err);
         }
 
-        cosmic::command::set_theme(theme.theme())
+        cosmic::command::set_theme(self.config.app_theme.theme())
     }
 
     /// Selects a finger by numeric key (1-0).

@@ -5,6 +5,7 @@ use crate::app::{
     message::Message,
     subscription::*,
     tasks::{task_connect, task_load_users},
+    theme_button_model,
 };
 use crate::config::{Config, read_config};
 use crate::fl;
@@ -17,8 +18,8 @@ use cosmic::{
     widget::{
         self, RcElementWrapper,
         about::About,
-        button, dialog, icon, menu,
-        menu::{ItemHeight, ItemWidth},
+        button, dialog, icon,
+        menu::{self, ItemHeight, ItemWidth},
         nav_bar,
     },
 };
@@ -80,6 +81,7 @@ impl cosmic::Application for AppModel {
             context_page: ContextPage::default(),
             about,
             nav: nav_bar::Model::default(),
+            theme: theme_button_model(),
             key_binds: super::default_key_binds(),
             config,
             config_handler,
@@ -335,6 +337,7 @@ impl cosmic::Application for AppModel {
             Message::SelectFingerByNumber(key) => self.on_select_finger_by_number(key),
             Message::SelectDevice(index) => self.on_select_device(index),
             Message::UsersLoaded(users) => self.on_users_loaded(users),
+            Message::UpdateUI(state) => self.on_ui_change(state),
         }
     }
 
