@@ -8,11 +8,11 @@ GUI application for fingerprint management. Designed for COSMIC DE.
 
 ## Prerequisites
 
-You're using Linux or freedesktop compatible system with a supported fingerprint scanner. You also need [fprintd][fprintd] or [open-fprintd][open-fprintd] installed.
+Linux with a supported fingerprint scanner. You also need [fprintd][fprintd] or [open-fprintd][open-fprintd] installed.
 
-Tested with: 
+### Tested with: 
 | Distribution | Desktop | Architecture | Fingerprint scanner |
-| ------------ | ------- | ------------ | ------------------- |
+| ------------ | ------- | ------------:|:-------------------:|
 | Pop!_OS | COSMIC™ DE | amd64 | Goodix MOC Fingerprint Sensor | 
 | Arch Linux | KDE Plasma | arm64 | No fingerprint scanner | 
 
