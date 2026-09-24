@@ -18,7 +18,7 @@ confirm-clear = Är du säker?
 clearing-device = Rensar alla fingeravtryck från enheten för alla kända användare…
 device-cleared = Rensad för alla kända användare.
 clear-device-confirm = Är du säker du vill radera fingeravtryck för alla kända användare?
-settings-ui = Användargränssnitt
+settings-ui = Utseende
 alternative-ui = Andra UI
 settings-clear-device = Radera alla fingeravtryck
 settings-theme = Tema
@@ -84,8 +84,9 @@ help-validity = För viss hårdvara, som till exempel Validity-skannrar, behöve
 help-pam = För att kunna använda fingeravtryck effektivt måste PAM också konfigureras för att använda fprintd-modulen för autentisering. Du kan hitta exempel här:
 settings-device =
     { $nbr ->
-        [1] Du har { $nbr } stödd enhet
-       *[other] Du har { $nbr } stödda enheter
+        [0] Inga enheter
+        [1] { $nbr } enhet
+       *[other] { $nbr } enheter
     }
 theme-system = System
 theme-light = Ljust
@@ -95,3 +96,5 @@ menu-help = Hjälp...
 menu-settings = Inställningar...
 repository = Källkod
 support = Support
+settings-section-devices = Enheter
+settings-supported = Stöds

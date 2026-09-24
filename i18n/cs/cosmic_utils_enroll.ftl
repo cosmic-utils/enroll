@@ -21,16 +21,16 @@ device-cleared = Zařízení bylo vymazáno pro všechny známé uživatele.
 clear-device-confirm = Opravdu chcete vymazat otisky pro VŠECHNY známé uživatele?
 help-fprintd = Pokud narazíte na problémy, nejprve zkontrolujte, zda máte správně nainstalovanou službu fprintd. Více informací najdete na jejich webových stránkách:
 help-pam = Aby bylo možné otisk prstu účinně využívat, musí být PAM nakonfigurován tak, aby pro ověřování používal modul fprintd. Příklady konfigurace najdete zde:
-settings-ui = Uživatelské rozhraní
+settings-ui = Vzhled
 alternative-ui = Alternativní UI
 settings-clear-device = Odstranit všechny otisky
 settings-theme = Motiv
 settings-device =
-    Máte { $nbr } { $nbr ->
-        [1] podporované
-        [few] podporovaná
-       *[other] podporovaných
-    } zařízení
+    { $nbr ->
+        [0] Žádné zařízení
+        [1] { $nbr } zařízení
+       *[other] { $nbr } zařízení
+    }
 theme-system = Podle systému
 theme-light = Světlý
 theme-dark = Tmavý
@@ -96,3 +96,5 @@ menu-help = Nápověda...
 menu-settings = Nastavení...
 repository = Repozitář
 support = Podpora
+settings-section-devices = Zařízení
+settings-supported = Podporováno
