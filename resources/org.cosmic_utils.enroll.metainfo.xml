@@ -122,7 +122,7 @@
   <screenshots>
     <screenshot type="default">
       <image>
-          https://user.fm/files/v2-cc02d7b079267b7013fd35983d1f80ac/enroll-frosted-1.png
+          https://github.com/cosmic-utils/enroll/blob/main/screenshots/registering.png
       </image>
       <caption>Main UI</caption>
       <caption xml:lang="cs">Hlavní UI</caption>
@@ -136,13 +136,13 @@
     </screenshot>
     <screenshot>
       <image>
-          https://user.fm/files/v2-d137513e976d3dcc73e9db16ce385894/enroll-frosted.png      
+          https://github.com/cosmic-utils/enroll/blob/main/screenshots/about.png
       </image>
-      <caption>Starting view</caption>
+      <caption>About page</caption>
     </screenshot>
     <screenshot>
       <image>
-        https://user.fm/files/v2-24d6c8fc18e84f95c0e38c10fc193bb6/settings.png
+          https://github.com/cosmic-utils/enroll/blob/main/screenshots/settings.png
       </image>
       <caption>Settings sidebar</caption>
       <caption xml:lang="cs">Nastavení - postranní panel</caption>
@@ -150,7 +150,7 @@
     </screenshot>
     <screenshot>
       <image>
-        https://user.fm/files/v2-ea42cb8f02e66d95020cdde9529c6e19/user.png
+        https://github.com/cosmic-utils/enroll/blob/main/screenshots/users.png
       </image>
       <caption>User selection</caption>
       <caption xml:lang="cs">Výběr uživatele</caption>
