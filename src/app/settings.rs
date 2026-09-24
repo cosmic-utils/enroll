@@ -22,7 +22,10 @@ impl AppModel {
         let theme_section = section()
             .title(fl!("settings-ui"))
             .add(theme_selection)
-            .add(builder(fl!("alternative-ui")).toggler(false, Message::UpdateUI));
+            .add(
+                builder(fl!("alternative-ui"))
+                    .toggler(self.config.experimental_ui, Message::UpdateUI),
+            );
 
         let device_count = self.devices.len();
 
