@@ -158,6 +158,20 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.8" date="2026-09-25">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Settings UI polished.</li>
+          <li>Cancel keyboard shortcut moved to Ctrl + C and works on anything cancellable.</li>
+          <li>Make Menu wider, display shortcuts &amp; remove icons @KodeBarista</li>
+          <li>About refactored to use libcosmic widget @KodeBarista</li>
+          <li>Updated Portuguese (Brazil), Swedish, Czezh translation by @carvalhods, @bittin, @lorduskordus</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.2.7" date="2026-09-18">
       <description>
         <p>

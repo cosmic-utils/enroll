@@ -1,3 +1,13 @@
+cosmic-utils-enroll (1.2.8-1) unstable; urgency=medium
+
+  * Settings UI polished.
+  * Cancel keyboard shortcut moved to Ctrl + C and works on anything cancellable.
+  * Make Menu wider, display shortcuts & remove icons @KodeBarista
+  * About refactored to use libcosmic widget @KodeBarista
+  * Updated Portuguese (Brazil), Swedish, Czezh translation by @carvalhods, @bittin, @lorduskordus
+
+ -- Joonas Tuomi <git@joonastuomi.fi>  Fri, 25 Sep 2026 11:30:28 +0000
+
 cosmic-utils-enroll (1.2.7-1) unstable; urgency=medium
 
   * Missing icons to View menu items
