@@ -64,7 +64,7 @@ impl cosmic::Application for AppModel {
             context_page: ContextPage::default(),
             about: about(Self::APP_ID),
             nav: nav_bar::Model::default(),
-            theme: theme_button_model(),
+            theme: theme_button_model(config.app_theme),
             key_binds: super::default_key_binds(),
             config,
             config_handler,

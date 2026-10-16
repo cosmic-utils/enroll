@@ -203,16 +203,14 @@ pub enum ContextPage {
     Help,
 }
 
-fn theme_button_model() -> segmented_button::SingleSelectModel {
-    segmented_button::SingleSelectModel::builder()
-        .insert(|b| {
-            b.text(fl!("theme-system"))
-                .data(AppTheme::System)
-                .activate()
-        })
-        .insert(|b| b.text(fl!("theme-dark")).data(AppTheme::Dark))
+fn theme_button_model(app_theme: AppTheme) -> segmented_button::SingleSelectModel {
+    let mut theme_button = segmented_button::SingleSelectModel::builder()
+        .insert(|b| b.text(fl!("theme-system")).data(AppTheme::System))
         .insert(|b| b.text(fl!("theme-light")).data(AppTheme::Light))
-        .build()
+        .insert(|b| b.text(fl!("theme-dark")).data(AppTheme::Dark))
+        .build();
+    theme_button.activate_position(app_theme.into());
+    theme_button
 }
 
 #[cfg(test)]
@@ -221,7 +219,6 @@ mod tests {
 
     use super::*;
     use cosmic::widget::menu::action::MenuAction as _;
-
     #[test]
     fn test_app_error_localization() {
         // Test localized message for permission denied
