@@ -31,6 +31,13 @@ impl AppModel {
         Task::none()
     }
 
+    /// Sets app theme to match config state
+    pub fn task_set_theme(&self) -> Task<cosmic::Action<Message>> {
+        cosmic::Task::done(cosmic::Action::App(crate::app::Message::ThemeSetting(
+            self.theme.active(),
+        )))
+    }
+
     /// Updates the header and window titles.
     pub fn update_title_task(&mut self) -> Task<cosmic::Action<Message>> {
         let mut window_title = fl!("app-title");

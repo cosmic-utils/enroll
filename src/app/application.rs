@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: MPL-2.0
-use crate::app::{
-    ContextPage, MenuAction,
-    finger::*,
-    message::Message,
-    subscription::*,
-    tasks::{task_connect, task_load_users},
-    theme_button_model,
-};
 use crate::config::{Config, read_config};
 use crate::fl;
+use crate::{
+    app::{
+        ContextPage, MenuAction,
+        finger::*,
+        message::Message::{self},
+        subscription::*,
+        tasks::{task_connect, task_load_users},
+        theme_button_model,
+    },
+    config::AppTheme,
+};
 
 use cosmic::iced::Subscription;
 use cosmic::{
@@ -58,6 +61,7 @@ impl cosmic::Application for AppModel {
 
         // Start with navigation closed
         core.nav_bar_toggle();
+        let _prefers_dark = config.app_theme == AppTheme::Dark;
 
         let mut app = AppModel {
             core,
@@ -87,14 +91,14 @@ impl cosmic::Application for AppModel {
             confirm_delete_all: false,
         };
 
-        let start_theme = cosmic::command::set_theme(app.config.app_theme.theme());
         let command = app.update_title_task();
         let connect_task = task_connect();
         let users_task = task_load_users();
+        let theme = app.task_set_theme();
 
         (
             app,
-            Task::batch(vec![command, connect_task, users_task, start_theme]),
+            Task::batch(vec![command, connect_task, users_task, theme]),
         )
     }
 
@@ -276,7 +280,6 @@ impl cosmic::Application for AppModel {
         }
 
         subscriptions.push(portal_theme_subscription(self.config.app_theme));
-
         subscriptions.push(key_subscription());
 
         Subscription::batch(subscriptions)
