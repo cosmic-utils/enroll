@@ -222,7 +222,7 @@ jobs:
     needs: vendor-tar
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:25.04
+      image: ubuntu:26.04
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
@@ -254,6 +254,7 @@ jobs:
         env:
           LP_GPG_KEY: ${{ secrets.LP_GPG_KEY }}
           LP_GPG_PASSPHRASE: ${{ secrets.LP_GPG_PASSPHRASE }}
+        shell: bash
         run: |
           set -e
           # Import the ASCII-armored private key registered to the Launchpad
