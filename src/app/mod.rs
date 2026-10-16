@@ -18,6 +18,7 @@ use crate::{
     fprint_dbus::DeviceProxy,
 };
 
+pub mod about;
 pub mod error;
 pub mod finger;
 pub mod fprint;

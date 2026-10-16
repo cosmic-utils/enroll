@@ -4,6 +4,7 @@ use crate::fl;
 use crate::{
     app::{
         ContextPage, MenuAction,
+        about::about,
         finger::*,
         message::Message::{self},
         subscription::*,
@@ -19,9 +20,7 @@ use cosmic::{
     prelude::*,
     theme,
     widget::{
-        self, RcElementWrapper,
-        about::About,
-        button, dialog, icon,
+        self, RcElementWrapper, button, dialog, icon,
         menu::{self, ItemHeight, ItemWidth},
         nav_bar,
     },
@@ -344,34 +343,4 @@ impl cosmic::Application for AppModel {
 
         Task::batch(vec![self.update_title_task(), self.list_fingers_task()])
     }
-}
-
-fn about(icon_name: &str) -> About {
-    About::default()
-        .name(fl!("app-title"))
-        .icon(icon::from_name(icon_name))
-        .version(env!("CARGO_PKG_VERSION"))
-        .author("Joonas Tuomi")
-        .translators([
-            ("Luna \"bittin\" Jernberg", "bittin@reimu.nl"),
-            ("David Carvalho", "david.snt.carvalho@gmail.com"),
-            ("Geeson \"Gerseneck\" Wan", "wang14240@gmail.com"),
-            ("Albano Battistella", ""),
-            ("lorduskordus", "lorduskordus@gmail.com"),
-            ("therealmate", "hellogaming91@gmail.com"),
-            ("VandaLHJ", "vandalhj@gmail.com"),
-            ("Димко", "Dymkovych@proton.me"),
-        ])
-        .designers([("KodeBarista", ""), ("Hojjat Abdollahi", "")])
-        .comments(fl!("welcome"))
-        .license(env!("CARGO_PKG_LICENSE"))
-        .license_url("https://spdx.org/licenses/MPL-2.0")
-        .developers([("Joonas Tuomi", "github@joonastuomi.fi")])
-        .links([
-            (fl!("repository"), "https://github.com/cosmic-utils/enroll"),
-            (
-                fl!("support"),
-                "https://github.com/cosmic-utils/enroll/issues",
-            ),
-        ])
 }
