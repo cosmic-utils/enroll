@@ -11,10 +11,10 @@ pub enum AppTheme {
     /// Follow system theme (dark or light based on system setting)
     #[default]
     System,
-    /// Always use dark theme
-    Dark,
     /// Always use light theme
     Light,
+    /// Always use dark theme
+    Dark,
 }
 
 impl AppTheme {
@@ -44,6 +44,16 @@ impl AppTheme {
                 Self::Dark | Self::System => Theme::dark(),
                 Self::Light => Theme::light(),
             }
+        }
+    }
+}
+
+impl Into<u16> for AppTheme {
+    fn into(self) -> u16 {
+        match self {
+            AppTheme::System => 0,
+            AppTheme::Light => 1,
+            AppTheme::Dark => 2,
         }
     }
 }
