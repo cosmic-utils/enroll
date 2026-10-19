@@ -1,4 +1,6 @@
 app-title = Enroll
+app-comment = Gestione dei dati relativi alle impronte digitali
+app-keywords = Impronta digitale;Identificazione;COSMIC;
 about = Informazioni
 settings = Impostazioni
 view = Vista

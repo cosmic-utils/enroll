@@ -1,4 +1,6 @@
 app-title = Enroll
+app-comment = Správa otisků prstů
+app-keywords = Otisky prstů;Ověřování;Biometrie;
 about = O aplikaci
 settings = Nastavení
 help = Nápověda

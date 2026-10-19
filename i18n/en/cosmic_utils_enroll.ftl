@@ -8,6 +8,10 @@
 
 # Header message.
 app-title = Enroll
+# Desktop and app store tag line
+app-comment = Register fingerprints
+# For desktop file keywords to find application by.
+app-keywords = Fingerprint;Authentication;Biometrics;
 # Menu item for opening a section.
 menu-about = About Enroll...
 menu-help = Help...

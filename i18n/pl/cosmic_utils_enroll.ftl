@@ -1,4 +1,6 @@
 app-title = Enroll
+app-comment = Zarządzanie odciskami palców
+app-keywords = Odciki palca;Uwierzytelnienie;COSMIC;
 about = O aplikacji
 settings = Ustawienia
 help = Pomoc

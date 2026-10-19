@@ -4,15 +4,7 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MPL-2.0</project_license>
   <name>Enroll</name>
-  <summary>Fingerprint record management</summary>
-  <summary xml:lang="cs">Správa otisků prstů</summary>
-  <summary xml:lang="fi">Sormenjälkien hallinointi</summary>
-  <summary xml:lang="pl">Zarządzanie odciskami palców</summary>
-  <summary xml:lang="se">Fingerprint registreringshantering</summary>
-  <summary xml:lang="it">Gestione dei dati relativi alle impronte digitali</summary>
-  <summary xml:lang="zh-Hans">指纹记录管理</summary>
-  <summary xml:lang="pt-BR">Gestão de registros de impressões digitais</summary>
-  <summary xml:lang="uk">Управління записами відбитків пальців</summary>
+  <summary>Register fingerprints</summary>
   <developer id="org.cosmic-utils">
     <name>Joonas Tuomi</name>
   </developer>
@@ -93,13 +85,13 @@
   <keywords>
     <keyword>Fingerprint</keyword>
     <keyword>Authentication</keyword>
-    <keyword>COSMIC</keyword>
+    <keyword>Biometrics</keyword>
     <keyword xml:lang="cs">Otisky prstů</keyword>
     <keyword xml:lang="cs">Ověřování</keyword>
-    <keyword xml:lang="cs">COSMIC</keyword>
+    <keyword xml:lang="cs">Biometrie</keyword>
     <keyword xml:lang="fi">Sormenjälki</keyword>
     <keyword xml:lang="fi">Tunnistautuminen</keyword>
-    <keyword xml:lang="fi">COSMIC</keyword>
+    <keyword xml:lang="fi">Biometria</keyword>
     <keyword xml:lang="pl">Odciki palca</keyword>
     <keyword xml:lang="pl">Uwierzytelnienie</keyword>
     <keyword xml:lang="pl">COSMIC</keyword>

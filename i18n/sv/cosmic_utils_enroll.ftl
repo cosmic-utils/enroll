@@ -1,4 +1,6 @@
 app-title = Enroll
+app-comment = Fingerprint registreringshantering
+app-keywords = Fingerprint;Autentisering;COSMIC;
 about = Om
 settings = Inställningar
 view = Visa

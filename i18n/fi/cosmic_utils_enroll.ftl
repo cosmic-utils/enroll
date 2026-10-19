@@ -1,4 +1,6 @@
 app-title = Enroll
+app-comment = Sormenjälkien hallinointi
+app-keywords = Sormenjälki;Tunnistautuminen;Biometria;
 about = Tietoa
 settings = Asetukset
 view = Näkymä
