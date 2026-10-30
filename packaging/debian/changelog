@@ -1,3 +1,10 @@
+cosmic-utils-enroll (1.2.11-1) unstable; urgency=medium
+
+  * Localized Flathub and application metadata
+  * Hungarian translation finished by @therealmatae
+
+ -- Joonas Tuomi <git@joonastuomi.fi>  Fri, 30 Oct 2026 13:09:00 +0000
+
 cosmic-utils-enroll (1.2.10-1) unstable; urgency=medium
 
   * Added Spanish translation by @PGSCOM

@@ -150,6 +150,17 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="1.2.11" date="2026-10-30">
+      <description>
+        <p>
+          Changes:
+        </p>
+        <ul>
+          <li>Localized Flathub and application metadata</li>
+          <li>Hungarian translation finished by @therealmatae</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.2.10" date="2026-10-16">
       <description>
         <p>
