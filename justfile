@@ -1,5 +1,5 @@
 name := 'cosmic-utils-enroll'
-appid := 'org.cosmic_utils.Enroll'
+appid := 'org.cosmic_utils.enroll'
 
 rootdir := ''
 prefix := '/usr'
@@ -10,11 +10,11 @@ bin-src := 'target' / 'release' / name
 bin-dst := base-dir / 'bin' / name
 
 desktop := appid + '.desktop'
-desktop-src := 'resources' / desktop
+desktop-src := 'target' / 'xdgen' / desktop
 desktop-dst := clean(rootdir / prefix) / 'share' / 'applications' / desktop
 
 appdata := appid + '.metainfo.xml'
-appdata-src := 'resources' / appdata
+appdata-src := 'target' / 'xdgen' / appdata
 appdata-dst := clean(rootdir / prefix) / 'share' / 'appdata' / appdata
 
 icons-src := 'resources' / 'icons' / 'hicolor'
@@ -72,20 +72,53 @@ uninstall:
 # Vendor dependencies locally
 vendor:
     #!/usr/bin/env bash
+    set -euo pipefail
     mkdir -p .cargo
     cargo vendor --sync Cargo.toml | head -n -1 > .cargo/config.toml
     echo 'directory = "vendor"' >> .cargo/config.toml
     echo >> .cargo/config.toml
     echo '[env]' >> .cargo/config.toml
-    if [ -n "${SOURCE_DATE_EPOCH}" ]
+    if [ -n "${SOURCE_DATE_EPOCH:-}" ]
     then
         source_date="$(date -d "@${SOURCE_DATE_EPOCH}" "+%Y-%m-%d")"
         echo "VERGEN_GIT_COMMIT_DATE = \"${source_date}\"" >> .cargo/config.toml
     fi
-    if [ -n "${SOURCE_GIT_HASH}" ]
+    if [ -n "${SOURCE_GIT_HASH:-}" ]
     then
         echo "VERGEN_GIT_SHA = \"${SOURCE_GIT_HASH}\"" >> .cargo/config.toml
     fi
+    # Work around an upstream bug in zbus-lockstep 0.5.2 where `../xml` (which matches
+    # `vendor/xml` from the xml crate) was checked before or without `else if` and
+    # panicked on non-XML files like LICENSE in vendor/xml.
+    python3 - << 'PY'
+    import json, hashlib, pathlib
+    p1 = pathlib.Path("vendor/zbus-lockstep/src/macros.rs")
+    if p1.exists():
+        text = p1.read_text()
+        text = text.replace("        }\n\n        if current_dir_upper_case.exists() {", "        } else if current_dir_upper_case.exists() {")
+        text = text.replace("        }\n\n        if parent_dir_lower_case.exists() {", "        } else if parent_dir_lower_case.exists() {")
+        text = text.replace("        }\n\n        if parent_dir_upper_case.exists() {", "        } else if parent_dir_upper_case.exists() {")
+        text = text.replace("        }\n\n        if crate_dir_lower_case.exists() {", "        } else if crate_dir_lower_case.exists() {")
+        text = text.replace("        }\n\n        if crate_dir_upper_case.exists() {", "        } else if crate_dir_upper_case.exists() {")
+        p1.write_text(text)
+        cs1_path = pathlib.Path("vendor/zbus-lockstep/.cargo-checksum.json")
+        cs1 = json.loads(cs1_path.read_text())
+        cs1["files"]["src/macros.rs"] = hashlib.sha256(p1.read_bytes()).hexdigest()
+        cs1_path.write_text(json.dumps(cs1))
+
+    p2 = pathlib.Path("vendor/zbus-lockstep-macros/src/lib.rs")
+    if p2.exists():
+        text2 = p2.read_text()
+        old_str = 'if entry.path().extension().expect("File has no extension.") == "xml" {'
+        new_str = 'if entry.path().extension().map_or(false, |ext| ext == "xml") {'
+        if old_str in text2:
+            text2 = text2.replace(old_str, new_str)
+            p2.write_text(text2)
+            cs2_path = pathlib.Path("vendor/zbus-lockstep-macros/.cargo-checksum.json")
+            cs2 = json.loads(cs2_path.read_text())
+            cs2["files"]["src/lib.rs"] = hashlib.sha256(p2.read_bytes()).hexdigest()
+            cs2_path.write_text(json.dumps(cs2))
+    PY
     tar pcf vendor.tar .cargo vendor
     rm -rf .cargo vendor
 

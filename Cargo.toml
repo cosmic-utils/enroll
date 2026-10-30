@@ -10,7 +10,6 @@ default = []
 wgpu = ["libcosmic/wgpu"]
 
 [build-dependencies]
-vergen-gitcl = { version = "10", features = ["build", "cargo", "rustc", "si"] }
 xdgen = "0"
 
 [dependencies]

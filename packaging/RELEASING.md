@@ -75,8 +75,8 @@ Optional repository variables (under *Settings → Secrets and variables → Act
 
 | Variable | Job | Default | Purpose |
 |---|---|---|---|
-| `COPR_PROJECT` | `copr` | `enroll` | Copr project name (`owner/project`) if different from default. |
-| `DEB_SERIES` | `launchpad` | `plucky` | Ubuntu series name. Must be 25.04 or newer due to Rust 2024 edition requirements. |
-| `LP_DPUT_HOST` | `launchpad` | `ppa:cosmic-utils/enroll` | Target PPA name for `dput`. |
+| `COPR_PROJECT` | `copr` | `Enroll` | Copr project name (`owner/project`) if different from default. |
+| `DEB_SERIES` | `launchpad` | `resolute` | Ubuntu series name. Must be 25.04 or newer due to Rust 2024 edition requirements. |
+| `LP_DPUT_HOST` | `launchpad` | `ppa:jotuel/enroll` | Target PPA name for `dput`. |
 
 Note: Launchpad requires uploads to be signed by a key registered to the Launchpad account owning the destination PPA. Unmatched keys are rejected on upload.

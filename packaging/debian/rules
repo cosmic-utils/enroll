@@ -18,9 +18,15 @@ export CARGO_NET_OFFLINE = 1
 %:
 	dh $@
 
+override_dh_clean:
+	# Preserve *.orig files inside vendor/ (e.g. Cargo.toml.orig), which are
+	# listed in .cargo-checksum.json and required by `cargo build --frozen`.
+	dh_clean -X.orig
+
 override_dh_auto_configure:
-	# Unpack the vendored deps the CI rolled into the source tree.
-	just vendor-extract
+	# Unpack the vendored deps if shipped as vendor.tar; if CI already
+	# extracted them into the orig tarball, this is a no-op.
+	if [ -f vendor.tar ]; then just vendor-extract; fi
 
 override_dh_auto_build:
 	cargo build --release --frozen --offline
@@ -35,4 +41,5 @@ override_dh_auto_test:
 
 override_dh_auto_clean:
 	dh_auto_clean
-	rm -rf vendor .cargo
+	rm -rf $(CARGO_HOME)
+	if [ -f vendor.tar ]; then rm -rf vendor .cargo; fi

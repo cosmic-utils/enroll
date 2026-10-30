@@ -109,5 +109,5 @@ just rootdir=%{buildroot} install
 - Weblate recommended switching three dots to ellipsis character
 - Updated Chinese (Simplified Han script) translation by @Gerseneck
 
-* Tue Jul 15 2026 Joonas Tuomi <git@joonastuomi.fi> - 1.2.1-1
+* Wed Jul 15 2026 Joonas Tuomi <git@joonastuomi.fi> - 1.2.1-1
 - Initial Fedora spec for Copr.

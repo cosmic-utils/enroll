@@ -170,12 +170,13 @@ jobs:
     runs-on: ubuntu-latest
     container: fedora:42
     steps:
-      - uses: actions/checkout@v4
       - name: Install build tools
         run: |
-          # rustc/cargo 1.85+ ships in the Fedora 42 base; no rust toolchain
-          # install needed. copr-cli submits an SRPM (no in-runner build).
+          # Install git before actions/checkout so checkout creates a real .git
+          # repository (required by `git archive` below) instead of falling back
+          # to the GitHub REST API tarball download.
           dnf install -y rpmdevtools copr-cli gh git
+      - uses: actions/checkout@v4
       - name: Download vendor.tar from the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -190,11 +191,13 @@ jobs:
           VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Build SRPM
+        id: srpm
         env:
           VERSION: ${{ steps.prep.outputs.version }}
         run: |
           set -e
           rpmdev-setuptree
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "git@joonastuomi.fi"
           git config --global user.name "Joonas Tuomi"
           # Source0: git archive of the tag, named as the spec expects.
@@ -208,14 +211,15 @@ jobs:
         env:
           # Whole ~/.config/copr INI: login/token/username/copr_url.
           COPR_API_TOKEN: ${{ secrets.COPR_API_TOKEN }}
-          SRPM: ${{ steps.prep.outputs.srpm }}
+          COPR_PROJECT: ${{ vars.COPR_PROJECT || 'Enroll' }}
+          SRPM: ${{ steps.srpm.outputs.srpm }}
         run: |
           set -e
           mkdir -p ~/.config
           printf '%s\n' "$COPR_API_TOKEN" > ~/.config/copr
-          # Default project name "enroll" under the token's account; override
+          # Default project name "Enroll" under the token's account; override
           # by setting the COPR_PROJECT repo variable if you host elsewhere.
-          copr-cli build "${COPR_PROJECT:-enroll}" "$SRPM" --nowait
+          copr-cli build "${COPR_PROJECT:-Enroll}" "$SRPM" --nowait
 
   launchpad:
     name: dput source package to Launchpad PPA
@@ -224,14 +228,16 @@ jobs:
     container:
       image: ubuntu:26.04
     steps:
-      - uses: actions/checkout@v4
       - name: Install build tools
         run: |
+          # Install git and ca-certificates before actions/checkout so checkout
+          # clones a real .git repository (required by `git archive` below).
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            devscripts dput debhelper-compat dh-make just pkg-config \
+            build-essential devscripts dput debhelper-compat dh-make just pkg-config \
             libfontconfig1-dev libfreetype-dev libxkbcommon-dev libwayland-dev \
-            cargo rustc gnupg ca-certificates gh git
+            cargo rustc gnupg ca-certificates gh git python3
+      - uses: actions/checkout@v4
       - name: Download vendor.tar from the release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -241,34 +247,70 @@ jobs:
               --pattern vendor.tar
       - name: Resolve version
         id: prep
+        env:
+          DEB_SERIES: ${{ vars.DEB_SERIES }}
         run: |
           set -e
           VERSION=$(grep -m1 '^version' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
-          # Debian target series; override via the DEB_SERIES repo variable.
-          SERIES="${DEB_SERIES:-plucky}"
+          # Ubuntu target series; override via the DEB_SERIES repo variable.
+          SERIES="${DEB_SERIES:-resolute}"
           {
             echo "version=$VERSION"
             echo "series=$SERIES"
           } >> "$GITHUB_OUTPUT"
       - name: Import GPG signing key
+        id: gpg
         env:
           LP_GPG_KEY: ${{ secrets.LP_GPG_KEY }}
           LP_GPG_PASSPHRASE: ${{ secrets.LP_GPG_PASSPHRASE }}
         shell: bash
         run: |
           set -e
-          # Import the ASCII-armored private key registered to the Launchpad
-          # account that owns the PPA. debsign signs the .changes with it.
-          gpg --batch --import <<< "$LP_GPG_KEY"
-          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
-          # Enable loopback pinentry so gpg can be unlocked non-interactively
-          # inside the container (no pinentry-tty/tty agent available there).
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          # Enable loopback pinentry before importing so gpg can unlock
+          # passphrase-protected keys non-interactively inside the container.
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           printf '%s\n' "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-          # Preset the passphrase into the agent so later gpg calls don't prompt.
-          gpg-connect-agent "PRESET_PASSPHRASE $KEYID 1 $LP_GPG_PASSPHRASE" /bye \
-            >/dev/null 2>&1 || true
           gpg-connect-agent reloadagent /bye >/dev/null 2>&1 || true
+
+          # Normalize LP_GPG_KEY (handles standard ASCII-armored, single-line
+          # space-separated armor, literal \n, or base64-encoded keys) and import.
+          python3 - <<'PY' > /tmp/lp_key.gpg
+          import base64, os, re, sys
+          s = os.environ.get("LP_GPG_KEY", "").strip()
+          if "\\n" in s and "\n" not in s:
+              s = s.replace("\\n", "\n")
+          m = re.match(r"^(-----BEGIN PGP [A-Z ]+-----)\s+(.*?)\s+(-----END PGP [A-Z ]+-----)$", s, re.DOTALL)
+          if m and "\n" not in m.group(2):
+              header, body, footer = m.groups()
+              s = header + "\n\n" + "\n".join(body.split()) + "\n" + footer + "\n"
+              sys.stdout.buffer.write(s.encode())
+              sys.exit(0)
+          if s.startswith("-----BEGIN PGP "):
+              sys.stdout.buffer.write((s + "\n").encode())
+              sys.exit(0)
+          body_lines = [ln.strip() for ln in s.split() if not ln.strip().startswith("=")]
+          try:
+              decoded = base64.b64decode("".join(body_lines), validate=True)
+              sys.stdout.buffer.write(decoded)
+              sys.exit(0)
+          except Exception:
+              sys.stdout.buffer.write(s.encode())
+          PY
+
+          if ! gpg --batch --yes --pinentry-mode loopback --passphrase "$LP_GPG_PASSPHRASE" --import /tmp/lp_key.gpg; then
+            rm -f /tmp/lp_key.gpg
+            echo "::error::LP_GPG_KEY secret is not a valid OpenPGP secret key (length: ${#LP_GPG_KEY} chars). Export your secret key with: gpg --armor --export-secret-keys <KEY_ID> | gh secret set LP_GPG_KEY"
+            exit 1
+          fi
+          rm -f /tmp/lp_key.gpg
+
+          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+          if [ -z "$KEYID" ]; then
+            echo "::error::No secret key found after importing LP_GPG_KEY (ensure it was exported with --export-secret-keys, not --export)."
+            exit 1
+          fi
           echo "keyid=$KEYID" >> "$GITHUB_OUTPUT"
       - name: Build source package
         env:
@@ -279,6 +321,7 @@ jobs:
           PKG=cosmic-utils-enroll
           STAGE="$PKG-$VERSION"
 
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global user.email "git@joonastuomi.fi"
           git config --global user.name "Joonas Tuomi"
 
@@ -307,14 +350,25 @@ jobs:
           debuild -S -sa --unsigned-source --unsigned-changes
       - name: Sign & dput to PPA
         env:
-          KEYID: ${{ steps.prep.outputs.keyid }}
+          KEYID: ${{ steps.gpg.outputs.keyid }}
           LP_GPG_PASSPHRASE: ${{ secrets.LP_GPG_PASSPHRASE }}
           # Override if your PPA lives under a different user/name.
-          LP_DPUT_HOST: ${{ vars.LP_DPUT_HOST || 'ppa:cosmic-utils/enroll' }}
+          LP_DPUT_HOST: ${{ secrets.LP_DPUT_HOST || vars.LP_DPUT_HOST || 'ppa:jotuel/enroll' }}
+        shell: bash
         run: |
           set -e
-          # debsign re-signs the .changes (and .dsc) with the registered key.
-          DEBSIGN_KEYID="$KEYID" debsign -p\
-            "gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0"\
-            ../*.changes <<< "$LP_GPG_PASSPHRASE"
-          dput "$LP_DPUT_HOST" ../*.changes
+          # Use a wrapper script so every gpg invocation inside debsign
+          # (for .dsc, .buildinfo, and .changes) receives the passphrase.
+          PASSFILE=$(mktemp)
+          chmod 600 "$PASSFILE"
+          printf '%s' "$LP_GPG_PASSPHRASE" > "$PASSFILE"
+          GPG_WRAP=$(mktemp)
+          cat > "$GPG_WRAP" << EOF
+#!/usr/bin/env bash
+exec gpg --batch --yes --pinentry-mode loopback --passphrase-file "$PASSFILE" "\$@"
+EOF
+          chmod 700 "$GPG_WRAP"
+
+          DEBSIGN_KEYID="$KEYID" debsign -p "$GPG_WRAP" ./*.changes
+          rm -f "$GPG_WRAP" "$PASSFILE"
+          dput "$LP_DPUT_HOST" ./*.changes
