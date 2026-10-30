@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Localized Flathub and application metadata
+- Hungarian translation finished by @therealmatae
 
 ## [1.2.10](https://github.com/cosmic-utils/enroll/releases/tag/v1.2.10) - 2026-10-16
 
