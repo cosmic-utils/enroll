@@ -98,3 +98,5 @@ error-prints-not-deleted = No se pudieron eliminar las huellas.
 error-connect-dbus = Error al conectarse a DBus: { $err }
 error-unsupported-operation = La operación no está soportada por el servicio de huellas dactilares. La implementación instalada de fprintd puede ser incompatible.
 status-starting-enrollment = Empezando el registro…
+app-comment = Registrar huellas
+app-keywords = Huella;Autenticación;Biometría;
