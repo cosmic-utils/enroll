@@ -2,7 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+
 ### You don't have to translate these exactly just as long as you keep the users in mind.
+
 
 ## Most prominent parts of user interface.
 
@@ -40,7 +42,7 @@ danger = Danger
 # Button to Cancel deletion operation on a confirmation dialog.
 cancel = Cancel
 # This is status cover message for a really rare state. It conveys that everything is OK and you can keep using the application.
-success = Success. Now go register a print.
+success = Success. Register a fingerprint now.
 # Status messages that a fingerprint was succesfully deleted.
 deleted = Deleted fingerprint.
 # Fingerprint deletion is underway status message.
@@ -153,7 +155,7 @@ page-left-ring-finger = Left Ring Finger
 # Name of left little one
 page-left-little-finger = Left Little Finger
 # Name for deleting them all
-page-delete-all-users-prints = Delete All User's Prints
+page-delete-all-users-prints = Delete all users’ fingerprints
 
 ## These cover gap states left by fprintd in the application to keep users informed.
 
