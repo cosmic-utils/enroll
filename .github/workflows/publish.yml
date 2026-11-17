@@ -216,11 +216,7 @@ jobs:
         run: |
           set -e
           mkdir -p ~/.config
-          cat > ~/.config/copr <<EOF
-          [copr-cli]
-          token = ${COPR_API_TOKEN}
-          copr_url = https://copr.fedorainfracloud.org
-          EOF
+          printf '%s\n' "$COPR_API_TOKEN" > ~/.config/copr
           # Default project name "Enroll" under the token's account; override
           # by setting the COPR_PROJECT repo variable if you host elsewhere.
           copr-cli build "${COPR_PROJECT:-Enroll}" "$SRPM" --nowait
