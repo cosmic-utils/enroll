@@ -1,3 +1,12 @@
+cosmic-utils-enroll (1.2.12-1) unstable; urgency=medium
+
+  * German translation by Ettore Attalan
+  * Russian translation by @cgtalium
+  * Updated English, Swedish, Finnish & Ukrainian translations
+  * Updated depedencies libcosmic, tokio
+
+ -- Joonas Tuomi <git@joonastuomi.fi>  Tue, 17 Nov 2026 10:48:44 +0000
+
 cosmic-utils-enroll (1.2.11-1) unstable; urgency=medium
 
   * Localized Flathub and application metadata
