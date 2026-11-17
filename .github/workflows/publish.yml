@@ -364,9 +364,9 @@ jobs:
           printf '%s' "$LP_GPG_PASSPHRASE" > "$PASSFILE"
           GPG_WRAP=$(mktemp)
           cat > "$GPG_WRAP" << EOF
-#!/usr/bin/env bash
-exec gpg --batch --yes --pinentry-mode loopback --passphrase-file "$PASSFILE" "\$@"
-EOF
+          #!/usr/bin/env bash
+          exec gpg --batch --yes --pinentry-mode loopback --passphrase-file "$PASSFILE" "\$@"
+          EOF
           chmod 700 "$GPG_WRAP"
 
           DEBSIGN_KEYID="$KEYID" debsign -p "$GPG_WRAP" ./*.changes
