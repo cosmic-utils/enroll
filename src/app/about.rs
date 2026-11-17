@@ -18,6 +18,8 @@ pub fn about(icon_name: &str) -> About {
             ("therealmate", "hellogaming91@gmail.com"),
             ("VandaLHJ", "vandalhj@gmail.com"),
             ("Димко", "Dymkovych@proton.me"),
+            ("Ettore Attalan", ""),
+            ("Roman \"cgtalium\" Serov", "cgtalium@yandex.com"),
         ])
         .designers([("KodeBarista", ""), ("Hojjat Abdollahi", "")])
         .comments(fl!("welcome"))
