@@ -1,48 +1,53 @@
-[![Flathub Installs](https://img.shields.io/flathub/downloads/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/org.cosmic_utils.enroll)
-[![Flathub Version](https://img.shields.io/flathub/v/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/org.cosmic_utils.enroll)
-[![AUR Version](https://img.shields.io/aur/version/enroll)](https://aur.archlinux.org/packages/enroll)
-<a href="https://hosted.weblate.org/engage/cosmic-utils/"><img src="https://hosted.weblate.org/widget/cosmic-utils/enroll/svg-badge.svg" alt="Translation status"></a>
-# Enroll
+
+# Enroll ![GitHub Release](https://img.shields.io/github/v/release/cosmic-utils/enroll) <a href="https://hosted.weblate.org/engage/cosmic-utils/"><img src="https://hosted.weblate.org/widget/cosmic-utils/enroll/svg-badge.svg" alt="Translation status"></a>
+
 
 Application for fingerprint management. Designed for COSMIC DE.
 
-## Prerequisites
+### Prerequisites
 
 Linux with a supported fingerprint scanner. [Fprintd][fprintd] or [open-fprintd][open-fprintd] installed.
 
-#### Tested with: 
-| Distribution | Desktop | Architecture | Fingerprint scanner |
-| ------------ | ------- | ------------:|:-------------------:|
-| Pop!_OS | COSMIC™ DE | amd64 | Goodix MOC Fingerprint Sensor | 
-| Arch Linux | KDE Plasma | arm64 | No fingerprint scanner | 
-
 #### Usage
 
-Choose which finger and press Register.
+Choose a *finger* and press **Register**.
 
-## Installation
+## Installing
 
-#### Flathub
-<a href='https://flathub.org/apps/org.github.cosmic_utils.enroll'><img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?svg&locale=en'/></a>
-#### AUR
-You can just [go get it][aur] but I recommend installing using [Shelly][shelly] for instance.
-#### AppImage
-Download from [Releases][latest-release]
+#### Arch Linux [![AUR Version](https://img.shields.io/aur/version/enroll)](https://aur.archlinux.org/packages/enroll) ![AUR Maintainer](https://img.shields.io/aur/maintainer/enroll)
+
+Available from [AUR][aur]. I recommend installing using [Shelly][shelly].
+#### AppImage ![GitHub Release](https://img.shields.io/github/v/release/cosmic-utils/enroll)
+Download from [Releases][latest-release].
+
+```sh
+chmod +x 
+```
 
 #### Fedora
-Available at [Copr][copr]. Install:
+Available from [Copr][copr]. Install:
 
 ```sh
 sudo dnf copr install jwnz/Enroll
+sudo dnf install cosmic-utils-enroll
 ```
+#### Flathub [![Flathub Version](https://img.shields.io/flathub/v/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/org.cosmic_utils.enroll) [![Flathub Installs](https://img.shields.io/flathub/downloads/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/org.cosmic_utils.enroll) 
+<a href='https://flathub.org/apps/org.github.cosmic_utils.enroll'><img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?svg&locale=en'/></a>
 
-#### Ubuntu / Debian / Pop!_OS
-Available at [Launchpad][launchpad]. Install:
+#### Debian / Ubuntu / Pop!_OS <a href="https://launchpad.net/~jotuel/+archive/ubuntu/enroll" style="border: none;"><img src="https://ubuntu.com/docs/launchpad/_images/Launchpad_120px_badge.png" alt="Launchpad logo" style="border: none;"/></a> 
 
 ```sh
 sudo add-apt-repository ppa:jotuel/enroll
 sudo apt update
 sudo apt install cosmic-utils-enroll
+```
+#### NixOS [![version](https://repology.org/badge/version-for-repo/nix_unstable/enroll.svg)](https://repology.org/project/enroll/versions)
+Available from [Nix unstable][nix]:
+
+```sh
+  environment.systemPackages = [
+    pkgs.enroll
+  ];
 ```
 
 [shelly]: https://www.seafoam-labs.org/shelly-alpm
@@ -52,3 +57,4 @@ sudo apt install cosmic-utils-enroll
 [latest-release]: /../../releases/latest
 [copr]: https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/
 [launchpad]: https://launchpad.net/~jotuel/+archive/ubuntu/enroll
+[nix]: https://search.nixos.org/packages?channel=unstable&query=enroll#show=enroll
