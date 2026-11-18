@@ -18,13 +18,14 @@ Choose a *finger* and press **Register**.
 
 Available from [AUR][aur]. I recommend installing using [Shelly][shelly].
 #### AppImage ![GitHub Release](https://img.shields.io/github/v/release/cosmic-utils/enroll)
-Download from [Releases][latest-release].
+Download from [Releases][latest-release]. Install using [Gear Lever][gearlever].
 
 ```sh
-chmod +x 
+chmod +x cosmic-utils-enroll-x86_64.AppImage
+./cosmic-utils-enroll-x86_64.AppImage
 ```
 
-#### Fedora
+#### Fedora [![Copr build status](https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/package/cosmic-utils-enroll/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/package/cosmic-utils-enroll/)
 Available from [Copr][copr]. Install:
 
 ```sh
@@ -58,3 +59,4 @@ Available from [Nix unstable][nix]:
 [copr]: https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/
 [launchpad]: https://launchpad.net/~jotuel/+archive/ubuntu/enroll
 [nix]: https://search.nixos.org/packages?channel=unstable&query=enroll#show=enroll
+[gearlever]: https://github.com/mijorus/gearlever
