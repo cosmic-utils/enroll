@@ -1,6 +1,4 @@
-
-# Enroll ![GitHub Release](https://img.shields.io/github/v/release/cosmic-utils/enroll) <a href="https://hosted.weblate.org/engage/cosmic-utils/"><img src="https://hosted.weblate.org/widget/cosmic-utils/enroll/svg-badge.svg" alt="Translation status"></a>
-
+# <img width="30" src="../resources/icons/hicolor/scalable/apps/enroll.svg"> Enroll ![GitHub Release](https://img.shields.io/github/v/release/cosmic-utils/enroll) <a href="https://hosted.weblate.org/engage/cosmic-utils/"><img src="https://hosted.weblate.org/widget/cosmic-utils/enroll/svg-badge.svg" alt="Translation status"></a>
 
 Application for fingerprint management. Designed for COSMIC DE.
 
