@@ -219,7 +219,10 @@ jobs:
           printf '%s\n' "$COPR_API_TOKEN" > ~/.config/copr
           # Default project name "Enroll" under the token's account; override
           # by setting the COPR_PROJECT repo variable if you host elsewhere.
-          copr-cli build "${COPR_PROJECT:-Enroll}" "$SRPM" --nowait
+          # --timeout raises the build window above Copr's default of 18000s
+          # (5h): the Rust compile phase exceeded the default and was killed,
+          # which surfaced as a build-root lock error. Give it 10 hours.
+          copr-cli build "${COPR_PROJECT:-Enroll}" "$SRPM" --nowait --timeout 36000
 
   launchpad:
     name: dput source package to Launchpad PPA
