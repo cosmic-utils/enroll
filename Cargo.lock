@@ -930,7 +930,7 @@ dependencies = [
  "tokio",
  "tracing",
  "xdg",
- "zbus 6.2.1",
+ "zbus 6.0.0",
 ]
 
 [[package]]
@@ -973,7 +973,7 @@ dependencies = [
  "tokio",
  "tracing",
  "which",
- "zbus 6.2.1",
+ "zbus 6.0.0",
 ]
 
 [[package]]
@@ -1008,7 +1008,7 @@ name = "cosmic-settings-daemon-zbus"
 version = "1.0.0"
 source = "git+https://github.com/pop-os/dbus-settings-bindings#6ccc9fbf034220f0142bc907a7d7513b49aba0e1"
 dependencies = [
- "zbus 6.2.1",
+ "zbus 6.0.0",
 ]
 
 [[package]]
@@ -1069,7 +1069,7 @@ dependencies = [
  "tokio",
  "tracing",
  "xdgen",
- "zbus 5.19.0",
+ "zbus 6.0.0",
 ]
 
 [[package]]
@@ -2926,7 +2926,7 @@ dependencies = [
  "tracing",
  "unicode-segmentation",
  "url",
- "zbus 6.2.1",
+ "zbus 6.0.0",
 ]
 
 [[package]]
@@ -4814,7 +4814,7 @@ name = "switcheroo-control-zbus"
 version = "1.0.0"
 source = "git+https://github.com/pop-os/dbus-settings-bindings#6ccc9fbf034220f0142bc907a7d7513b49aba0e1"
 dependencies = [
- "zbus 6.2.1",
+ "zbus 6.0.0",
 ]
 
 [[package]]
@@ -6611,9 +6611,9 @@ dependencies = [
 
 [[package]]
 name = "zbus"
-version = "6.2.1"
+version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ddb2961d9587ef9f24ad14cde1c3bc4c5edc9f1525932a8cffdd5bd98886eb9"
+checksum = "266223222c9d81e5966455a9da0783e35d56a7ccab79a03c2366b2d98f8fc8a9"
 dependencies = [
  "async-trait",
  "bitflags 2.13.2",
