@@ -48,9 +48,9 @@ impl AppTheme {
     }
 }
 
-impl Into<u16> for AppTheme {
-    fn into(self) -> u16 {
-        match self {
+impl From<AppTheme> for u16 {
+    fn from(val: AppTheme) -> Self {
+        match val {
             AppTheme::System => 0,
             AppTheme::Light => 1,
             AppTheme::Dark => 2,
