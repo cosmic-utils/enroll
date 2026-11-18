@@ -16,8 +16,8 @@ pub async fn fetch_users() -> Vec<UserOption> {
         && let Ok(user_paths) = accounts.list_cached_users().await
     {
         for path in user_paths {
-            if let Ok(builder) = UserProxy::builder(&conn).path(&path)
-                && let Ok(user_proxy) = builder.build().await
+            let builder = UserProxy::builder(&conn).path(&path);
+            if let Ok(user_proxy) = builder.build().await
                 && let (Ok(name), Ok(real_name), Ok(icon)) = (
                     user_proxy.user_name().await,
                     user_proxy.real_name().await,
