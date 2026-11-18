@@ -57,7 +57,7 @@ impl AppModel {
 
 /// **Returns** ***Task*** which request deletion of users all prints
 pub fn task_delete_prints(
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     username: String,
     conn: zbus::Connection,
 ) -> Task<cosmic::Action<Message>> {
@@ -80,15 +80,14 @@ pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>>
                 Ok(paths) => {
                     let mut devices = Vec::new();
                     for path in paths {
-                        let name = match DeviceProxy::builder(&conn).path(path.clone()) {
-                            Ok(builder) => match builder.build().await {
-                                Ok(proxy) => {
-                                    proxy.name().await.unwrap_or_else(|_| path.to_string())
-                                }
-                                Err(_) => path.to_string(),
-                            },
-                            Err(_) => path.to_string(),
-                        };
+                        let name = DeviceProxy::builder(&conn).path(path.clone());
+                        let builder = name.build().await;
+                        let name = builder
+                            .expect(&path)
+                            .name()
+                            .await
+                            .unwrap_or_else(|_| path.to_string());
+
                         devices.push(DeviceOption { path, name });
                     }
                     Message::UpdateDevices(devices)
@@ -102,7 +101,7 @@ pub fn get_devices_task(conn: zbus::Connection) -> Task<cosmic::Action<Message>>
 
 /// **Returns** ***Task*** which requests deletion of given users given print
 pub fn task_delete_print(
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     username: String,
     finger_name: String,
     conn: zbus::Connection,
@@ -127,12 +126,12 @@ pub fn task_delete_print(
 
 /// **Returns** ***Task*** which sends a signal to stop current enroll process
 pub fn task_enroll_stop(
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     conn: zbus::Connection,
 ) -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
-            let device = DeviceProxy::builder(&conn).path(path)?.build().await?;
+            let device = DeviceProxy::builder(&conn).path(path).build().await?;
             let _ = device.enroll_stop().await;
             device.release().await?;
             Ok::<(), zbus::Error>(())
@@ -148,12 +147,12 @@ pub fn task_enroll_stop(
 
 /// **Returns** ***Task*** which sends a signal to stop current verify process
 pub fn task_verify_stop(
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     conn: zbus::Connection,
 ) -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
-            let device = DeviceProxy::builder(&conn).path(path)?.build().await?;
+            let device = DeviceProxy::builder(&conn).path(path).build().await?;
             let _ = device.verify_stop().await;
             device.release().await?;
             Ok::<(), zbus::Error>(())
@@ -169,7 +168,7 @@ pub fn task_verify_stop(
 
 /// **Returns** ***Task*** which requests deletion of all prints for all users
 pub fn task_clear_device(
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     usernames: Vec<String>,
     conn: zbus::Connection,
 ) -> Task<cosmic::Action<Message>> {
@@ -187,15 +186,20 @@ pub fn task_clear_device(
 /// **Returns** a ***Task*** which changes device used for all operations.
 pub fn task_select_device(
     conn: zbus::Connection,
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
 ) -> Task<cosmic::Action<Message>> {
     Task::perform(
         async move {
-            match DeviceProxy::builder(&conn).path(path.clone()) {
-                Ok(builder) => match builder.build().await {
-                    Ok(proxy) => Message::DeviceFound(Some((path, proxy))),
-                    Err(e) => Message::OperationError(AppError::from(e)),
-                },
+            let uncached = vec![];
+            let conn: &::zbus::Connection = &conn;
+            match ::zbus::proxy::Builder::new(conn)
+                .cache_properties(::zbus::proxy::CacheProperties::default())
+                .uncached_properties(&uncached)
+                .path(path.clone())
+                .build()
+                .await
+            {
+                Ok(proxy) => Message::DeviceFound(Some((path, proxy))),
                 Err(e) => Message::OperationError(AppError::from(e)),
             }
         },

@@ -14,11 +14,11 @@ use futures_util::{SinkExt, StreamExt};
 /// if the device does not exist
 pub async fn find_device(
     connection: &zbus::Connection,
-) -> zbus::Result<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)> {
+) -> zbus::Result<(zbus::OwnedObjectPath, DeviceProxy<'static>)> {
     let manager = ManagerProxy::new(connection).await?;
     let path = manager.get_default_device().await?;
     let device = DeviceProxy::builder(connection)
-        .path(path.clone())?
+        .path(path.clone())
         .build()
         .await?;
     Ok((path, device))
@@ -26,7 +26,7 @@ pub async fn find_device(
 
 pub async fn find_all_devices(
     connection: &zbus::Connection,
-) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>> {
+) -> zbus::Result<Vec<zbus::OwnedObjectPath>> {
     let manager = ManagerProxy::new(connection).await?;
     manager.get_devices().await
 }
@@ -83,12 +83,12 @@ async fn delete_all_fingers(device: &DeviceProxy<'_>, username: &str) -> zbus::R
 /// if the device couldn't be claimed
 pub async fn delete_fingerprint_dbus(
     connection: &zbus::Connection,
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     finger: String,
     username: String,
 ) -> zbus::Result<()> {
     validate_username(&username)?;
-    let device = DeviceProxy::builder(connection).path(path)?.build().await?;
+    let device = DeviceProxy::builder(connection).path(path).build().await?;
 
     device.claim(&username).await?;
     let res = device.delete_enrolled_finger(&finger).await;
@@ -110,11 +110,11 @@ pub async fn delete_fingerprint_dbus(
 /// if the device couldn't be claimed
 pub async fn delete_fingers(
     connection: &zbus::Connection,
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     username: String,
 ) -> zbus::Result<()> {
     validate_username(&username)?;
-    let device = DeviceProxy::builder(connection).path(path)?.build().await?;
+    let device = DeviceProxy::builder(connection).path(path).build().await?;
 
     device.claim(&username).await?;
     let res = delete_all_fingers(&device, &username).await;
@@ -132,10 +132,10 @@ pub async fn delete_fingers(
 /// if the fingerprint is not deleted from fprintd storage
 pub async fn clear_all_fingers_dbus(
     connection: &zbus::Connection,
-    path: zbus::zvariant::OwnedObjectPath,
+    path: zbus::OwnedObjectPath,
     usernames: Vec<String>,
 ) -> zbus::Result<()> {
-    let device = DeviceProxy::builder(connection).path(path)?.build().await?;
+    let device = DeviceProxy::builder(connection).path(path).build().await?;
     let mut last_error = None;
 
     for username in usernames {
@@ -202,7 +202,7 @@ pub async fn clear_all_fingers_dbus(
 /// if there was an internal error
 pub async fn enroll_fingerprint_process<S>(
     connection: zbus::Connection,
-    path: &zbus::zvariant::OwnedObjectPath,
+    path: &zbus::OwnedObjectPath,
     finger_name: &str,
     username: &str,
     output: &mut S,
@@ -212,10 +212,7 @@ where
     S::Error: std::fmt::Debug + Send,
 {
     validate_username(username)?;
-    let device = DeviceProxy::builder(&connection)
-        .path(path)?
-        .build()
-        .await?;
+    let device = DeviceProxy::builder(&connection).path(path).build().await?;
 
     // Claim device
     device.claim(username).await?;
@@ -289,7 +286,7 @@ where
 /// if there was an internal error
 pub async fn verify_finger_process<S>(
     connection: zbus::Connection,
-    path: &zbus::zvariant::OwnedObjectPath,
+    path: &zbus::OwnedObjectPath,
     finger: &str,
     username: &str,
     output: &mut S,
@@ -299,10 +296,7 @@ where
     S::Error: std::fmt::Debug + Send,
 {
     validate_username(username)?;
-    let device = DeviceProxy::builder(&connection)
-        .path(path)?
-        .build()
-        .await?;
+    let device = DeviceProxy::builder(&connection).path(path).build().await?;
 
     device.claim(username).await?;
 
@@ -402,9 +396,7 @@ mod tests {
 
         fn method_error(name: &str) -> zbus::Error {
             let msg = Message::method_call("/", "Ping")
-                .unwrap()
                 .destination("org.freedesktop.DBus")
-                .unwrap()
                 .build(&())
                 .unwrap();
             let error_name = ErrorName::try_from(name).unwrap();

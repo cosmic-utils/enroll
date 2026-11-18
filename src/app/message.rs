@@ -20,7 +20,7 @@ use zbus;
 /// Messages emitted by the application and its widgets.
 #[derive(Debug, Clone)]
 pub struct DeviceOption {
-    pub path: zbus::zvariant::OwnedObjectPath,
+    pub path: zbus::OwnedObjectPath,
     pub name: String,
 }
 
@@ -34,7 +34,7 @@ pub enum Message {
     Register,
     Cancel,
     ConnectionReady(zbus::Connection),
-    DeviceFound(Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>),
+    DeviceFound(Option<(zbus::OwnedObjectPath, DeviceProxy<'static>)>),
     UpdateDevices(Vec<DeviceOption>),
     OperationError(AppError),
     EnrollStart(Option<u32>),
@@ -224,7 +224,7 @@ impl AppModel {
     /// **Returns** either ***Task***::**none**() or ***list_fingers_task***()
     pub(crate) fn on_device_found(
         &mut self,
-        device_info: Option<(zbus::zvariant::OwnedObjectPath, DeviceProxy<'static>)>,
+        device_info: Option<(zbus::OwnedObjectPath, DeviceProxy<'static>)>,
     ) -> Task<cosmic::Action<Message>> {
         if let Some((path, proxy)) = device_info {
             self.device_path = Some(Arc::new(path));

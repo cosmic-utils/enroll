@@ -77,9 +77,7 @@ mod tests {
 
     fn create_method_error(name: &str) -> zbus::Error {
         let msg = Message::method_call("/", "Ping")
-            .unwrap()
             .destination("org.freedesktop.DBus")
-            .unwrap()
             .build(&())
             .unwrap();
 

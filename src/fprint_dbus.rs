@@ -8,8 +8,8 @@ use zbus::proxy;
     default_path = "/net/reactivated/Fprint/Manager"
 )]
 pub trait Manager {
-    fn get_default_device(&self) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
-    fn get_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
+    fn get_default_device(&self) -> zbus::Result<zbus::OwnedObjectPath>;
+    fn get_devices(&self) -> zbus::Result<Vec<zbus::OwnedObjectPath>>;
 }
 
 #[proxy(

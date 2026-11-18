@@ -53,7 +53,7 @@ pub struct AppModel {
     // Status text for the UI
     status: String,
     // Currently selected device path
-    device_path: Option<Arc<zbus::zvariant::OwnedObjectPath>>,
+    device_path: Option<Arc<zbus::OwnedObjectPath>>,
     // All devices
     devices: Vec<DeviceOption>,
     // Reused device proxy

@@ -8,8 +8,8 @@ use zbus::proxy;
     default_path = "/org/freedesktop/Accounts"
 )]
 pub trait Accounts {
-    fn list_cached_users(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
-    fn find_user_by_name(&self, name: &str) -> zbus::Result<zbus::zvariant::OwnedObjectPath>;
+    fn list_cached_users(&self) -> zbus::Result<Vec<zbus::OwnedObjectPath>>;
+    fn find_user_by_name(&self, name: &str) -> zbus::Result<zbus::OwnedObjectPath>;
 }
 
 #[proxy(

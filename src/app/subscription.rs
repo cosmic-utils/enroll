@@ -12,7 +12,7 @@ use futures_util::{SinkExt, StreamExt};
 
 #[derive(Clone)]
 pub(crate) struct VerifyData {
-    device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
+    device_path: std::sync::Arc<zbus::OwnedObjectPath>,
     connection: zbus::Connection,
     username: std::sync::Arc<String>,
     finger: Finger,
@@ -20,7 +20,7 @@ pub(crate) struct VerifyData {
 
 impl VerifyData {
     pub(crate) fn new(
-        device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
+        device_path: std::sync::Arc<zbus::OwnedObjectPath>,
         connection: zbus::Connection,
         username: std::sync::Arc<String>,
         finger: Finger,
@@ -44,7 +44,7 @@ impl std::hash::Hash for VerifyData {
 #[derive(Clone)]
 pub(crate) struct EnrollData {
     finger_name: std::sync::Arc<String>,
-    device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
+    device_path: std::sync::Arc<zbus::OwnedObjectPath>,
     connection: zbus::Connection,
     username: std::sync::Arc<String>,
 }
@@ -52,7 +52,7 @@ pub(crate) struct EnrollData {
 impl EnrollData {
     pub(crate) fn new(
         finger_name: std::sync::Arc<String>,
-        device_path: std::sync::Arc<zbus::zvariant::OwnedObjectPath>,
+        device_path: std::sync::Arc<zbus::OwnedObjectPath>,
         connection: zbus::Connection,
         username: std::sync::Arc<String>,
     ) -> Self {
