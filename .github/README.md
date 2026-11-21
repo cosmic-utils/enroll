@@ -12,7 +12,7 @@ Choose a *finger* and press **Register**.
 
 ## Installing
 
-#### Arch Linux [![AUR Version](https://img.shields.io/aur/version/enroll)](https://aur.archlinux.org/packages/enroll) ![AUR Maintainer](https://img.shields.io/aur/maintainer/enroll)
+#### <img width="25" src="https://github.com/akirakani-kei/distro-icons/blob/main/icons/arch.png"> Arch Linux [![AUR Version](https://img.shields.io/aur/version/enroll)](https://aur.archlinux.org/packages/enroll) ![AUR Maintainer](https://img.shields.io/aur/maintainer/enroll)
 
 Available from [AUR][aur]. I recommend installing using [Shelly][shelly].
 #### AppImage ![GitHub Release](https://img.shields.io/github/v/release/cosmic-utils/enroll)
@@ -23,7 +23,7 @@ chmod +x cosmic-utils-enroll-x86_64.AppImage
 ./cosmic-utils-enroll-x86_64.AppImage
 ```
 
-#### Fedora [![Copr build status](https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/package/cosmic-utils-enroll/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/package/cosmic-utils-enroll/)
+#### <img width="25" src="https://github.com/akirakani-kei/distro-icons/blob/main/icons/fedora.png"> Fedora [![Copr build status](https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/package/cosmic-utils-enroll/status_image/last_build.png)](https://copr.fedorainfracloud.org/coprs/jwnz/Enroll/package/cosmic-utils-enroll/)
 Available from [Copr][copr]. Install:
 
 ```sh
@@ -33,14 +33,14 @@ sudo dnf install cosmic-utils-enroll
 #### Flathub [![Flathub Version](https://img.shields.io/flathub/v/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/org.cosmic_utils.enroll) [![Flathub Installs](https://img.shields.io/flathub/downloads/org.cosmic_utils.enroll?logo=flathub)](https://flathub.org/apps/org.cosmic_utils.enroll) 
 <a href='https://flathub.org/apps/org.github.cosmic_utils.enroll'><img width='240' alt='Get it on Flathub' src='https://flathub.org/api/badge?svg&locale=en'/></a>
 
-#### Debian / Ubuntu / Pop!_OS <a href="https://launchpad.net/~jotuel/+archive/ubuntu/enroll" style="border: none;"><img src="https://ubuntu.com/docs/launchpad/_images/Launchpad_120px_badge.png" alt="Launchpad logo" style="border: none;"/></a> 
+#### <img width="25" src="https://github.com/akirakani-kei/distro-icons/blob/main/icons/debian.png"> Debian / <img width="25" src="https://github.com/akirakani-kei/distro-icons/blob/main/icons/ubuntu.png"> Ubuntu / <img width="25" src="https://github.com/akirakani-kei/distro-icons/blob/main/icons/pop!_os.png"> Pop!_OS <a href="https://launchpad.net/~jotuel/+archive/ubuntu/enroll" style="border: none;"><img src="https://ubuntu.com/docs/launchpad/_images/Launchpad_120px_badge.png" alt="Launchpad logo" style="border: none;"/></a> 
 
 ```sh
 sudo add-apt-repository ppa:jotuel/enroll
 sudo apt update
 sudo apt install cosmic-utils-enroll
 ```
-#### NixOS [![version](https://repology.org/badge/version-for-repo/nix_unstable/enroll.svg)](https://repology.org/project/enroll/versions)
+#### <img width="25" src="https://github.com/akirakani-kei/distro-icons/blob/main/icons/nixos.png"> NixOS [![version](https://repology.org/badge/version-for-repo/nix_unstable/enroll.svg)](https://repology.org/project/enroll/versions)
 Available from [Nix unstable][nix]:
 
 ```sh
