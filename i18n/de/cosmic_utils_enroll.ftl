@@ -98,3 +98,5 @@ status-starting-enrollment = Registrierung wird gestartet …
 help-fprintd = Solltest du Probleme haben, überprüfe bitte zunächst, ob fprintd korrekt installiert ist. Weitere Informationen findest du auf deren Website:
 help-validity = Für bestimmte Hardware, wie beispielsweise Scanner von Validity, muss derzeit stattdessen open-fprintd verwendet werden.
 help-pam = Um Fingerabdrücke effektiv nutzen zu können, muss PAM so konfiguriert werden, dass es das fprintd-Modul zur Authentifizierung verwendet. Beispiele dazu findest du hier:
+success = Erfolg. Registriere jetzt einen Fingerabdruck.
+page-delete-all-users-prints = Fingerabdrücke aller Benutzer löschen
